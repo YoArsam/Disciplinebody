@@ -67,31 +67,31 @@ function Home({
         {/* Balance Card */}
         <button 
           onClick={onEditWallet}
-          className="flex-1 bg-white rounded-2xl p-4 shadow-sm relative active:scale-[0.98] transition-transform"
+          className="flex-1 bg-white rounded-2xl p-4 shadow-sm relative active:scale-[0.98] transition-transform text-left"
         >
           <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
           </div>
-          <span className="text-gray-800 font-semibold text-base block">Balance</span>
-          <p className="text-gray-400 text-xs">In Total</p>
-          <span className="text-3xl font-black text-gray-900 mt-2 block">${wallet.toFixed(0)}</span>
+          <span className="text-gray-800 font-semibold text-base block text-left">Balance</span>
+          <p className="text-gray-400 text-xs text-left">In Total</p>
+          <span className="text-3xl font-black text-gray-900 mt-2 block text-left">${wallet.toFixed(0)}</span>
         </button>
 
         {/* Cost Card */}
         <button 
           onClick={onEditSkipCost}
-          className="flex-1 bg-white rounded-2xl p-4 shadow-sm relative active:scale-[0.98] transition-transform"
+          className="flex-1 bg-white rounded-2xl p-4 shadow-sm relative active:scale-[0.98] transition-transform text-left"
         >
           <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
           </div>
-          <span className="text-gray-800 font-semibold text-base block">Cost</span>
-          <p className="text-gray-400 text-xs">Per Skip</p>
-          <span className="text-3xl font-black text-gray-900 mt-2 block">${skipCost.toFixed(1)}</span>
+          <span className="text-gray-800 font-semibold text-base block text-left">Cost</span>
+          <p className="text-gray-400 text-xs text-left">Per Skip</p>
+          <span className="text-3xl font-black text-gray-900 mt-2 block text-left">${skipCost.toFixed(1)}</span>
         </button>
       </div>
 
