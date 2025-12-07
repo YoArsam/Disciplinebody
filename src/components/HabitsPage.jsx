@@ -9,7 +9,7 @@ export default function HabitsPage({ habits, onAddHabit, onEditHabit, onDeleteHa
   }
 
   return (
-    <div className="h-full flex flex-col bg-gray-200 px-4 pt-4 pb-24 animate-slideUp">
+    <div className="h-full flex flex-col bg-gray-200 px-4 pb-24 animate-slideUp pt-[max(1rem,env(safe-area-inset-top))]">
       {/* Header */}
       <div className="flex items-center justify-between py-3 mb-4 flex-shrink-0">
         <button 

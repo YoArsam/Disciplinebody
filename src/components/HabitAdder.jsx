@@ -27,7 +27,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-gray-200 px-4 pt-4 pb-0 animate-slideUp">
+    <div className="h-full flex flex-col bg-gray-200 px-4 pb-0 animate-slideUp pt-[max(1rem,env(safe-area-inset-top))] relative">
       {/* Header */}
       <div className="flex items-center justify-between py-3 mb-2 flex-shrink-0">
         <button 
@@ -151,7 +151,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       </div>
 
       {/* Fixed Bottom Actions */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+      <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
         <div className="max-w-md mx-auto space-y-3">
           <button
             onClick={handleSubmit}

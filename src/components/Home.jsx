@@ -52,7 +52,7 @@ function Home({
   const firstIncompleteHabit = habits.find(h => !completedToday.includes(h.id))
 
   return (
-    <div className="h-full flex flex-col bg-gray-200 px-4 pt-4 pb-20">
+    <div className="h-full flex flex-col bg-gray-200 px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))]">
       {/* Profile Icon */}
       <div className="flex-shrink-0 mb-4">
         <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
