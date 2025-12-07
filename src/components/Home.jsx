@@ -99,8 +99,11 @@ function Home({
         </div>
       </div>
 
-      {/* Today's Habits Card */}
-      <div className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0">
+      {/* Today's Habits Card - Clickable to open habits page */}
+      <button 
+        onClick={onGoToHabits}
+        className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 text-left active:scale-[0.99] transition-transform"
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0">
           <div className="flex items-center gap-2">
@@ -109,14 +112,11 @@ function Home({
             </svg>
             <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
           </div>
-          <button 
-            onClick={onEditHabits}
-            className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center tap-bounce"
-          >
+          <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center">
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
-          </button>
+          </div>
         </div>
 
         {/* Habits List */}
@@ -124,12 +124,9 @@ function Home({
           {habits.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-400 mb-3">No habits yet</p>
-              <button
-                onClick={onEditHabits}
-                className="text-gray-600 font-medium underline"
-              >
+              <span className="text-gray-600 font-medium underline">
                 Add Your First Habit
-              </button>
+              </span>
             </div>
           ) : (
             habits.map((habit, index) => {
@@ -138,9 +135,8 @@ function Home({
               const isFirst = index === 0
               
               return (
-                <button
+                <div
                   key={habit.id}
-                  onClick={() => onEditHabit(habit)}
                   className={`w-full text-left p-4 rounded-2xl transition-all ${
                     isFirst && !isDone
                       ? 'bg-gray-100'
@@ -175,12 +171,12 @@ function Home({
                       </svg>
                     )}
                   </div>
-                </button>
+                </div>
               )
             })
           )}
         </div>
-      </div>
+      </button>
 
       {/* Done Button */}
       {firstIncompleteHabit && (
