@@ -23,6 +23,18 @@ body {
   overscroll-behavior: none;
 }
 
+/* Desktop preview mode */
+@media (min-width: 501px) {
+  html, body, #root {
+    height: auto;
+    overflow: visible;
+  }
+  body {
+    background: #1a1a1a;
+    padding: 0;
+  }
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }

@@ -112,9 +112,9 @@ function Home({
             </svg>
             <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
           </div>
-          <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center">
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
           </div>
         </div>
@@ -123,10 +123,16 @@ function Home({
         <div className="flex-1 flex flex-col min-h-0">
           {habits.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center">
-              <p className="text-gray-400 mb-2">No habits yet</p>
-              <span className="text-gray-600 font-medium underline">
-                Add Your First Habit
-              </span>
+              {/* Plus Icon Circle */}
+              <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+                <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <p className="text-gray-500 mb-4">No habits yet</p>
+              <div className="bg-gray-200 rounded-full px-8 py-3">
+                <span className="text-gray-600 font-medium">Add Your First Habits</span>
+              </div>
             </div>
           ) : (
             habits.map((habit, index) => {
