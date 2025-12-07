@@ -45,7 +45,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       </div>
 
       {/* Scrollable Form Content */}
-      <div className="flex-1 overflow-y-auto min-h-0 pb-24">
+      <div className="flex-1 overflow-y-auto min-h-0 pb-32">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Habit Name */}
           <div className="bg-white rounded-2xl p-4 shadow-sm">
@@ -151,7 +151,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       </div>
 
       {/* Fixed Bottom Actions */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
         <div className="max-w-md mx-auto space-y-3">
           <button
             onClick={handleSubmit}
