@@ -105,14 +105,16 @@ function Home({
         className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 text-left active:scale-[0.99] transition-transform"
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-3 flex-shrink-0">
+        <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
+            <div className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center">
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
             <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
@@ -120,16 +122,16 @@ function Home({
         </div>
 
         {/* Habits List */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 flex flex-col min-h-0 w-full">
           {habits.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center">
+            <div className="flex-1 flex flex-col items-center justify-center w-full">
               {/* Plus Icon Circle */}
               <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mb-4">
                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
-              <p className="text-gray-500 mb-4">No habits yet</p>
+              <p className="text-gray-500 mb-4 text-center">No habits yet</p>
               <div className="bg-gray-200 rounded-full px-8 py-3">
                 <span className="text-gray-600 font-medium">Add Your First Habits</span>
               </div>
