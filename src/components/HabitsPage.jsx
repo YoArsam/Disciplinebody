@@ -9,23 +9,23 @@ export default function HabitsPage({ habits, onAddHabit, onEditHabit, onDeleteHa
   }
 
   return (
-    <div className="h-full flex flex-col bg-gray-400 px-4 pt-4 pb-16 animate-slideUp">
+    <div className="h-full flex flex-col bg-gray-200 px-4 pt-4 pb-24 animate-slideUp">
       {/* Header */}
       <div className="flex items-center justify-between py-3 mb-4 flex-shrink-0">
         <button 
           onClick={onBack}
-          className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center tap-bounce"
+          className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center tap-bounce"
         >
-          <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-xl font-semibold text-white">My Habits</h1>
+        <h1 className="text-xl font-bold text-gray-800 tracking-tight">My Habits</h1>
         <button 
           onClick={onAddHabit}
-          className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center tap-bounce"
+          className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center tap-bounce"
         >
-          <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
         </button>
@@ -35,10 +35,10 @@ export default function HabitsPage({ habits, onAddHabit, onEditHabit, onDeleteHa
       <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {habits.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-300 mb-3">No habits yet</p>
+            <p className="text-gray-400 mb-3">No habits yet</p>
             <button
               onClick={onAddHabit}
-              className="text-white font-medium underline"
+              className="text-gray-600 font-medium underline"
             >
               Add Your First Habit
             </button>
@@ -47,17 +47,17 @@ export default function HabitsPage({ habits, onAddHabit, onEditHabit, onDeleteHa
           habits.map((habit) => (
             <div
               key={habit.id}
-              className="bg-gray-300 rounded-2xl p-4 flex items-center justify-between"
+              className="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm"
             >
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-700 text-lg">{habit.name}</h3>
-                <p className="text-sm text-gray-500">{formatTimeRange(habit)}</p>
+                <h3 className="font-semibold text-gray-800 text-lg">{habit.name}</h3>
+                <p className="text-sm text-gray-400">{formatTimeRange(habit)}</p>
               </div>
               <button
                 onClick={() => onEditHabit(habit)}
-                className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center tap-bounce"
+                className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center tap-bounce"
               >
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
               </button>
