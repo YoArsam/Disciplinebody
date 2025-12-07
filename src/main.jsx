@@ -32,7 +32,7 @@ function PhoneFrame({ children }) {
           borderRadius: '40px',
           overflow: 'hidden',
           position: 'relative',
-          background: '#d1d5db'
+          background: '#ffffff'
         }}>
           {/* Notch */}
           <div style={{
