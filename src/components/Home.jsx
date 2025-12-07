@@ -65,36 +65,36 @@ function Home({
       {/* Balance & Cost Cards - Side by Side */}
       <div className="flex gap-3 flex-shrink-0 mb-4">
         {/* Balance Card */}
-        <div className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-1">
+        <div className="flex-1 bg-white rounded-2xl p-4 py-5 shadow-sm">
+          <div className="flex items-center justify-between">
             <span className="text-gray-800 font-semibold text-lg">Balance</span>
             <button 
               onClick={onEditWallet}
-              className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center tap-bounce"
+              className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center tap-bounce"
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
             </button>
           </div>
-          <p className="text-gray-400 text-xs mb-1">In Total</p>
+          <p className="text-gray-400 text-xs -mt-1">In Total</p>
           <span className="text-4xl font-black text-gray-900">${wallet.toFixed(0)}</span>
         </div>
 
         {/* Cost Card */}
-        <div className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-1">
+        <div className="flex-1 bg-white rounded-2xl p-4 py-5 shadow-sm">
+          <div className="flex items-center justify-between">
             <span className="text-gray-800 font-semibold text-lg">Cost</span>
             <button 
               onClick={onEditSkipCost}
-              className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center tap-bounce"
+              className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center tap-bounce"
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
             </button>
           </div>
-          <p className="text-gray-400 text-xs mb-1">Per Missed Habit</p>
+          <p className="text-gray-400 text-xs -mt-1">Per Missed Habit</p>
           <span className="text-4xl font-black text-gray-900">${skipCost.toFixed(1)}</span>
         </div>
       </div>
@@ -114,8 +114,8 @@ function Home({
             </div>
             <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-11 h-11 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
           </div>
