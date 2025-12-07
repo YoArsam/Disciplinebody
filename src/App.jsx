@@ -119,7 +119,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="h-full w-full">
       {screen === 'home' && (
         <HomeScreen
           wallet={state.wallet}
