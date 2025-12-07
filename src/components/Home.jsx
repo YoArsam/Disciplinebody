@@ -120,10 +120,10 @@ function Home({
         </div>
 
         {/* Habits List */}
-        <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
+        <div className="flex-1 flex flex-col min-h-0">
           {habits.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-400 mb-3">No habits yet</p>
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <p className="text-gray-400 mb-2">No habits yet</p>
               <span className="text-gray-600 font-medium underline">
                 Add Your First Habit
               </span>
