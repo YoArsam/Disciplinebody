@@ -104,21 +104,22 @@ function Home({
         {/* Habits List */}
         <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
           {habits.length === 0 ? (
-            <button 
+            <motion.button 
+              layout="position"
               onClick={onGoToHabits}
               className="flex-1 flex flex-col items-center justify-center w-full"
             >
               {/* Plus Icon Circle */}
-              <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+              <motion.div layout="position" className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mb-4">
                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-              </div>
-              <p className="text-gray-500 mb-4 text-center">No habits yet</p>
-              <div className="bg-gray-200 rounded-full px-8 py-3">
+              </motion.div>
+              <motion.p layout="position" className="text-gray-500 mb-4 text-center">No habits yet</motion.p>
+              <motion.div layout="position" className="bg-gray-200 rounded-full px-8 py-3">
                 <span className="text-gray-600 font-medium">Add Your First Habits</span>
-              </div>
-            </button>
+              </motion.div>
+            </motion.button>
           ) : (
             habits.map((habit, index) => {
               const isDone = isHabitDone(habit)
