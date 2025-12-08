@@ -78,8 +78,8 @@ function Home({
         layoutId="habits-card"
         className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer"
         onClick={onGoToHabits}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        style={{ originX: 0.5, originY: 0.5 }}
+        transition={{ type: "spring", stiffness: 400, damping: 35 }}
+        layout="preserve-aspect"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">

@@ -18,8 +18,8 @@ export default function HabitsPage({ habits, completedToday = [], onAddHabit, on
     <motion.div 
       layoutId="habits-card"
       className="h-full flex flex-col bg-white px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top)]]"
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      style={{ originX: 0.5, originY: 0.5 }}
+      transition={{ type: "spring", stiffness: 400, damping: 35 }}
+      layout="preserve-aspect"
     >
       {/* Header - matches Home habits card header */}
       <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
