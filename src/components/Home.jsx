@@ -82,14 +82,14 @@ function Home({
         style={{ originX: 0.5, originY: 0.5 }}
       >
         {/* Header */}
-        <motion.div layout="position" className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
+        <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <motion.span layout="position" className="text-gray-500 text-sm font-medium">Today's Habits</motion.span>
+            <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
           </div>
           <button 
             onClick={onGoToHabits}
@@ -99,27 +99,26 @@ function Home({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
           </button>
-        </motion.div>
+        </div>
 
         {/* Habits List */}
         <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
           {habits.length === 0 ? (
-            <motion.button 
-              layout="position"
+            <button 
               onClick={onGoToHabits}
               className="flex-1 flex flex-col items-center justify-center w-full"
             >
               {/* Plus Icon Circle */}
-              <motion.div layout="position" className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mb-4">
                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-              </motion.div>
-              <motion.p layout="position" className="text-gray-500 mb-4 text-center">No habits yet</motion.p>
-              <motion.div layout="position" className="bg-gray-200 rounded-full px-8 py-3">
+              </div>
+              <p className="text-gray-500 mb-4 text-center">No habits yet</p>
+              <div className="bg-gray-200 rounded-full px-8 py-3">
                 <span className="text-gray-600 font-medium">Add Your First Habits</span>
-              </motion.div>
-            </motion.button>
+              </div>
+            </button>
           ) : (
             habits.map((habit, index) => {
               const isDone = isHabitDone(habit)
