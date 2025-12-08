@@ -5,12 +5,13 @@ function Home({
   skipCost, 
   habits, 
   completedToday, 
+  habitsExpanded,
   onEditWallet, 
   onEditSkipCost, 
-  onEditHabits, 
+  onAddHabit, 
   onEditHabit, 
   onMarkDone,
-  onGoToHabits 
+  onToggleHabits 
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
 
@@ -74,8 +75,8 @@ function Home({
 
       {/* Today's Habits Card */}
       <div 
-        className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer active:scale-[0.98] transition-transform"
-        onClick={onGoToHabits}
+        className={`flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget ${habitsExpanded ? 'expanded' : ''}`}
+        onClick={onToggleHabits}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
@@ -88,11 +89,14 @@ function Home({
             <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
           </div>
           <button 
-            onClick={onGoToHabits}
+            onClick={(e) => {
+              e.stopPropagation()
+              onAddHabit()
+            }}
             className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
           >
             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
           </button>
         </div>
@@ -101,7 +105,10 @@ function Home({
         <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
           {habits.length === 0 ? (
             <button 
-              onClick={onGoToHabits}
+              onClick={(e) => {
+                e.stopPropagation()
+                onAddHabit()
+              }}
               className="flex-1 flex flex-col items-center justify-center w-full"
             >
               {/* Plus Icon Circle */}
