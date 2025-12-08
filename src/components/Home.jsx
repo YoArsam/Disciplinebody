@@ -13,7 +13,6 @@ function Home({
   onGoToHabits 
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [selectedHabitIndex, setSelectedHabitIndex] = useState(0)
 
   // Update time every minute
   useEffect(() => {
@@ -22,88 +21,59 @@ function Home({
   }, [])
 
   const formatTimeRange = (habit) => {
-    if (habit.allDay) return 'Free Timing'
+    if (habit.allDay) return 'All Day'
     const format = (t) => {
       const [h, m] = t.split(':').map(Number)
-      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+      const ampm = h >= 12 ? 'PM' : 'AM'
+      const displayHour = h % 12 || 12
+      return `${displayHour} ${ampm}`
     }
-    return `${format(habit.startTime)}-${format(habit.endTime)}`
-  }
-
-  const getTimeRemaining = (habit) => {
-    if (habit.allDay) return null
-    const [endHour, endMin] = habit.endTime.split(':').map(Number)
-    const now = currentTime
-    const endDate = new Date(now)
-    endDate.setHours(endHour, endMin, 0, 0)
-    
-    const diff = endDate - now
-    if (diff <= 0) return null
-    
-    const hours = Math.floor(diff / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    
-    return `${hours}h ${minutes}m Left`
+    return `${format(habit.startTime)} - ${format(habit.endTime)}`
   }
 
   const isHabitDone = (habit) => completedToday.includes(habit.id)
 
-  // Get first incomplete habit for Done button
-  const firstIncompleteHabit = habits.find(h => !completedToday.includes(h.id))
-
   return (
     <div className="h-full flex flex-col bg-gray-200 px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))]">
-      {/* Profile Icon */}
-      <div className="flex-shrink-0 mb-4">
+      {/* Top Row: Profile Icon + Skip Cost Badge */}
+      <div className="flex-shrink-0 mb-4 flex items-center justify-between">
         <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         </div>
-      </div>
-
-      {/* Balance & Cost Cards - Side by Side */}
-      <div className="flex gap-3 flex-shrink-0 mb-4">
-        {/* Balance Card */}
-        <button 
-          onClick={onEditWallet}
-          className="flex-1 bg-white rounded-2xl p-4 h-36 shadow-sm relative active:scale-[0.98] transition-transform text-left flex flex-col justify-between"
-        >
-          <div className="absolute top-3 right-3 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </div>
-          <div>
-            <span className="text-gray-800 font-semibold text-base block text-left">Balance</span>
-            <p className="text-gray-400 text-xs text-left">In Total</p>
-          </div>
-          <span className="text-4xl font-black text-gray-900 block text-left">${wallet.toFixed(0)}</span>
-        </button>
-
-        {/* Cost Card */}
+        {/* Skip Cost Badge */}
         <button 
           onClick={onEditSkipCost}
-          className="flex-1 bg-white rounded-2xl p-4 h-36 shadow-sm relative active:scale-[0.98] transition-transform text-left flex flex-col justify-between"
+          className="bg-gray-700 text-white text-sm font-semibold px-3 py-1.5 rounded-full active:scale-95 transition-transform"
         >
-          <div className="absolute top-3 right-3 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </div>
-          <div>
-            <span className="text-gray-800 font-semibold text-base block text-left">Cost</span>
-            <p className="text-gray-400 text-xs text-left">Per Skip</p>
-          </div>
-          <span className="text-4xl font-black text-gray-900 block text-left">${skipCost.toFixed(1)}</span>
+          ${skipCost.toFixed(1)}
         </button>
       </div>
 
-      {/* Today's Habits Card - Clickable to open habits page */}
+      {/* Balance Card - Full Width, Bigger */}
       <button 
-        onClick={onGoToHabits}
-        className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 text-left active:scale-[0.99] transition-transform"
+        onClick={onEditWallet}
+        className="flex-shrink-0 bg-white rounded-2xl p-5 shadow-sm relative active:scale-[0.98] transition-transform text-left mb-4"
       >
+        <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
+          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+        </div>
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-7 h-7 rounded-md bg-gray-100 flex items-center justify-center">
+            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+          </div>
+          <span className="text-gray-500 text-sm font-medium">Balance</span>
+        </div>
+        <span className="text-5xl font-black text-gray-900 block text-center">${wallet.toFixed(0)}</span>
+      </button>
+
+      {/* Today's Habits Card */}
+      <div className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0">
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-2">
@@ -114,17 +84,23 @@ function Home({
             </div>
             <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
           </div>
-          <div className="w-11 h-11 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          <button 
+            onClick={onGoToHabits}
+            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
+          >
+            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
-          </div>
+          </button>
         </div>
 
         {/* Habits List */}
-        <div className="flex-1 flex flex-col min-h-0 w-full">
+        <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
           {habits.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center w-full">
+            <button 
+              onClick={onGoToHabits}
+              className="flex-1 flex flex-col items-center justify-center w-full"
+            >
               {/* Plus Icon Circle */}
               <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center mb-4">
                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,68 +111,57 @@ function Home({
               <div className="bg-gray-200 rounded-full px-8 py-3">
                 <span className="text-gray-600 font-medium">Add Your First Habits</span>
               </div>
-            </div>
+            </button>
           ) : (
             habits.map((habit, index) => {
               const isDone = isHabitDone(habit)
-              const timeLeft = getTimeRemaining(habit)
               const isFirst = index === 0
               
               return (
                 <div
                   key={habit.id}
-                  className={`w-full text-left p-4 rounded-2xl transition-all ${
+                  className={`w-full p-4 rounded-2xl transition-all flex items-center justify-between ${
                     isFirst && !isDone
                       ? 'bg-gray-100'
                       : 'bg-gray-50'
                   } ${isDone ? 'opacity-50' : ''}`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className={`font-semibold text-lg block ${
-                        isFirst && !isDone ? 'text-gray-900' : 'text-gray-400'
-                      }`}>
-                        {habit.name}
-                      </span>
-                      <span className={`text-sm ${
-                        isFirst && !isDone ? 'text-gray-500' : 'text-gray-300'
-                      }`}>
-                        {formatTimeRange(habit)}
-                      </span>
-                    </div>
-                    {timeLeft && !isDone && (
-                      <span className={`text-sm px-3 py-1 rounded-full ${
-                        isFirst 
-                          ? 'bg-gray-300 text-gray-700' 
-                          : 'bg-gray-200 text-gray-500'
-                      }`}>
-                        {timeLeft}
-                      </span>
-                    )}
-                    {isDone && (
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
+                  {/* Habit Info */}
+                  <div className="flex-1 min-w-0">
+                    <span className={`font-semibold text-lg block truncate ${
+                      isFirst && !isDone ? 'text-gray-900' : 'text-gray-400'
+                    }`}>
+                      {habit.name}
+                    </span>
+                    <span className={`text-sm ${
+                      isFirst && !isDone ? 'text-gray-500' : 'text-gray-300'
+                    }`}>
+                      {formatTimeRange(habit)}
+                    </span>
                   </div>
+                  
+                  {/* Done Button */}
+                  {isDone ? (
+                    <span className="text-gray-300 text-lg font-medium ml-4">Done</span>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onMarkDone(habit.id)
+                      }}
+                      className={`ml-4 text-lg font-medium transition-colors ${
+                        isFirst ? 'text-gray-600' : 'text-gray-300'
+                      } active:scale-95`}
+                    >
+                      Done
+                    </button>
+                  )}
                 </div>
               )
             })
           )}
         </div>
-      </button>
-
-      {/* Done Button */}
-      {firstIncompleteHabit && (
-        <div className="flex-shrink-0 mt-4">
-          <button
-            onClick={() => onMarkDone(firstIncompleteHabit.id)}
-            className="w-full bg-white rounded-2xl py-5 shadow-sm active:scale-[0.98] transition-transform"
-          >
-            <span className="text-4xl font-light text-gray-900">Done</span>
-          </button>
-        </div>
-      )}
+      </div>
 
       {/* Bottom Nav */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
