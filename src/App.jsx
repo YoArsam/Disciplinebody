@@ -25,6 +25,7 @@ function App() {
   const [screen, setScreen] = useState('home') // 'home' | 'habits-page' | 'habit-adder' | 'wallet-editor' | 'skip-cost-editor'
   const [editingHabit, setEditingHabit] = useState(null)
   const [previousScreen, setPreviousScreen] = useState('home')
+  const [habitsClosing, setHabitsClosing] = useState(false)
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -137,10 +138,11 @@ function App() {
             onGoToHabits={() => setScreen('habits-page')}
           />
         )}
-        {screen === 'habits-page' && (
+        {(screen === 'habits-page' || habitsClosing) && (
           <HabitsScreen
             habits={state.habits}
             completedToday={state.completedToday}
+            isClosing={habitsClosing}
             onAddHabit={() => {
               setEditingHabit(null)
               setPreviousScreen('habits-page')
@@ -153,7 +155,13 @@ function App() {
             }}
             onDeleteHabit={deleteHabit}
             onMarkDone={markHabitDone}
-            onBack={() => setScreen('home')}
+            onBack={() => {
+              setHabitsClosing(true)
+              setTimeout(() => {
+                setScreen('home')
+                setHabitsClosing(false)
+              }, 250)
+            }}
           />
         )}
       {screen === 'habit-adder' && (

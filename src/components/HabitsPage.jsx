@@ -1,4 +1,4 @@
-export default function HabitsPage({ habits, completedToday = [], onAddHabit, onEditHabit, onDeleteHabit, onMarkDone, onBack }) {
+export default function HabitsPage({ habits, completedToday = [], isClosing, onAddHabit, onEditHabit, onDeleteHabit, onMarkDone, onBack }) {
   const formatTimeRange = (habit) => {
     if (habit.allDay) return 'All Day'
     const format = (t) => {
@@ -12,8 +12,10 @@ export default function HabitsPage({ habits, completedToday = [], onAddHabit, on
 
   const isHabitDone = (habit) => completedToday.includes(habit.id)
 
+  const animationClass = isClosing ? 'animate-sheetDown' : 'animate-sheetUp'
+
   return (
-    <div className="fixed inset-0 bg-white flex flex-col px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] z-40 animate-slideUp">
+    <div className={`fixed inset-0 bg-white flex flex-col px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] z-40 ${animationClass}`}>
       {/* Header - matches Home habits card header */}
       <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
         <div className="flex items-center gap-2">
