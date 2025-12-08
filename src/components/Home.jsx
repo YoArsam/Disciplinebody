@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 function Home({ 
   wallet, 
@@ -74,12 +73,9 @@ function Home({
       </button>
 
       {/* Today's Habits Card */}
-      <motion.div 
-        layoutId="habits-card"
-        className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer"
+      <div 
+        className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer active:scale-[0.98] transition-transform"
         onClick={onGoToHabits}
-        transition={{ type: "spring", stiffness: 400, damping: 35 }}
-        layout="preserve-aspect"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
@@ -168,7 +164,7 @@ function Home({
             })
           )}
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }

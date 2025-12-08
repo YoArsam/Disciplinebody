@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { LayoutGroup, AnimatePresence } from 'framer-motion'
 import HomeScreen from './screens/HomeScreen'
 import HabitsScreen from './screens/HabitsScreen'
 import EditHabitScreen from './screens/EditHabitScreen'
@@ -123,8 +122,7 @@ function App() {
   const showMainNav = screen === 'home' || screen === 'habits-page'
 
   return (
-    <LayoutGroup>
-      <div className="h-full w-full">
+    <div className="h-full w-full">
         {screen === 'home' && (
           <HomeScreen
             wallet={state.wallet}
@@ -236,8 +234,7 @@ function App() {
             </div>
           </div>
         )}
-      </div>
-    </LayoutGroup>
+    </div>
   )
 }
 
