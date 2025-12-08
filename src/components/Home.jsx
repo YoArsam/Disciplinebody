@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 function Home({ 
   wallet, 
@@ -10,8 +11,7 @@ function Home({
   onEditHabits, 
   onEditHabit, 
   onMarkDone,
-  onGoToHabits,
-  habitsTransition 
+  onGoToHabits 
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
 
@@ -34,21 +34,10 @@ function Home({
 
   const isHabitDone = (habit) => completedToday.includes(habit.id)
 
-  // Determine animation classes
-  const isExpanding = habitsTransition === 'expanding'
-  const isCollapsing = habitsTransition === 'collapsing'
-  const homeContentClass = isExpanding ? 'home-fading-out' : isCollapsing ? 'home-fading-in' : ''
-  
-  const habitsCardClass = `
-    flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 habits-card-base
-    ${isExpanding ? 'habits-expanded habits-expanding' : ''}
-    ${isCollapsing ? 'habits-expanded habits-collapsing' : ''}
-  `
-
   return (
     <div className="h-full flex flex-col bg-gray-200 px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))]">
       {/* Top Row: Profile Icon + Skip Cost Badge */}
-      <div className={`flex-shrink-0 mb-4 flex items-center justify-between ${homeContentClass}`}>
+      <div className="flex-shrink-0 mb-4 flex items-center justify-between">
         <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -66,7 +55,7 @@ function Home({
       {/* Balance Card - Full Width, Bigger */}
       <button 
         onClick={onEditWallet}
-        className={`flex-shrink-0 bg-white rounded-2xl p-5 shadow-sm relative active:scale-[0.98] transition-transform text-left mb-4 ${homeContentClass}`}
+        className="flex-shrink-0 bg-white rounded-2xl p-5 shadow-sm relative active:scale-[0.98] transition-transform text-left mb-4"
       >
         <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
           <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +74,12 @@ function Home({
       </button>
 
       {/* Today's Habits Card */}
-      <div className={habitsCardClass} onClick={!habitsTransition ? onGoToHabits : undefined}>
+      <motion.div 
+        layoutId="habits-card"
+        className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer"
+        onClick={onGoToHabits}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-2">
@@ -173,7 +167,7 @@ function Home({
             })
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Bottom Nav */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">

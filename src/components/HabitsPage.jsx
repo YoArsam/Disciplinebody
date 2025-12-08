@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion'
+
 export default function HabitsPage({ habits, completedToday = [], onAddHabit, onEditHabit, onDeleteHabit, onMarkDone, onBack }) {
   const formatTimeRange = (habit) => {
     if (habit.allDay) return 'All Day'
@@ -13,7 +15,11 @@ export default function HabitsPage({ habits, completedToday = [], onAddHabit, on
   const isHabitDone = (habit) => completedToday.includes(habit.id)
 
   return (
-    <div className="h-full flex flex-col bg-white px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))]">
+    <motion.div 
+      layoutId="habits-card"
+      className="h-full flex flex-col bg-white px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))]"
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    >
       {/* Header - matches Home habits card header */}
       <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
         <div className="flex items-center gap-2">
@@ -135,6 +141,6 @@ export default function HabitsPage({ habits, completedToday = [], onAddHabit, on
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
