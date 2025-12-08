@@ -17,11 +17,12 @@ export default function HabitsPage({ habits, completedToday = [], onAddHabit, on
   return (
     <motion.div 
       layoutId="habits-card"
-      className="h-full flex flex-col bg-white px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))]"
+      className="h-full flex flex-col bg-white px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top)]]"
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      style={{ originX: 0.5, originY: 0.5 }}
     >
       {/* Header - matches Home habits card header */}
-      <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
+      <motion.div layout="position" className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
         <div className="flex items-center gap-2">
           <button 
             onClick={onBack}
@@ -36,7 +37,7 @@ export default function HabitsPage({ habits, completedToday = [], onAddHabit, on
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </div>
-          <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
+          <motion.span layout="position" className="text-gray-500 text-sm font-medium">Today's Habits</motion.span>
         </div>
         <button 
           onClick={onAddHabit}
@@ -46,7 +47,7 @@ export default function HabitsPage({ habits, completedToday = [], onAddHabit, on
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
         </button>
-      </div>
+      </motion.div>
 
       {/* Habits List - same style as Home */}
       <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
@@ -116,8 +117,8 @@ export default function HabitsPage({ habits, completedToday = [], onAddHabit, on
       </div>
 
       {/* Bottom Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <div className="max-w-md mx-auto flex justify-around items-center">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-50">
+        <div className="max-w-md mx-auto flex justify-center items-center gap-12">
           {/* Home */}
           <button 
             onClick={onBack}

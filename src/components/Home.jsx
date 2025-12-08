@@ -79,16 +79,17 @@ function Home({
         className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer"
         onClick={onGoToHabits}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        style={{ originX: 0.5, originY: 0.5 }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
+        <motion.div layout="position" className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
+            <motion.span layout="position" className="text-gray-500 text-sm font-medium">Today's Habits</motion.span>
           </div>
           <button 
             onClick={onGoToHabits}
@@ -98,7 +99,7 @@ function Home({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
           </button>
-        </div>
+        </motion.div>
 
         {/* Habits List */}
         <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
@@ -169,9 +170,9 @@ function Home({
         </div>
       </motion.div>
 
-      {/* Bottom Nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <div className="max-w-md mx-auto flex justify-around items-center">
+      {/* Bottom Nav - Outside animation flow, stays fixed */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-50">
+        <div className="max-w-md mx-auto flex justify-center items-center gap-12">
           {/* Home */}
           <button className="p-2">
             <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
