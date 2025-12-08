@@ -25,6 +25,7 @@ function App() {
   const [screen, setScreen] = useState('home') // 'home' | 'habits-page' | 'habit-adder' | 'wallet-editor' | 'skip-cost-editor'
   const [editingHabit, setEditingHabit] = useState(null)
   const [previousScreen, setPreviousScreen] = useState('home')
+  const [habitsTransition, setHabitsTransition] = useState(null) // 'expanding' | 'collapsing' | null
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -118,9 +119,27 @@ function App() {
     setScreen('habit-adder')
   }
 
+  // Handle expanding to habits page
+  const goToHabits = () => {
+    setHabitsTransition('expanding')
+    setTimeout(() => {
+      setScreen('habits-page')
+      setHabitsTransition(null)
+    }, 350)
+  }
+
+  // Handle collapsing back to home
+  const goBackFromHabits = () => {
+    setHabitsTransition('collapsing')
+    setTimeout(() => {
+      setScreen('home')
+      setHabitsTransition(null)
+    }, 350)
+  }
+
   return (
     <div className="h-full w-full">
-      {screen === 'home' && (
+      {(screen === 'home' || habitsTransition) && (
         <HomeScreen
           wallet={state.wallet}
           skipCost={state.skipCost}
@@ -131,12 +150,14 @@ function App() {
           onEditHabits={() => openHabitAdder()}
           onEditHabit={(habit) => openHabitAdder(habit)}
           onMarkDone={markHabitDone}
-          onGoToHabits={() => setScreen('habits-page')}
+          onGoToHabits={goToHabits}
+          habitsTransition={habitsTransition}
         />
       )}
-      {screen === 'habits-page' && (
+      {screen === 'habits-page' && !habitsTransition && (
         <HabitsScreen
           habits={state.habits}
+          completedToday={state.completedToday}
           onAddHabit={() => {
             setEditingHabit(null)
             setPreviousScreen('habits-page')
@@ -148,7 +169,8 @@ function App() {
             setScreen('habit-adder')
           }}
           onDeleteHabit={deleteHabit}
-          onBack={() => setScreen('home')}
+          onMarkDone={markHabitDone}
+          onBack={goBackFromHabits}
         />
       )}
       {screen === 'habit-adder' && (

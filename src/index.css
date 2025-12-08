@@ -62,3 +62,75 @@ body {
 .animate-slideUp {
   animation: slideUp 0.3s ease-out forwards;
 }
+
+/* Habits card expand animation */
+@keyframes expandCard {
+  from {
+    border-radius: 1rem;
+    margin: 0;
+    transform: scale(1);
+  }
+  to {
+    border-radius: 0;
+    margin: 0;
+    transform: scale(1);
+  }
+}
+
+.habits-card-base {
+  transition: all 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.habits-expanded {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 50;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding-top: max(1rem, env(safe-area-inset-top)) !important;
+}
+
+.habits-expanding {
+  animation: habitsExpand 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.habits-collapsing {
+  animation: habitsCollapse 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes habitsExpand {
+  0% {
+    border-radius: 1rem;
+  }
+  100% {
+    border-radius: 0;
+  }
+}
+
+@keyframes habitsCollapse {
+  0% {
+    border-radius: 0;
+  }
+  100% {
+    border-radius: 1rem;
+  }
+}
+
+/* Fade out home content when habits expand */
+.home-fading-out {
+  animation: fadeOut 0.2s ease-out forwards;
+}
+
+.home-fading-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
