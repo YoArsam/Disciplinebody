@@ -17,26 +17,20 @@ function Home({
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
 
-  // Calculate expanded position
+  // Calculate expanded position - only use transform and height (animatable)
   useEffect(() => {
     if (habitsExpanded && widgetRef.current) {
       const rect = widgetRef.current.getBoundingClientRect()
       const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
-      const navHeight = 80 // 5rem
-      const bottomPadding = 16 // space above nav
+      const navHeight = 80
       
-      // Calculate how much to extend the bottom
-      const targetBottom = window.innerHeight - navHeight - bottomPadding
-      const currentBottom = rect.bottom
-      const extraHeight = targetBottom - currentBottom
+      const moveUp = rect.top - safeTop
+      const newHeight = window.innerHeight - safeTop - navHeight
       
       setWidgetStyle({
-        position: 'fixed',
-        top: `${safeTop}px`,
-        left: '1rem',
-        right: '1rem',
-        bottom: `${navHeight}px`,
-        height: 'auto',
+        transform: `translateY(-${moveUp}px)`,
+        height: `${newHeight}px`,
+        marginBottom: `-${moveUp}px`,
       })
     } else {
       setWidgetStyle({})
