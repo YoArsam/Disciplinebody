@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 function Home({ 
   wallet, 
@@ -14,6 +14,24 @@ function Home({
   onToggleHabits 
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const widgetRef = useRef(null)
+  const [widgetStyle, setWidgetStyle] = useState({})
+
+  // Calculate expanded position
+  useEffect(() => {
+    if (habitsExpanded && widgetRef.current) {
+      const rect = widgetRef.current.getBoundingClientRect()
+      const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
+      const navHeight = 80 // 5rem
+      
+      setWidgetStyle({
+        transform: `translateY(-${rect.top - safeTop}px)`,
+        height: `calc(100vh - ${safeTop}px - ${navHeight}px)`,
+      })
+    } else {
+      setWidgetStyle({})
+    }
+  }, [habitsExpanded])
 
   // Update time every minute
   useEffect(() => {
@@ -75,7 +93,9 @@ function Home({
 
       {/* Today's Habits Card */}
       <div 
-        className={`flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget ${habitsExpanded ? 'expanded' : ''}`}
+        ref={widgetRef}
+        className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget"
+        style={widgetStyle}
         onClick={onToggleHabits}
       >
         {/* Header */}
