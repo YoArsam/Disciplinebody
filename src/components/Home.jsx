@@ -27,11 +27,19 @@ function Home({
       const moveUp = rect.top - safeTop
       const newHeight = window.innerHeight - safeTop - navHeight
       
+      // First extend height, then move up
       setWidgetStyle({
-        transform: `translateY(-${moveUp}px)`,
         height: `${newHeight}px`,
         marginBottom: `-${moveUp}px`,
       })
+      
+      setTimeout(() => {
+        setWidgetStyle({
+          transform: `translateY(-${moveUp}px)`,
+          height: `${newHeight}px`,
+          marginBottom: `-${moveUp}px`,
+        })
+      }, 50)
     } else {
       setWidgetStyle({})
     }
