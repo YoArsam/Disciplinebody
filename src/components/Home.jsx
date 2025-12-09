@@ -16,57 +16,27 @@ function Home({
   const [currentTime, setCurrentTime] = useState(new Date())
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
-  const calculatedRef = useRef({ moveUp: 0, newHeight: 0 })
 
-  // Pre-calculate on mount so first transition is smooth
-  useEffect(() => {
-    const calculate = () => {
-      if (widgetRef.current) {
-        const rect = widgetRef.current.getBoundingClientRect()
-        const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
-        const navHeight = 80
-        
-        calculatedRef.current = {
-          moveUp: rect.top - safeTop,
-          newHeight: window.innerHeight - safeTop - navHeight,
-        }
-      }
-    }
-    
-    // Calculate after layout settles
-    setTimeout(calculate, 100)
-  }, [])
-
-  // Calculate expanded position - only use transform and height (animatable)
+  // Calculate expanded position
   useEffect(() => {
     if (habitsExpanded && widgetRef.current) {
-      // Use pre-calculated values if available, otherwise calculate fresh
-      let moveUp, newHeight
+      const rect = widgetRef.current.getBoundingClientRect()
+      const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
+      const navHeight = 80
       
-      if (calculatedRef.current.newHeight > 0) {
-        moveUp = calculatedRef.current.moveUp
-        newHeight = calculatedRef.current.newHeight
-      } else {
-        const rect = widgetRef.current.getBoundingClientRect()
-        const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
-        const navHeight = 80
-        moveUp = rect.top - safeTop
-        newHeight = window.innerHeight - safeTop - navHeight
-      }
+      const moveUp = rect.top - safeTop
+      const newHeight = window.innerHeight - safeTop - navHeight
       
-      // First extend height, then move up
-      setWidgetStyle({
-        height: `${newHeight}px`,
-        marginBottom: `-${moveUp}px`,
-      })
-      
-      setTimeout(() => {
-        setWidgetStyle({
-          transform: `translateY(-${moveUp}px)`,
-          height: `${newHeight}px`,
-          marginBottom: `-${moveUp}px`,
+      // Use requestAnimationFrame to ensure browser is ready
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setWidgetStyle({
+            transform: `translateY(-${moveUp}px)`,
+            height: `${newHeight}px`,
+            marginBottom: `-${moveUp}px`,
+          })
         })
-      }, 50)
+      })
     } else {
       setWidgetStyle({})
     }
