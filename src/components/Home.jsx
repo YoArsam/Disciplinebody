@@ -75,7 +75,11 @@ function Home({
 
       {/* Today's Habits Card */}
       <div 
-        className={`flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget ${habitsExpanded ? 'expanded' : ''}`}
+        className={`bg-white p-4 shadow-sm flex flex-col cursor-pointer habits-widget ${
+          habitsExpanded 
+            ? 'fixed inset-x-0 top-0 bottom-20 z-40 rounded-none pt-[max(1rem,env(safe-area-inset-top))]' 
+            : 'flex-1 rounded-2xl min-h-0'
+        }`}
         onClick={onToggleHabits}
       >
         {/* Header */}

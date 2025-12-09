@@ -63,13 +63,9 @@ body {
   animation: slideUp 0.3s ease-out forwards;
 }
 
-/* Habits widget slide animation */
+/* Habits widget expand animation */
 .habits-widget {
-  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-.habits-widget.expanded {
-  transform: translateY(-200px);
+  transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* Habits card expand animation */
