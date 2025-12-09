@@ -31,8 +31,12 @@ function Home({
       const extraHeight = targetBottom - currentBottom
       
       setWidgetStyle({
-        transform: `translateY(-${rect.top - safeTop}px)`,
-        height: `calc(100vh - ${safeTop}px - ${navHeight}px)`,
+        position: 'fixed',
+        top: `${safeTop}px`,
+        left: '1rem',
+        right: '1rem',
+        bottom: `${navHeight}px`,
+        height: 'auto',
       })
     } else {
       setWidgetStyle({})
