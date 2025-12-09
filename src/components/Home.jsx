@@ -32,7 +32,7 @@ function Home({
       
       setWidgetStyle({
         transform: `translateY(-${rect.top - safeTop}px)`,
-        height: `${rect.height + (rect.top - safeTop) + extraHeight}px`,
+        height: `${rect.height + (rect.top - safeTop) + extraHeight + 1000}px`,
       })
     } else {
       setWidgetStyle({})
