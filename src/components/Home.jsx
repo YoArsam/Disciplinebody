@@ -124,14 +124,14 @@ function Home({
       {/* Today's Habits Card */}
       <div 
         ref={widgetRef}
-        className="flex-1 bg-white rounded-2xl p-4 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget"
+        className="flex-1 bg-white rounded-3xl px-6 py-5 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget"
         style={widgetStyle}
         onClick={onToggleHabits}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
@@ -143,7 +143,7 @@ function Home({
               e.stopPropagation()
               onAddHabit()
             }}
-            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
+            className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
           >
             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
