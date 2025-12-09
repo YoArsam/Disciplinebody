@@ -84,7 +84,7 @@ function Home({
     <div className={`h-full flex flex-col bg-gray-200 px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
       {/* Top Row: Profile Icon + Skip Cost Badge */}
       <div className="flex-shrink-0 mb-4 flex items-center justify-between">
-        <div className="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
@@ -92,7 +92,7 @@ function Home({
         {/* Skip Cost Badge */}
         <button 
           onClick={onEditSkipCost}
-          className="bg-gray-700 text-white text-sm font-semibold w-12 h-12 rounded-full active:scale-95 transition-transform flex items-center justify-center"
+          className="bg-gray-700 text-white text-xs font-semibold w-10 h-10 rounded-full active:scale-95 transition-transform flex items-center justify-center"
         >
           ${skipCost.toFixed(1)}
         </button>
