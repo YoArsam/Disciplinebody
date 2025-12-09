@@ -23,10 +23,16 @@ function Home({
       const rect = widgetRef.current.getBoundingClientRect()
       const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
       const navHeight = 80 // 5rem
+      const bottomPadding = 16 // space above nav
+      
+      // Calculate how much to extend the bottom
+      const targetBottom = window.innerHeight - navHeight - bottomPadding
+      const currentBottom = rect.bottom
+      const extraHeight = targetBottom - currentBottom
       
       setWidgetStyle({
         transform: `translateY(-${rect.top - safeTop}px)`,
-        height: `calc(100vh - ${safeTop}px - ${navHeight}px)`,
+        height: `${rect.height + (rect.top - safeTop) + extraHeight}px`,
       })
     } else {
       setWidgetStyle({})
