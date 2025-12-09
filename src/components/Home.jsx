@@ -15,7 +15,14 @@ function Home({
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
   const widgetRef = useRef(null)
-  const [widgetStyle, setWidgetStyle] = useState({})
+  const [widgetStyle, setWidgetStyle] = useState({ transform: 'translateY(0)', height: 'auto' })
+
+  // Warm up CSS transitions on mount
+  useEffect(() => {
+    setTimeout(() => {
+      setWidgetStyle({})
+    }, 10)
+  }, [])
 
   // Calculate expanded position - only use transform and height (animatable)
   useEffect(() => {
