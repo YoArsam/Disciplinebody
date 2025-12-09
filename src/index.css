@@ -69,8 +69,8 @@ body {
 }
 
 .habits-widget.expanded {
-  transform: translateY(-180px);
-  margin-bottom: -180px;
+  transform: translateY(-220px);
+  margin-bottom: -220px;
 }
 
 /* Habits card expand animation */
