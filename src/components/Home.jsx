@@ -16,16 +16,43 @@ function Home({
   const [currentTime, setCurrentTime] = useState(new Date())
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
+  const calculatedRef = useRef({ moveUp: 0, newHeight: 0 })
+
+  // Pre-calculate on mount so first transition is smooth
+  useEffect(() => {
+    const calculate = () => {
+      if (widgetRef.current) {
+        const rect = widgetRef.current.getBoundingClientRect()
+        const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
+        const navHeight = 80
+        
+        calculatedRef.current = {
+          moveUp: rect.top - safeTop,
+          newHeight: window.innerHeight - safeTop - navHeight,
+        }
+      }
+    }
+    
+    // Calculate after layout settles
+    setTimeout(calculate, 100)
+  }, [])
 
   // Calculate expanded position - only use transform and height (animatable)
   useEffect(() => {
     if (habitsExpanded && widgetRef.current) {
-      const rect = widgetRef.current.getBoundingClientRect()
-      const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
-      const navHeight = 80
+      // Use pre-calculated values if available, otherwise calculate fresh
+      let moveUp, newHeight
       
-      const moveUp = rect.top - safeTop
-      const newHeight = window.innerHeight - safeTop - navHeight
+      if (calculatedRef.current.newHeight > 0) {
+        moveUp = calculatedRef.current.moveUp
+        newHeight = calculatedRef.current.newHeight
+      } else {
+        const rect = widgetRef.current.getBoundingClientRect()
+        const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
+        const navHeight = 80
+        moveUp = rect.top - safeTop
+        newHeight = window.innerHeight - safeTop - navHeight
+      }
       
       // First extend height, then move up
       setWidgetStyle({
