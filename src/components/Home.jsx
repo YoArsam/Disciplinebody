@@ -15,13 +15,22 @@ function Home({
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
   const widgetRef = useRef(null)
-  const [widgetStyle, setWidgetStyle] = useState({ transform: 'translateY(0)', height: 'auto' })
+  const [widgetStyle, setWidgetStyle] = useState({})
 
-  // Warm up CSS transitions on mount
+  // Warm up CSS transitions on mount by doing a tiny invisible transition
   useEffect(() => {
+    // Start with a tiny transform
+    setWidgetStyle({ transform: 'translateY(0.1px)' })
+    
+    // Then reset after transition completes - this activates the transition
+    setTimeout(() => {
+      setWidgetStyle({ transform: 'translateY(0)' })
+    }, 50)
+    
+    // Clear completely
     setTimeout(() => {
       setWidgetStyle({})
-    }, 10)
+    }, 500)
   }, [])
 
   // Calculate expanded position - only use transform and height (animatable)
