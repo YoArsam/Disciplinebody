@@ -70,7 +70,7 @@ body {
 
 .habits-widget.expanded {
   transform: translateY(-200px);
-  height: calc(100% + 200px);
+  height: calc(100% + 400px);
 }
 
 /* Habits card expand animation */
