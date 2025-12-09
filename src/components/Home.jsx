@@ -17,7 +17,7 @@ function Home({
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
 
-  // Calculate expanded position
+  // Calculate expanded position - only use transform and height (animatable)
   useEffect(() => {
     if (habitsExpanded && widgetRef.current) {
       const rect = widgetRef.current.getBoundingClientRect()
@@ -27,19 +27,19 @@ function Home({
       const moveUp = rect.top - safeTop
       const newHeight = window.innerHeight - safeTop - navHeight
       
-      // Step 1: Extend height from bottom
+      // First extend height, then move up
       setWidgetStyle({
         height: `${newHeight}px`,
+        marginBottom: `-${moveUp}px`,
       })
       
-      // Step 2: After height animation completes, push up
       setTimeout(() => {
         setWidgetStyle({
           transform: `translateY(-${moveUp}px)`,
           height: `${newHeight}px`,
           marginBottom: `-${moveUp}px`,
         })
-      }, 300)
+      }, 50)
     } else {
       setWidgetStyle({})
     }
