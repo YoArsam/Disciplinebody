@@ -7,6 +7,16 @@
   user-select: none;
 }
 
+/* Hide scrollbars but keep scrolling */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 html, body, #root {
   height: 100%;
   height: 100dvh;
