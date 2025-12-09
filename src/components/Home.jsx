@@ -173,18 +173,33 @@ function Home({
               </div>
             </button>
           ) : (
-            habits.map((habit, index) => {
+            // Sort habits: by time, then done habits go to bottom
+            [...habits]
+              .sort((a, b) => {
+                const aDone = completedToday.includes(a.id)
+                const bDone = completedToday.includes(b.id)
+                // Done habits go to bottom
+                if (aDone && !bDone) return 1
+                if (!aDone && bDone) return -1
+                // Sort by start time
+                const aTime = a.allDay ? 0 : a.startTime
+                const bTime = b.allDay ? 0 : b.startTime
+                return aTime - bTime
+              })
+              .map((habit, index) => {
               const isDone = isHabitDone(habit)
-              const isFirst = index === 0
+              const isFirst = index === 0 && !isDone
               
               return (
                 <div
                   key={habit.id}
                   className={`w-full p-4 rounded-2xl transition-all flex items-center justify-between ${
-                    isFirst && !isDone
-                      ? 'bg-gray-100'
-                      : 'bg-gray-50'
-                  } ${isDone ? 'opacity-50' : ''}`}
+                    isDone
+                      ? 'bg-gray-50'
+                      : isFirst
+                        ? 'bg-gray-100'
+                        : 'bg-gray-50'
+                  }`}
                 >
                   {/* Habit Info - Clickable to edit */}
                   <button
@@ -195,12 +210,12 @@ function Home({
                     className="flex-1 min-w-0 text-left"
                   >
                     <span className={`font-semibold text-lg block truncate ${
-                      isFirst && !isDone ? 'text-gray-900' : 'text-gray-400'
+                      isDone ? 'text-gray-300' : 'text-gray-900'
                     }`}>
                       {habit.name}
                     </span>
                     <span className={`text-sm ${
-                      isFirst && !isDone ? 'text-gray-500' : 'text-gray-300'
+                      isDone ? 'text-gray-300' : 'text-gray-500'
                     }`}>
                       {formatTimeRange(habit)}
                     </span>
@@ -215,9 +230,7 @@ function Home({
                         e.stopPropagation()
                         onMarkDone(habit.id)
                       }}
-                      className={`ml-4 text-lg font-medium transition-colors ${
-                        isFirst ? 'text-gray-600' : 'text-gray-300'
-                      } active:scale-95`}
+                      className="ml-4 text-lg font-medium transition-colors text-gray-600 active:scale-95"
                     >
                       Done
                     </button>
