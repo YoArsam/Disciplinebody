@@ -101,22 +101,24 @@ function Home({
       {/* Balance Card - Full Width, Bigger */}
       <button 
         onClick={onEditWallet}
-        className="flex-shrink-0 bg-white rounded-2xl p-5 shadow-sm relative active:scale-[0.98] transition-transform text-left mb-4"
+        className="flex-shrink-0 bg-white rounded-3xl px-6 py-6 shadow-sm relative active:scale-[0.98] transition-transform text-left mb-4"
       >
-        <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
-          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-        </div>
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-7 h-7 rounded-md bg-gray-100 flex items-center justify-center">
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+            </div>
+            <span className="text-gray-500 text-sm font-medium">Balance</span>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+            <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>
           </div>
-          <span className="text-gray-500 text-sm font-medium">Balance</span>
         </div>
-        <span className="text-5xl font-black text-gray-900 block text-center">${wallet.toFixed(0)}</span>
+        <span className="text-6xl font-black text-gray-900 block text-center py-2">${wallet.toFixed(0)}</span>
       </button>
 
       {/* Today's Habits Card */}
