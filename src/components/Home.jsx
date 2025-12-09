@@ -37,11 +37,11 @@ function Home({
   useEffect(() => {
     if (habitsExpanded && widgetRef.current) {
       const rect = widgetRef.current.getBoundingClientRect()
-      const safeTop = Math.max(16, parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0'))
       const navHeight = 80
       
-      const moveUp = rect.top - safeTop
-      const newHeight = window.innerHeight - safeTop - navHeight
+      // Slide up to cover profile/cost buttons (start from top of screen)
+      const moveUp = rect.top
+      const newHeight = window.innerHeight - navHeight
       
       // First extend height, then move up
       setWidgetStyle({
