@@ -124,7 +124,7 @@ function Home({
       {/* Today's Habits Card */}
       <div 
         ref={widgetRef}
-        className="flex-1 bg-white rounded-3xl px-6 py-5 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget"
+        className={`flex-1 bg-white px-6 py-5 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget ${habitsExpanded ? 'rounded-none' : 'rounded-3xl'}`}
         style={widgetStyle}
         onClick={onToggleHabits}
       >
