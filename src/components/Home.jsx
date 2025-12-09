@@ -27,16 +27,19 @@ function Home({
       const moveUp = rect.top - safeTop
       const newHeight = window.innerHeight - safeTop - navHeight
       
-      // Use requestAnimationFrame to ensure browser is ready
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setWidgetStyle({
-            transform: `translateY(-${moveUp}px)`,
-            height: `${newHeight}px`,
-            marginBottom: `-${moveUp}px`,
-          })
-        })
+      // Step 1: Extend height from bottom
+      setWidgetStyle({
+        height: `${newHeight}px`,
       })
+      
+      // Step 2: After height animation completes, push up
+      setTimeout(() => {
+        setWidgetStyle({
+          transform: `translateY(-${moveUp}px)`,
+          height: `${newHeight}px`,
+          marginBottom: `-${moveUp}px`,
+        })
+      }, 300)
     } else {
       setWidgetStyle({})
     }
