@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function CheckInModal({ habitName, skipCost, onYes, onNo, onClose }) {
+function CheckInModal({ habitName, skipCost, onYes, onNo }) {
   const [showPayment, setShowPayment] = useState(false)
 
   // Payment view
@@ -29,13 +29,6 @@ function CheckInModal({ habitName, skipCost, onYes, onNo, onClose }) {
           className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
         >
           Pay with Apple Pay
-        </button>
-
-        <button
-          onClick={onClose}
-          className="mt-4 text-gray-500 text-sm"
-        >
-          Cancel
         </button>
       </div>
     )
@@ -73,13 +66,6 @@ function CheckInModal({ habitName, skipCost, onYes, onNo, onClose }) {
           No, I missed it
         </button>
       </div>
-
-      <button
-        onClick={onClose}
-        className="mt-6 text-gray-500 text-sm"
-      >
-        Ask me later
-      </button>
     </div>
   )
 }

@@ -411,7 +411,7 @@ function Home({
                       const timeLeft = getTimeRemaining(habit)
                       return (
                         <span className={`ml-4 text-lg font-medium ${
-                          timeLeft.expired ? 'text-red-400' : 'text-gray-500'
+                          timeLeft.expired ? 'text-gray-400' : 'text-gray-500'
                         }`}>
                           {timeLeft.text}
                         </span>
