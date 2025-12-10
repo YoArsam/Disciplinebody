@@ -1,34 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 function CheckInModal({ habit, skipCost, onComplete, onClose }) {
-  const [showCelebration, setShowCelebration] = useState(false)
-  const [showPayment, setShowPayment] = useState(false)
+  const [view, setView] = useState('question') // 'question' | 'celebration' | 'payment'
+  const timerRef = useRef(null)
+  const habitIdRef = useRef(habit?.id) // Store habit id in ref
 
   // Safety check - if habit is null/undefined, don't render
   if (!habit) {
     return null
   }
 
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+    }
+  }, [])
+
   const handleYes = () => {
-    setShowCelebration(true)
-    // Show celebration for 1.5s, then close
-    setTimeout(() => {
-      onComplete(habit.id, true) // true = completed
+    const id = habitIdRef.current
+    setView('celebration')
+    // Show celebration for 1.5s, then complete
+    timerRef.current = setTimeout(() => {
+      onComplete(id, true)
     }, 1500)
   }
 
   const handleNo = () => {
-    setShowPayment(true)
+    setView('payment')
   }
 
   const handlePayment = () => {
-    // This will trigger Apple Pay in the future
-    // For now, just mark as missed and close
-    onComplete(habit.id, false) // false = missed
+    const id = habitIdRef.current
+    onComplete(id, false)
   }
 
   // Celebration view
-  if (showCelebration) {
+  if (view === 'celebration') {
     return (
       <div className="fixed inset-0 bg-green-500 flex flex-col items-center justify-center z-50">
         <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center mb-6 animate-bounce">
@@ -43,7 +53,7 @@ function CheckInModal({ habit, skipCost, onComplete, onClose }) {
   }
 
   // Payment confirmation view
-  if (showPayment) {
+  if (view === 'payment') {
     return (
       <div className="fixed inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-50 px-6">
         <div className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mb-6">

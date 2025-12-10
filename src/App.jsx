@@ -197,7 +197,7 @@ function App() {
     }
   }, []) // Empty deps = only on mount
 
-  // Handle check-in completion
+  // Handle check-in completion - keep it simple, no timeouts
   const handleCheckInComplete = (habitId, completed) => {
     // Mark this habit as asked
     setAskedHabits(prev => [...prev, habitId])
@@ -207,18 +207,8 @@ function App() {
     }
     // In future: if !completed, trigger Apple Pay here
     
+    // Just close the modal - don't try to show another one
     setCheckInHabit(null)
-    
-    // Check for more habits after a short delay
-    setTimeout(() => {
-      const habitsNeedingCheckIn = getHabitsNeedingCheckIn(state.habits, state.completedToday)
-      const unaskedHabits = habitsNeedingCheckIn.filter(h => 
-        !askedHabits.includes(h.id) && h.id !== habitId
-      )
-      if (unaskedHabits.length > 0) {
-        setCheckInHabit(unaskedHabits[0])
-      }
-    }, 300)
   }
 
   // Safety: redirect to home if on education screen but habit is null
