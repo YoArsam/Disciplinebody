@@ -43,8 +43,8 @@ function HabitEducation({ habit, skipCost, onDone }) {
         {/* When to check in */}
         <div className="bg-gray-50 rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+              <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -95,7 +95,7 @@ function HabitEducation({ habit, skipCost, onDone }) {
       {/* Done Button */}
       <button
         onClick={onDone}
-        className="w-full bg-gray-900 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform mt-6"
+        className="w-full bg-orange-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform mt-6"
       >
         Got it
       </button>

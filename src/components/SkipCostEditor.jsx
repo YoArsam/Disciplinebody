@@ -51,8 +51,8 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
         {/* Quick Select */}
         <div className="bg-gray-50 rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+              <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
@@ -66,7 +66,7 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
                 onClick={() => setAmount(val.toString())}
                 className={`py-3 rounded-xl font-semibold transition-all active:scale-95 ${
                   parseFloat(amount) === val
-                    ? 'bg-gray-900 text-white'
+                    ? 'bg-orange-500 text-white'
                     : 'bg-white text-gray-700 border border-gray-200'
                 }`}
               >
@@ -105,7 +105,7 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
               <button
                 type="button"
                 onClick={handleCustomSubmit}
-                className="px-4 py-3 bg-gray-900 text-white rounded-xl font-semibold active:scale-95 transition-transform"
+                className="px-4 py-3 bg-orange-500 text-white rounded-xl font-semibold active:scale-95 transition-transform"
               >
                 Set
               </button>
@@ -140,7 +140,7 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
       <button
         type="button"
         onClick={handleSave}
-        className="w-full bg-gray-900 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform mt-6"
+        className="w-full bg-orange-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform mt-6"
       >
         Save Changes
       </button>
