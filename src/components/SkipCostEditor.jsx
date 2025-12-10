@@ -24,12 +24,12 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
   const presets = [0.25, 0.5, 1, 2, 5, 10]
 
   return (
-    <div className="h-full flex flex-col bg-white px-6 pt-[max(1rem,env(safe-area-inset-top))] pb-8">
+    <div className="h-full flex flex-col bg-gray-100 px-6 pt-[max(1rem,env(safe-area-inset-top))] pb-8">
       {/* Header */}
       <div className="flex items-center gap-4 py-4 mb-4">
         <button 
           onClick={onBack}
-          className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center active:scale-95 transition-transform"
+          className="w-10 h-10 rounded-full bg-white flex items-center justify-center active:scale-95 transition-transform"
         >
           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -41,7 +41,7 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
       {/* Main Content */}
       <div className="flex-1 space-y-4">
         {/* Current Amount Display */}
-        <div className="bg-gray-50 rounded-2xl p-6 text-center">
+        <div className="bg-white rounded-2xl p-6 text-center">
           <p className="text-gray-500 text-sm mb-2">Cost per missed habit</p>
           <div className="flex items-center justify-center">
             <span className="text-4xl font-bold text-gray-900">${parseFloat(amount).toFixed(2)}</span>
@@ -49,7 +49,7 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
         </div>
 
         {/* Quick Select */}
-        <div className="bg-gray-50 rounded-2xl p-5">
+        <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
               <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,10 +77,10 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
         </div>
 
         {/* Custom Amount */}
-        <div className="bg-gray-50 rounded-2xl p-5">
+        <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+              <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </div>
@@ -129,7 +129,7 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
         </div>
 
         {/* Tip */}
-        <div className="bg-gray-50 rounded-2xl p-4">
+        <div className="bg-white rounded-2xl p-4">
           <p className="text-gray-500 text-sm text-center">
             💡 Higher stakes = stronger motivation. Start small and increase as you build consistency.
           </p>
