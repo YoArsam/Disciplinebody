@@ -146,13 +146,14 @@ function App() {
     setScreen('habit-adder')
   }
 
-  // Find first habit that needs check-in (past end time, not completed)
-  const findHabitNeedingCheckIn = () => {
+  // Find first habit that needs check-in (past end time, not completed, not answered)
+  const findHabitNeedingCheckIn = (alreadyAnswered = []) => {
     const now = new Date()
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
     
     for (const habit of state.habits) {
       if (state.completedToday.includes(habit.id)) continue
+      if (alreadyAnswered.includes(habit.id)) continue
       const [endHour, endMin] = habit.endTime.split(':').map(Number)
       const endMinutes = endHour * 60 + endMin
       if (currentMinutes > endMinutes) {
@@ -164,7 +165,7 @@ function App() {
 
   // Show check-in popup on app load (once)
   useEffect(() => {
-    const habit = findHabitNeedingCheckIn()
+    const habit = findHabitNeedingCheckIn(answeredToday)
     if (habit) {
       setCheckInHabit(habit)
     }
@@ -309,16 +310,22 @@ function App() {
           skipCost={state.skipCost}
           onYes={() => {
             const id = checkInHabit.id
-            setAnsweredToday(prev => [...prev, id])
+            const newAnswered = [...answeredToday, id]
+            setAnsweredToday(newAnswered)
             setCheckInHabit(null)
             markHabitDone(id)
-            showNextCheckIn(id)
+            // Show next habit
+            const next = findHabitNeedingCheckIn(newAnswered)
+            if (next) setCheckInHabit(next)
           }}
           onNo={() => {
             const id = checkInHabit.id
-            setAnsweredToday(prev => [...prev, id])
+            const newAnswered = [...answeredToday, id]
+            setAnsweredToday(newAnswered)
             setCheckInHabit(null)
-            showNextCheckIn(id)
+            // Show next habit
+            const next = findHabitNeedingCheckIn(newAnswered)
+            if (next) setCheckInHabit(next)
           }}
         />
       )}
