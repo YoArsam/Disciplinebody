@@ -4,7 +4,6 @@ import EditHabitScreen from './screens/EditHabitScreen'
 import EditWalletScreen from './screens/EditWalletScreen'
 import EditSkipCostScreen from './screens/EditSkipCostScreen'
 import HabitEducation from './components/HabitEducation'
-import CheckInModal from './components/CheckInModal'
 
 // Load from localStorage or use defaults
 const loadState = () => {
@@ -31,7 +30,6 @@ function App() {
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null) // For education screen
-  const [checkInHabit, setCheckInHabit] = useState(null) // For check-in modal
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -163,53 +161,6 @@ function App() {
     })
   }
 
-  // Track which habits user has already been asked about today
-  const [askedHabits, setAskedHabits] = useState(() => {
-    const saved = localStorage.getItem('asked-habits-today')
-    if (saved) {
-      const { date, ids } = JSON.parse(saved)
-      if (date === new Date().toDateString()) {
-        return ids
-      }
-    }
-    return []
-  })
-
-  // Save asked habits to localStorage
-  useEffect(() => {
-    localStorage.setItem('asked-habits-today', JSON.stringify({
-      date: new Date().toDateString(),
-      ids: askedHabits
-    }))
-  }, [askedHabits])
-
-  // Check for habits needing check-in on mount only
-  useEffect(() => {
-    // Only run once on mount, and only if not already showing a check-in
-    if (checkInHabit) return
-    
-    const habitsNeedingCheckIn = getHabitsNeedingCheckIn(state.habits, state.completedToday)
-    // Filter out habits we've already asked about
-    const unaskedHabits = habitsNeedingCheckIn.filter(h => !askedHabits.includes(h.id))
-    
-    if (unaskedHabits.length > 0) {
-      setCheckInHabit(unaskedHabits[0])
-    }
-  }, []) // Empty deps = only on mount
-
-  // Handle check-in completion - keep it simple, no timeouts
-  const handleCheckInComplete = (habitId, completed) => {
-    // Mark this habit as asked
-    setAskedHabits(prev => [...prev, habitId])
-    
-    if (completed) {
-      markHabitDone(habitId)
-    }
-    // In future: if !completed, trigger Apple Pay here
-    
-    // Just close the modal - don't try to show another one
-    setCheckInHabit(null)
-  }
 
   // Safety: redirect to home if on education screen but habit is null
   useEffect(() => {
@@ -343,15 +294,6 @@ function App() {
           </div>
         )}
 
-      {/* Check-in Modal - overlays everything */}
-      {checkInHabit && (
-        <CheckInModal
-          habit={checkInHabit}
-          skipCost={state.skipCost}
-          onComplete={handleCheckInComplete}
-          onClose={() => setCheckInHabit(null)}
-        />
-      )}
     </div>
   )
 }
