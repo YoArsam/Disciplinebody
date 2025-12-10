@@ -112,7 +112,7 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
               <button
                 type="button"
                 onClick={() => { setShowCustom(false); setCustomInput('') }}
-                className="px-4 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold active:scale-95 transition-transform"
+                className="px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold active:scale-95 transition-transform"
               >
                 Cancel
               </button>
