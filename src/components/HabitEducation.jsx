@@ -41,7 +41,7 @@ function HabitEducation({ habit, skipCost, onDone }) {
       {/* Main Content */}
       <div className="flex-1 space-y-4">
         {/* When to check in */}
-        <div className="bg-white rounded-2xl p-5">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
               <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@ function HabitEducation({ habit, skipCost, onDone }) {
         </div>
 
         {/* What happens */}
-        <div className="bg-white rounded-2xl p-5">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
               <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
