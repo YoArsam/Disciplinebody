@@ -48,7 +48,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       <div className="flex-1 overflow-y-auto min-h-0 pb-32">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Habit Name */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+          <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shadow-sm">
                 <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,7 +67,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           </div>
 
           {/* Time Frame */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+          <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shadow-sm">
                 <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,7 +130,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           </div>
 
           {/* Preview */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+          <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shadow-sm">
                 <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
