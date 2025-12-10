@@ -27,7 +27,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-gray-100 px-4 pb-0 animate-slideUp pt-[max(1rem,env(safe-area-inset-top))] relative">
+    <div className="h-full flex flex-col bg-gray-50 px-4 pb-0 animate-slideUp pt-[max(1rem,env(safe-area-inset-top))] relative">
       {/* Header */}
       <div className="flex items-center justify-between py-3 mb-2 flex-shrink-0">
         <button 
