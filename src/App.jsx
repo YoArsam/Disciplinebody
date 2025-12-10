@@ -306,6 +306,7 @@ function App() {
       {checkInHabit && (
         <CheckInModal
           habitName={checkInHabit.name}
+          skipCost={state.skipCost}
           onYes={() => {
             const id = checkInHabit.id
             setCheckInHabit(null)
