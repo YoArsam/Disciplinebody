@@ -20,7 +20,7 @@ function HabitEducation({ habit, skipCost, onDone }) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-8">
+    <div className="h-full flex flex-col bg-[#fafafa] px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-8">
       {/* Header Section */}
       <div className="flex flex-col items-center text-center mb-8">
         {/* Success Icon */}
