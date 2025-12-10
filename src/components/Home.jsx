@@ -274,7 +274,7 @@ function Home({
   }
 
   return (
-    <div className={`h-full flex flex-col bg-gray-100 px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
+    <div className={`h-full flex flex-col bg-white px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
       {/* Top Row: Profile Icon + Skip Cost Badge */}
       <div className="flex-shrink-0 mb-4 flex items-center justify-between">
         <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
@@ -295,9 +295,9 @@ function Home({
       {(() => {
         const progress = getProgressMessage(habits, completedToday, paidToday, habitHistory)
         return (
-          <div className="flex-shrink-0 bg-white rounded-3xl px-6 py-6 shadow-sm mb-4">
+          <div className="flex-shrink-0 bg-gray-50 rounded-3xl px-6 py-6 mb-4">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
                 {progress.icon}
               </div>
               <span className="text-gray-500 text-sm font-medium">Your Progress</span>
@@ -313,15 +313,15 @@ function Home({
       {/* Today's Habits Card */}
       <div 
         ref={widgetRef}
-        className="flex-1 bg-white rounded-3xl px-6 py-5 shadow-sm flex flex-col min-h-0 cursor-pointer habits-widget"
+        className="flex-1 bg-gray-50 rounded-3xl px-6 py-5 flex flex-col min-h-0 cursor-pointer habits-widget"
         style={widgetStyle}
         onClick={onToggleHabits}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
-              <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
+              <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
@@ -332,7 +332,7 @@ function Home({
               e.stopPropagation()
               onAddHabit()
             }}
-            className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform shadow-sm"
           >
             <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -351,13 +351,13 @@ function Home({
               className="flex-1 flex flex-col items-center justify-center w-full"
             >
               {/* Plus Icon Circle */}
-              <div className="w-20 h-20 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm">
                 <svg className="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
               <p className="text-gray-500 mb-4 text-center">No habits yet</p>
-              <div className="bg-orange-100 rounded-full px-8 py-3">
+              <div className="bg-white rounded-full px-8 py-3 shadow-sm">
                 <span className="text-orange-700 font-medium">Add Your First Habits</span>
               </div>
             </button>
@@ -384,8 +384,8 @@ function Home({
                 <div
                   key={habit.id}
                   className={`w-full p-4 rounded-2xl transition-all flex items-center justify-between ${
-                    isResolved ? 'bg-gray-100' : 'bg-gray-50'
-                  }`}
+                    isResolved ? 'bg-white/50' : 'bg-white'
+                  } shadow-sm border border-gray-100/50`}
                 >
                   {/* Habit Info - Clickable to edit */}
                   <button
