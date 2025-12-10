@@ -17,6 +17,7 @@ const loadState = () => {
     skipCost: 0.5,
     habits: [],
     completedToday: [], // habit IDs completed today
+    paidToday: [], // habit IDs paid for today
     lastCheckedDate: new Date().toDateString(),
     currentStreak: 0,
     longestStreak: 0,
@@ -53,6 +54,7 @@ function App() {
         return {
           ...prev,
           completedToday: [],
+          paidToday: [],
           lastCheckedDate: today,
           currentStreak: newStreak,
           longestStreak: Math.max(prev.longestStreak, newStreak),
@@ -142,18 +144,28 @@ function App() {
     }
   }
 
+  const markHabitPaid = (habitId) => {
+    if (!state.paidToday?.includes(habitId)) {
+      setState(prev => ({
+        ...prev,
+        paidToday: [...(prev.paidToday || []), habitId],
+      }))
+    }
+  }
+
   const openHabitAdder = (habit = null) => {
     setEditingHabit(habit)
     setScreen('habit-adder')
   }
 
-  // Find ALL habits that need check-in (past end time, not completed)
+  // Find ALL habits that need check-in (past end time, not completed, not paid)
   const getHabitsNeedingCheckIn = () => {
     const now = new Date()
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
     
     return state.habits.filter(habit => {
       if (state.completedToday.includes(habit.id)) return false
+      if (state.paidToday?.includes(habit.id)) return false
       const [endHour, endMin] = habit.endTime.split(':').map(Number)
       const endMinutes = endHour * 60 + endMin
       return currentMinutes > endMinutes
@@ -189,6 +201,7 @@ function App() {
             skipCost={state.skipCost}
             habits={state.habits}
             completedToday={state.completedToday}
+            paidToday={state.paidToday || []}
             currentStreak={state.currentStreak || 0}
             longestStreak={state.longestStreak || 0}
             habitHistory={state.habitHistory || {}}
@@ -306,7 +319,7 @@ function App() {
       {/* Success Toast */}
       {showSuccessToast && (
         <div 
-          className="fixed top-[max(1rem,env(safe-area-inset-top))] left-4 right-4 bg-green-500 text-white py-4 px-6 rounded-2xl z-50 flex items-center justify-center gap-2 shadow-lg"
+          className="fixed top-[max(1rem,env(safe-area-inset-top))] left-4 right-4 bg-green-500 text-white py-4 px-6 rounded-2xl z-[60] flex items-center justify-center gap-2 shadow-lg"
           onAnimationEnd={() => setShowSuccessToast(false)}
           style={{ animation: 'toastSlide 2s ease-out forwards' }}
         >
@@ -320,6 +333,7 @@ function App() {
       {/* Check-in Modal */}
       {currentCheckIn && (
         <CheckInModal
+          key={currentCheckIn.id}
           habitName={currentCheckIn.name}
           skipCost={state.skipCost}
           onYes={() => {
@@ -330,7 +344,7 @@ function App() {
           }}
           onNo={() => {
             const id = currentCheckIn.id
-            markHabitDone(id) // Mark as resolved (they paid)
+            markHabitPaid(id) // Mark as paid (separate from done)
             setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
           }}
         />

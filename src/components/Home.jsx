@@ -161,6 +161,7 @@ function Home({
   skipCost, 
   habits, 
   completedToday,
+  paidToday,
   currentStreak,
   longestStreak,
   habitHistory,
@@ -375,12 +376,14 @@ function Home({
               })
               .map((habit, index) => {
               const isDone = isHabitDone(habit)
+              const isPaid = paidToday?.includes(habit.id)
+              const isResolved = isDone || isPaid
               
               return (
                 <div
                   key={habit.id}
                   className={`w-full p-4 rounded-2xl transition-all flex items-center justify-between ${
-                    isDone ? 'bg-gray-100' : 'bg-gray-50'
+                    isResolved ? 'bg-gray-100' : 'bg-gray-50'
                   }`}
                 >
                   {/* Habit Info - Clickable to edit */}
@@ -392,20 +395,20 @@ function Home({
                     className="flex-1 min-w-0 text-left"
                   >
                     <span className={`font-semibold text-lg block truncate ${
-                      isDone ? 'text-gray-300' : 'text-gray-900'
+                      isResolved ? 'text-gray-300' : 'text-gray-900'
                     }`}>
                       {habit.name}
                     </span>
                     <span className={`text-sm ${
-                      isDone ? 'text-gray-300' : 'text-gray-500'
+                      isResolved ? 'text-gray-300' : 'text-gray-500'
                     }`}>
                       {formatTimeRange(habit)}
                     </span>
                   </button>
                   
-                  {/* Time Remaining / Done Status */}
-                  {isDone ? (
-                    <span className="text-gray-300 text-lg font-medium ml-4">Done</span>
+                  {/* Time Remaining / Done / Paid Status */}
+                  {isResolved ? (
+                    <span className="text-gray-300 text-lg font-medium ml-4">{isPaid ? 'Paid' : 'Done'}</span>
                   ) : (
                     (() => {
                       const timeLeft = getTimeRemaining(habit)
