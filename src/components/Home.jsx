@@ -40,12 +40,15 @@ const ProgressIcons = {
   ),
 }
 
-function getProgressMessage(habits, completedToday, currentStreak, longestStreak) {
+function getProgressMessage(habits, completedToday, habitHistory) {
   const totalHabits = habits.length
   // Only count completions that match actual habit IDs
   const habitIds = habits.map(h => h.id)
   const validCompletions = completedToday.filter(id => habitIds.includes(id))
   const doneToday = validCompletions.length
+  
+  // Get best per-habit streak
+  const bestStreak = getBestHabitStreak(habits, habitHistory)
   
   // Priority 1: No habits yet
   if (totalHabits === 0) {
@@ -56,25 +59,16 @@ function getProgressMessage(habits, completedToday, currentStreak, longestStreak
     }
   }
   
-  // Priority 2: New record streak (3+ days)
-  if (currentStreak > 0 && currentStreak >= longestStreak && currentStreak >= 3) {
-    return {
-      icon: ProgressIcons.trophy,
-      headline: `New record: ${currentStreak} days!`,
-      subtext: "You're making history"
-    }
-  }
-  
-  // Priority 3: On a streak (3+ days)
-  if (currentStreak >= 3) {
+  // Priority 2: Has a notable habit streak (2+ days)
+  if (bestStreak.days >= 2) {
     return {
       icon: ProgressIcons.fire,
-      headline: `${currentStreak}-day streak!`,
-      subtext: "Keep the momentum going"
+      headline: `${bestStreak.days}-day streak`,
+      subtext: `of ${bestStreak.habitName}`
     }
   }
   
-  // Priority 4: All done today
+  // Priority 3: All done today
   if (doneToday > 0 && doneToday >= totalHabits) {
     return {
       icon: ProgressIcons.check,
@@ -83,7 +77,7 @@ function getProgressMessage(habits, completedToday, currentStreak, longestStreak
     }
   }
   
-  // Priority 5: Some done
+  // Priority 4: Some done
   if (doneToday > 0) {
     return {
       icon: ProgressIcons.bolt,
@@ -92,7 +86,7 @@ function getProgressMessage(habits, completedToday, currentStreak, longestStreak
     }
   }
   
-  // Priority 6: Has habits, none done yet - time-based greeting
+  // Priority 5: Has habits, none done yet - time-based greeting
   const hour = new Date().getHours()
   if (hour < 12) {
     return {
@@ -115,6 +109,53 @@ function getProgressMessage(habits, completedToday, currentStreak, longestStreak
   }
 }
 
+// Calculate streak for a single habit from its completion history
+function calculateHabitStreak(dates) {
+  if (!dates || dates.length === 0) return 0
+  
+  // Sort dates descending (most recent first)
+  const sortedDates = [...dates].sort().reverse()
+  
+  const today = new Date().toISOString().split('T')[0]
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+  
+  // Streak must include today or yesterday to be "active"
+  if (sortedDates[0] !== today && sortedDates[0] !== yesterday) {
+    return 0
+  }
+  
+  let streak = 1
+  for (let i = 1; i < sortedDates.length; i++) {
+    const current = new Date(sortedDates[i - 1])
+    const prev = new Date(sortedDates[i])
+    const diffDays = (current - prev) / 86400000
+    
+    if (diffDays === 1) {
+      streak++
+    } else {
+      break
+    }
+  }
+  
+  return streak
+}
+
+// Find the best habit streak to display
+function getBestHabitStreak(habits, habitHistory) {
+  let bestStreak = { habitName: '', days: 0 }
+  
+  for (const habit of habits) {
+    const dates = habitHistory[habit.id] || []
+    const streak = calculateHabitStreak(dates)
+    
+    if (streak > bestStreak.days) {
+      bestStreak = { habitName: habit.name, days: streak }
+    }
+  }
+  
+  return bestStreak
+}
+
 function Home({ 
   wallet, 
   skipCost, 
@@ -122,6 +163,7 @@ function Home({
   completedToday,
   currentStreak,
   longestStreak,
+  habitHistory,
   habitsExpanded,
   onEditSkipCost, 
   onAddHabit, 
@@ -216,7 +258,7 @@ function Home({
 
       {/* Your Progress Card */}
       {(() => {
-        const progress = getProgressMessage(habits, completedToday, currentStreak, longestStreak)
+        const progress = getProgressMessage(habits, completedToday, habitHistory)
         return (
           <div className="flex-shrink-0 bg-white rounded-3xl px-6 py-6 shadow-sm mb-4">
             <div className="flex items-center gap-3 mb-2">

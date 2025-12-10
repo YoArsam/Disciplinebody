@@ -18,6 +18,7 @@ const loadState = () => {
     lastCheckedDate: new Date().toDateString(),
     currentStreak: 0,
     longestStreak: 0,
+    habitHistory: {}, // { habitId: ['2024-12-08', '2024-12-09', ...] }
   }
 }
 
@@ -116,10 +117,23 @@ function App() {
 
   const markHabitDone = (habitId) => {
     if (!state.completedToday.includes(habitId)) {
-      setState(prev => ({
-        ...prev,
-        completedToday: [...prev.completedToday, habitId],
-      }))
+      const today = new Date().toISOString().split('T')[0] // 'YYYY-MM-DD'
+      setState(prev => {
+        const habitDates = prev.habitHistory[habitId] || []
+        // Only add if not already recorded for today
+        const updatedDates = habitDates.includes(today) 
+          ? habitDates 
+          : [...habitDates, today]
+        
+        return {
+          ...prev,
+          completedToday: [...prev.completedToday, habitId],
+          habitHistory: {
+            ...prev.habitHistory,
+            [habitId]: updatedDates,
+          },
+        }
+      })
     }
   }
 
@@ -141,6 +155,7 @@ function App() {
             completedToday={state.completedToday}
             currentStreak={state.currentStreak || 0}
             longestStreak={state.longestStreak || 0}
+            habitHistory={state.habitHistory || {}}
             habitsExpanded={habitsExpanded}
             onEditSkipCost={() => setScreen('skip-cost-editor')}
             onAddHabit={() => {
