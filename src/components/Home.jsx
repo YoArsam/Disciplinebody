@@ -287,7 +287,7 @@ function Home({
           onClick={onEditSkipCost}
           className="bg-gray-700 text-white text-xs font-semibold w-10 h-10 rounded-full active:scale-95 transition-transform flex items-center justify-center"
         >
-          ${skipCost.toFixed(1)}
+          ${skipCost % 1 === 0 ? skipCost : skipCost.toFixed(2)}
         </button>
       </div>
 
