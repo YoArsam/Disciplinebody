@@ -42,46 +42,12 @@ const ProgressIcons = {
 
 function getProgressMessage(habits, completedToday, currentStreak, longestStreak) {
   const totalHabits = habits.length
-  const doneToday = completedToday.length
-  const allDoneToday = totalHabits > 0 && doneToday >= totalHabits
+  // Only count completions that match actual habit IDs
+  const habitIds = habits.map(h => h.id)
+  const validCompletions = completedToday.filter(id => habitIds.includes(id))
+  const doneToday = validCompletions.length
   
-  // Priority 1: New record
-  if (currentStreak > 0 && currentStreak >= longestStreak && currentStreak >= 3) {
-    return {
-      icon: ProgressIcons.trophy,
-      headline: `New record: ${currentStreak} days!`,
-      subtext: "You're making history"
-    }
-  }
-  
-  // Priority 2: On a streak
-  if (currentStreak >= 3) {
-    return {
-      icon: ProgressIcons.fire,
-      headline: `${currentStreak}-day streak!`,
-      subtext: "Keep the momentum going"
-    }
-  }
-  
-  // Priority 3: All done today
-  if (allDoneToday) {
-    return {
-      icon: ProgressIcons.check,
-      headline: "Perfect day!",
-      subtext: "You crushed all your habits"
-    }
-  }
-  
-  // Priority 4: Some done
-  if (doneToday > 0 && totalHabits > 0) {
-    return {
-      icon: ProgressIcons.bolt,
-      headline: `${doneToday} of ${totalHabits} done`,
-      subtext: "Keep going, almost there"
-    }
-  }
-  
-  // Priority 5: No habits yet
+  // Priority 1: No habits yet
   if (totalHabits === 0) {
     return {
       icon: ProgressIcons.sparkle,
@@ -90,25 +56,61 @@ function getProgressMessage(habits, completedToday, currentStreak, longestStreak
     }
   }
   
-  // Priority 6: Has habits, none done yet
+  // Priority 2: New record streak (3+ days)
+  if (currentStreak > 0 && currentStreak >= longestStreak && currentStreak >= 3) {
+    return {
+      icon: ProgressIcons.trophy,
+      headline: `New record: ${currentStreak} days!`,
+      subtext: "You're making history"
+    }
+  }
+  
+  // Priority 3: On a streak (3+ days)
+  if (currentStreak >= 3) {
+    return {
+      icon: ProgressIcons.fire,
+      headline: `${currentStreak}-day streak!`,
+      subtext: "Keep the momentum going"
+    }
+  }
+  
+  // Priority 4: All done today
+  if (doneToday > 0 && doneToday >= totalHabits) {
+    return {
+      icon: ProgressIcons.check,
+      headline: "Perfect day!",
+      subtext: "You crushed all your habits"
+    }
+  }
+  
+  // Priority 5: Some done
+  if (doneToday > 0) {
+    return {
+      icon: ProgressIcons.bolt,
+      headline: `${doneToday} of ${totalHabits} done`,
+      subtext: "Keep going, almost there"
+    }
+  }
+  
+  // Priority 6: Has habits, none done yet - time-based greeting
   const hour = new Date().getHours()
   if (hour < 12) {
     return {
       icon: ProgressIcons.sun,
       headline: "Good morning!",
-      subtext: "A fresh day to build habits"
+      subtext: `${totalHabits} habit${totalHabits > 1 ? 's' : ''} to complete today`
     }
   } else if (hour < 17) {
     return {
       icon: ProgressIcons.sun,
       headline: "Afternoon check-in",
-      subtext: "How are your habits going?"
+      subtext: `${totalHabits} habit${totalHabits > 1 ? 's' : ''} waiting for you`
     }
   } else {
     return {
       icon: ProgressIcons.moon,
       headline: "Evening push",
-      subtext: "Still time to finish strong"
+      subtext: `${totalHabits} habit${totalHabits > 1 ? 's' : ''} left today`
     }
   }
 }
