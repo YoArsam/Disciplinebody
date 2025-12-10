@@ -163,26 +163,62 @@ function App() {
     })
   }
 
-  // Check for habits needing check-in when app loads
-  // DISABLED FOR NOW - causing crashes, will re-enable with proper implementation
-  // useEffect(() => {
-  //   if (checkInHabit && !state.habits.find(h => h.id === checkInHabit.id)) {
-  //     setCheckInHabit(null)
-  //     return
-  //   }
-  //   const habitsNeedingCheckIn = getHabitsNeedingCheckIn(state.habits, state.completedToday)
-  //   if (habitsNeedingCheckIn.length > 0 && !checkInHabit) {
-  //     setCheckInHabit(habitsNeedingCheckIn[0])
-  //   }
-  // }, [state.habits, state.completedToday, checkInHabit])
+  // Track which habits user has already been asked about today
+  const [askedHabits, setAskedHabits] = useState(() => {
+    const saved = localStorage.getItem('asked-habits-today')
+    if (saved) {
+      const { date, ids } = JSON.parse(saved)
+      if (date === new Date().toDateString()) {
+        return ids
+      }
+    }
+    return []
+  })
+
+  // Save asked habits to localStorage
+  useEffect(() => {
+    localStorage.setItem('asked-habits-today', JSON.stringify({
+      date: new Date().toDateString(),
+      ids: askedHabits
+    }))
+  }, [askedHabits])
+
+  // Check for habits needing check-in on mount only
+  useEffect(() => {
+    // Only run once on mount, and only if not already showing a check-in
+    if (checkInHabit) return
+    
+    const habitsNeedingCheckIn = getHabitsNeedingCheckIn(state.habits, state.completedToday)
+    // Filter out habits we've already asked about
+    const unaskedHabits = habitsNeedingCheckIn.filter(h => !askedHabits.includes(h.id))
+    
+    if (unaskedHabits.length > 0) {
+      setCheckInHabit(unaskedHabits[0])
+    }
+  }, []) // Empty deps = only on mount
 
   // Handle check-in completion
   const handleCheckInComplete = (habitId, completed) => {
+    // Mark this habit as asked
+    setAskedHabits(prev => [...prev, habitId])
+    
     if (completed) {
       markHabitDone(habitId)
     }
     // In future: if !completed, trigger Apple Pay here
+    
     setCheckInHabit(null)
+    
+    // Check for more habits after a short delay
+    setTimeout(() => {
+      const habitsNeedingCheckIn = getHabitsNeedingCheckIn(state.habits, state.completedToday)
+      const unaskedHabits = habitsNeedingCheckIn.filter(h => 
+        !askedHabits.includes(h.id) && h.id !== habitId
+      )
+      if (unaskedHabits.length > 0) {
+        setCheckInHabit(unaskedHabits[0])
+      }
+    }, 300)
   }
 
   // Safety: redirect to home if on education screen but habit is null
