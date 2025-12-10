@@ -31,7 +31,7 @@ function App() {
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null) // For education screen
-  const [checkInHabit, setCheckInHabit] = useState(null) // For check-in popup
+  const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -146,29 +146,29 @@ function App() {
     setScreen('habit-adder')
   }
 
-  // Find first habit that needs check-in (past end time, not completed)
-  const findHabitNeedingCheckIn = () => {
+  // Find ALL habits that need check-in (past end time, not completed)
+  const getHabitsNeedingCheckIn = () => {
     const now = new Date()
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
     
-    for (const habit of state.habits) {
-      if (state.completedToday.includes(habit.id)) continue
+    return state.habits.filter(habit => {
+      if (state.completedToday.includes(habit.id)) return false
       const [endHour, endMin] = habit.endTime.split(':').map(Number)
       const endMinutes = endHour * 60 + endMin
-      if (currentMinutes > endMinutes) {
-        return habit
-      }
-    }
-    return null
+      return currentMinutes > endMinutes
+    })
   }
 
-  // Show check-in popup on app load (once)
+  // Populate check-in queue on app load (once)
   useEffect(() => {
-    const habit = findHabitNeedingCheckIn()
-    if (habit) {
-      setCheckInHabit(habit)
+    const habitsNeedingCheckIn = getHabitsNeedingCheckIn()
+    if (habitsNeedingCheckIn.length > 0) {
+      setCheckInQueue(habitsNeedingCheckIn)
     }
   }, [])
+
+  // Current habit to show = first in queue
+  const currentCheckIn = checkInQueue[0] || null
 
   // Safety: redirect to home if on education screen but habit is null
   useEffect(() => {
@@ -303,17 +303,17 @@ function App() {
         )}
 
       {/* Check-in Modal */}
-      {checkInHabit && (
+      {currentCheckIn && (
         <CheckInModal
-          habitName={checkInHabit.name}
+          habitName={currentCheckIn.name}
           skipCost={state.skipCost}
           onYes={() => {
-            const id = checkInHabit.id
-            setCheckInHabit(null)
+            const id = currentCheckIn.id
             markHabitDone(id)
+            setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
           }}
           onNo={() => {
-            setCheckInHabit(null)
+            setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
           }}
         />
       )}
