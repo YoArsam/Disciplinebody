@@ -32,6 +32,7 @@ function App() {
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null) // For education screen
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
+  const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -302,6 +303,20 @@ function App() {
           </div>
         )}
 
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div 
+          className="fixed top-[max(1rem,env(safe-area-inset-top))] left-4 right-4 bg-green-500 text-white py-4 px-6 rounded-2xl z-50 flex items-center justify-center gap-2 shadow-lg"
+          onAnimationEnd={() => setShowSuccessToast(false)}
+          style={{ animation: 'toastSlide 2s ease-out forwards' }}
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="font-semibold text-lg">Great job!</span>
+        </div>
+      )}
+
       {/* Check-in Modal */}
       {currentCheckIn && (
         <CheckInModal
@@ -311,8 +326,11 @@ function App() {
             const id = currentCheckIn.id
             markHabitDone(id)
             setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
+            setShowSuccessToast(true) // Show good vibes
           }}
           onNo={() => {
+            const id = currentCheckIn.id
+            markHabitDone(id) // Mark as resolved (they paid)
             setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
           }}
         />
