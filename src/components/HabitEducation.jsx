@@ -20,7 +20,7 @@ function HabitEducation({ habit, skipCost, onDone }) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-white px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-8">
+    <div className="h-full flex flex-col bg-gray-100 px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-8">
       {/* Header Section */}
       <div className="flex flex-col items-center text-center mb-8">
         {/* Success Icon */}
@@ -41,7 +41,7 @@ function HabitEducation({ habit, skipCost, onDone }) {
       {/* Main Content */}
       <div className="flex-1 space-y-4">
         {/* When to check in */}
-        <div className="bg-gray-50 rounded-2xl p-5">
+        <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
               <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,10 +56,10 @@ function HabitEducation({ habit, skipCost, onDone }) {
         </div>
 
         {/* What happens */}
-        <div className="bg-gray-50 rounded-2xl p-5">
+        <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+              <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
