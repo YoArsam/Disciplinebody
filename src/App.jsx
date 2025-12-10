@@ -307,8 +307,9 @@ function App() {
         <CheckInModal
           habitName={checkInHabit.name}
           onYes={() => {
-            markHabitDone(checkInHabit.id)
+            const id = checkInHabit.id
             setCheckInHabit(null)
+            markHabitDone(id)
           }}
           onNo={() => {
             setCheckInHabit(null)
