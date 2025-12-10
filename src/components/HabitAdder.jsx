@@ -129,22 +129,65 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             )}
           </div>
 
-          {/* Preview */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-4">
+          {/* How It Works - Only show for new habits */}
+          {!habit && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">How It Works</span>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
+                  <div>
+                    <p className="text-gray-700 font-medium text-sm">Set your window</p>
+                    <p className="text-gray-400 text-xs">We'll check in at the end</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
+                  <div>
+                    <p className="text-gray-700 font-medium text-sm">Did you do it?</p>
+                    <p className="text-gray-400 text-xs">Yes = streak grows · No = pay skip cost</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
+                  <div>
+                    <p className="text-gray-700 font-medium text-sm">Skin in the game</p>
+                    <p className="text-gray-400 text-xs">Real stakes = real results</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* When We'll Check In - Dynamic preview */}
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 border border-orange-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>
-              <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Preview</span>
+              <span className="text-orange-700 text-xs font-bold uppercase tracking-wider">We'll Ask You</span>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <span className="font-bold text-base text-gray-700 block">{name || 'Your habit'}</span>
-              <span className="text-gray-400 text-sm">
-                {allDay ? 'All Day' : `${formatTime(startTime)} - ${formatTime(endTime)}`}
-              </span>
+            
+            <div className="bg-white/60 rounded-xl p-4 text-center">
+              <p className="text-orange-600 font-bold text-lg mb-1">
+                {allDay ? 'At end of day' : `At ${formatTime(endTime)}`}
+              </p>
+              <p className="text-gray-600 text-sm">
+                "Did you complete <span className="font-semibold">{name || 'this habit'}</span>?"
+              </p>
+              <p className="text-gray-400 text-xs mt-2 italic">Be honest. That's the whole point.</p>
             </div>
           </div>
         </form>
@@ -158,7 +201,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             disabled={!name.trim()}
             className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {habit ? 'Save Changes' : 'Add Habit'}
+            {habit ? 'Save Changes' : 'Lock It In'}
           </button>
 
           {onDelete && (
