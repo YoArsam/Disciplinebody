@@ -16,6 +16,8 @@ const loadState = () => {
     habits: [],
     completedToday: [], // habit IDs completed today
     lastCheckedDate: new Date().toDateString(),
+    currentStreak: 0,
+    longestStreak: 0,
   }
 }
 
@@ -36,12 +38,20 @@ function App() {
     const today = new Date().toDateString()
     
     if (state.lastCheckedDate !== today) {
-      // New day - check for missed habits from yesterday and reset
-      setState(prev => ({
-        ...prev,
-        completedToday: [],
-        lastCheckedDate: today,
-      }))
+      // New day - check if all habits were done yesterday, update streak
+      const allDoneYesterday = state.habits.length > 0 && 
+        state.habits.every(h => state.completedToday.includes(h.id))
+      
+      setState(prev => {
+        const newStreak = allDoneYesterday ? prev.currentStreak + 1 : 0
+        return {
+          ...prev,
+          completedToday: [],
+          lastCheckedDate: today,
+          currentStreak: newStreak,
+          longestStreak: Math.max(prev.longestStreak, newStreak),
+        }
+      })
     }
 
     // Check for missed habits (past end time and not completed)
@@ -129,8 +139,9 @@ function App() {
             skipCost={state.skipCost}
             habits={state.habits}
             completedToday={state.completedToday}
+            currentStreak={state.currentStreak || 0}
+            longestStreak={state.longestStreak || 0}
             habitsExpanded={habitsExpanded}
-            onEditWallet={() => setScreen('wallet-editor')}
             onEditSkipCost={() => setScreen('skip-cost-editor')}
             onAddHabit={() => {
               setEditingHabit(null)

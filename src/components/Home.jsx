@@ -1,12 +1,86 @@
 import { useState, useEffect, useRef } from 'react'
 
+function getProgressMessage(habits, completedToday, currentStreak, longestStreak) {
+  const totalHabits = habits.length
+  const doneToday = completedToday.length
+  const allDoneToday = totalHabits > 0 && doneToday >= totalHabits
+  
+  // Priority 1: New record
+  if (currentStreak > 0 && currentStreak >= longestStreak && currentStreak >= 3) {
+    return {
+      icon: '🏆',
+      headline: `New record: ${currentStreak} days!`,
+      subtext: "You're making history"
+    }
+  }
+  
+  // Priority 2: On a streak
+  if (currentStreak >= 3) {
+    return {
+      icon: '🔥',
+      headline: `${currentStreak}-day streak!`,
+      subtext: "Keep the momentum going"
+    }
+  }
+  
+  // Priority 3: All done today
+  if (allDoneToday) {
+    return {
+      icon: '💪',
+      headline: "Perfect day!",
+      subtext: "You crushed all your habits"
+    }
+  }
+  
+  // Priority 4: Some done
+  if (doneToday > 0 && totalHabits > 0) {
+    return {
+      icon: '⚡',
+      headline: `${doneToday} of ${totalHabits} done`,
+      subtext: "Keep going, almost there"
+    }
+  }
+  
+  // Priority 5: No habits yet
+  if (totalHabits === 0) {
+    return {
+      icon: '✨',
+      headline: "Ready to start",
+      subtext: "Add your first habit below"
+    }
+  }
+  
+  // Priority 6: Has habits, none done yet
+  const hour = new Date().getHours()
+  if (hour < 12) {
+    return {
+      icon: '🌅',
+      headline: "Good morning!",
+      subtext: "A fresh day to build habits"
+    }
+  } else if (hour < 17) {
+    return {
+      icon: '☀️',
+      headline: "Afternoon check-in",
+      subtext: "How are your habits going?"
+    }
+  } else {
+    return {
+      icon: '🌙',
+      headline: "Evening push",
+      subtext: "Still time to finish strong"
+    }
+  }
+}
+
 function Home({ 
   wallet, 
   skipCost, 
   habits, 
-  completedToday, 
+  completedToday,
+  currentStreak,
+  longestStreak,
   habitsExpanded,
-  onEditWallet, 
   onEditSkipCost, 
   onAddHabit, 
   onEditHabit, 
@@ -98,28 +172,24 @@ function Home({
         </button>
       </div>
 
-      {/* Balance Card - Full Width, Bigger */}
-      <button 
-        onClick={onEditWallet}
-        className="flex-shrink-0 bg-white rounded-3xl px-6 py-6 shadow-sm relative active:scale-[0.98] transition-transform text-left mb-4"
-      >
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-              </svg>
+      {/* Your Progress Card */}
+      {(() => {
+        const progress = getProgressMessage(habits, completedToday, currentStreak, longestStreak)
+        return (
+          <div className="flex-shrink-0 bg-white rounded-3xl px-6 py-6 shadow-sm mb-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                <span className="text-xl">{progress.icon}</span>
+              </div>
+              <span className="text-gray-500 text-sm font-medium">Your Progress</span>
             </div>
-            <span className="text-gray-500 text-sm font-medium">Balance</span>
+            <div className="text-center py-2">
+              <span className="text-3xl font-bold text-gray-900 block">{progress.headline}</span>
+              <span className="text-gray-500 text-sm">{progress.subtext}</span>
+            </div>
           </div>
-          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </div>
-        </div>
-        <span className="text-6xl font-black text-gray-900 block text-center py-2">${wallet.toFixed(0)}</span>
-      </button>
+        )
+      })()}
 
       {/* Today's Habits Card */}
       <div 
