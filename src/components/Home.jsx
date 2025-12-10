@@ -40,12 +40,13 @@ const ProgressIcons = {
   ),
 }
 
-function getProgressMessage(habits, completedToday, habitHistory) {
+function getProgressMessage(habits, completedToday, paidToday, habitHistory) {
   const totalHabits = habits.length
-  // Only count completions that match actual habit IDs
+  // Only count completions/payments that match actual habit IDs
   const habitIds = habits.map(h => h.id)
   const validCompletions = completedToday.filter(id => habitIds.includes(id))
-  const doneToday = validCompletions.length
+  const validPayments = (paidToday || []).filter(id => habitIds.includes(id))
+  const doneToday = validCompletions.length + validPayments.length
   
   // Get best per-habit streak
   const bestStreak = getBestHabitStreak(habits, habitHistory)
@@ -292,7 +293,7 @@ function Home({
 
       {/* Your Progress Card */}
       {(() => {
-        const progress = getProgressMessage(habits, completedToday, habitHistory)
+        const progress = getProgressMessage(habits, completedToday, paidToday, habitHistory)
         return (
           <div className="flex-shrink-0 bg-white rounded-3xl px-6 py-6 shadow-sm mb-4">
             <div className="flex items-center gap-3 mb-2">
