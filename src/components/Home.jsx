@@ -285,7 +285,7 @@ function Home({
         {/* Skip Cost Badge */}
         <button 
           onClick={onEditSkipCost}
-          className="bg-orange-500 text-white text-xs font-semibold w-10 h-10 rounded-full active:scale-95 transition-transform flex items-center justify-center shadow-sm"
+          className="bg-orange-500 text-white text-xs font-semibold w-10 h-10 rounded-full active:scale-95 transition-transform flex items-center justify-center"
         >
           ${skipCost % 1 === 0 ? skipCost : skipCost.toFixed(2)}
         </button>
@@ -351,13 +351,13 @@ function Home({
               className="flex-1 flex flex-col items-center justify-center w-full"
             >
               {/* Plus Icon Circle */}
-              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 shadow-sm">
+              <div className="w-20 h-20 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-4">
                 <svg className="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
               <p className="text-gray-500 mb-4 text-center">No habits yet</p>
-              <div className="bg-white rounded-full px-8 py-3 shadow-sm">
+              <div className="bg-white rounded-full px-8 py-3 border border-gray-200">
                 <span className="text-orange-700 font-medium">Add Your First Habits</span>
               </div>
             </button>
@@ -385,7 +385,7 @@ function Home({
                   key={habit.id}
                   className={`w-full p-4 rounded-2xl transition-all flex items-center justify-between ${
                     isResolved ? 'bg-white/50' : 'bg-white'
-                  } shadow-sm border border-gray-100/50`}
+                  } border border-gray-200`}
                 >
                   {/* Habit Info - Clickable to edit */}
                   <button

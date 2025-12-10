@@ -319,7 +319,7 @@ function App() {
       {/* Success Toast */}
       {showSuccessToast && (
         <div 
-          className="fixed top-[max(1rem,env(safe-area-inset-top))] left-4 right-4 bg-green-500 text-white py-4 px-6 rounded-2xl z-[60] flex items-center justify-center gap-2 shadow-lg"
+          className="fixed top-[max(1rem,env(safe-area-inset-top))] left-4 right-4 bg-green-500 text-white py-4 px-6 rounded-2xl z-[60] flex items-center justify-center gap-2"
           onAnimationEnd={() => setShowSuccessToast(false)}
           style={{ animation: 'toastSlide 2s ease-out forwards' }}
         >

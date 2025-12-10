@@ -32,7 +32,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       <div className="flex items-center justify-between py-3 mb-2 flex-shrink-0">
         <button 
           onClick={onBack}
-          className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center tap-bounce"
+          className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center tap-bounce"
         >
           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -50,7 +50,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           {/* Habit Name */}
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
                 <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
@@ -69,7 +69,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           {/* Time Frame */}
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
                 <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -132,7 +132,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           {/* Preview */}
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
                 <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -151,12 +151,12 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       </div>
 
       {/* Fixed Bottom Actions */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50">
+      <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] z-50">
         <div className="max-w-md mx-auto space-y-3">
           <button
             onClick={handleSubmit}
             disabled={!name.trim()}
-            className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base shadow-lg active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {habit ? 'Save Changes' : 'Add Habit'}
           </button>

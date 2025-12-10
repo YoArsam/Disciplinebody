@@ -22,7 +22,7 @@ function WalletEditor({ wallet, onSave, onBack }) {
       <div className="flex items-center justify-between py-4 mb-6">
         <button 
           onClick={onBack}
-          className="w-12 h-12 rounded-2xl bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-all active:scale-95"
+          className="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all active:scale-95"
         >
           <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -34,7 +34,7 @@ function WalletEditor({ wallet, onSave, onBack }) {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Current Balance */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-8 text-center shadow-2xl shadow-emerald-500/30">
+        <div className="relative overflow-hidden bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-8 text-center">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
           <label className="block text-emerald-100 text-sm font-medium mb-4 uppercase tracking-wider">
@@ -54,10 +54,10 @@ function WalletEditor({ wallet, onSave, onBack }) {
         </div>
 
         {/* Quick Add Buttons */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 shadow-xl">
+        <div className="bg-white rounded-3xl p-6 border border-gray-200">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+              <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </div>
@@ -69,7 +69,7 @@ function WalletEditor({ wallet, onSave, onBack }) {
                 key={val}
                 type="button"
                 onClick={() => quickAdd(val)}
-                className="bg-gradient-to-br from-gray-100 to-gray-50 text-gray-700 py-4 rounded-2xl font-bold hover:shadow-md transition-all active:scale-95"
+                className="bg-gray-100 text-gray-700 py-4 rounded-2xl font-bold transition-all active:scale-95"
               >
                 +${val}
               </button>
@@ -78,10 +78,10 @@ function WalletEditor({ wallet, onSave, onBack }) {
         </div>
 
         {/* Info */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 shadow-xl">
+        <div className="bg-white rounded-3xl p-6 border border-gray-200">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+              <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -96,7 +96,7 @@ function WalletEditor({ wallet, onSave, onBack }) {
         {/* Save Button */}
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-emerald-400 to-emerald-500 text-white py-5 rounded-2xl font-bold text-lg shadow-lg shadow-emerald-500/30 hover:shadow-xl transition-all active:scale-[0.98]"
+          className="w-full bg-orange-500 text-white py-5 rounded-2xl font-bold text-lg transition-all active:scale-[0.98]"
         >
           Save Changes
         </button>
