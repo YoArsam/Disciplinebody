@@ -1,4 +1,9 @@
 function HabitEducation({ habit, skipCost, onDone }) {
+  // Safety check - if habit is null/undefined, don't render
+  if (!habit) {
+    return null
+  }
+
   // Format time for display
   const formatTime = (timeStr) => {
     const [hour, min] = timeStr.split(':').map(Number)

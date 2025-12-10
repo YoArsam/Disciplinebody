@@ -147,13 +147,13 @@ function App() {
   }
 
   // Find habits that need check-in (past their end time, not completed today)
-  const getHabitsNeedingCheckIn = () => {
+  const getHabitsNeedingCheckIn = (habits, completedToday) => {
     const now = new Date()
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
     
-    return state.habits.filter(habit => {
+    return habits.filter(habit => {
       // Already completed today
-      if (state.completedToday.includes(habit.id)) return false
+      if (completedToday.includes(habit.id)) return false
       
       // Check if past end time
       const [endHour, endMin] = habit.endTime.split(':').map(Number)
@@ -164,13 +164,20 @@ function App() {
   }
 
   // Check for habits needing check-in when app loads
+  // Also clear checkInHabit if the habit was deleted
   useEffect(() => {
-    const habitsNeedingCheckIn = getHabitsNeedingCheckIn()
+    // If current checkInHabit no longer exists, clear it
+    if (checkInHabit && !state.habits.find(h => h.id === checkInHabit.id)) {
+      setCheckInHabit(null)
+      return
+    }
+    
+    const habitsNeedingCheckIn = getHabitsNeedingCheckIn(state.habits, state.completedToday)
     if (habitsNeedingCheckIn.length > 0 && !checkInHabit) {
       // Show check-in for the first habit that needs it
       setCheckInHabit(habitsNeedingCheckIn[0])
     }
-  }, [state.habits, state.completedToday])
+  }, [state.habits, state.completedToday, checkInHabit])
 
   // Handle check-in completion
   const handleCheckInComplete = (habitId, completed) => {
@@ -182,11 +189,16 @@ function App() {
     setCheckInHabit(null)
     
     // Check if there are more habits needing check-in after a delay
+    // Use setState callback to get fresh state
     setTimeout(() => {
-      const remaining = getHabitsNeedingCheckIn()
-      if (remaining.length > 0) {
-        setCheckInHabit(remaining[0])
-      }
+      setState(prev => {
+        const remaining = getHabitsNeedingCheckIn(prev.habits, prev.completedToday)
+        if (remaining.length > 0) {
+          // Use a separate effect to set this to avoid state update during render
+          setTimeout(() => setCheckInHabit(remaining[0]), 0)
+        }
+        return prev // no state change
+      })
     }, 500)
   }
 

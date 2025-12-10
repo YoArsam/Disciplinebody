@@ -4,6 +4,11 @@ function CheckInModal({ habit, skipCost, onComplete, onClose }) {
   const [showCelebration, setShowCelebration] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
 
+  // Safety check - if habit is null/undefined, don't render
+  if (!habit) {
+    return null
+  }
+
   const handleYes = () => {
     setShowCelebration(true)
     // Show celebration for 1.5s, then close
