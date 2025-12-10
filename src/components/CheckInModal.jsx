@@ -9,9 +9,12 @@ function CheckInModal({ habit, skipCost, onComplete, onClose }) {
   }
 
   const handleYes = () => {
+    const habitId = habit.id // Capture id before async
     setAnswered('yes')
-    // Complete immediately after showing feedback
-    setTimeout(() => onComplete(habit.id, true), 800)
+    // Complete after showing feedback
+    setTimeout(() => {
+      onComplete(habitId, true)
+    }, 800)
   }
 
   const handleNo = () => {
