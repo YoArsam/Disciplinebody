@@ -164,20 +164,17 @@ function App() {
   }
 
   // Check for habits needing check-in when app loads
-  // Also clear checkInHabit if the habit was deleted
-  useEffect(() => {
-    // If current checkInHabit no longer exists, clear it
-    if (checkInHabit && !state.habits.find(h => h.id === checkInHabit.id)) {
-      setCheckInHabit(null)
-      return
-    }
-    
-    const habitsNeedingCheckIn = getHabitsNeedingCheckIn(state.habits, state.completedToday)
-    if (habitsNeedingCheckIn.length > 0 && !checkInHabit) {
-      // Show check-in for the first habit that needs it
-      setCheckInHabit(habitsNeedingCheckIn[0])
-    }
-  }, [state.habits, state.completedToday, checkInHabit])
+  // DISABLED FOR NOW - causing crashes, will re-enable with proper implementation
+  // useEffect(() => {
+  //   if (checkInHabit && !state.habits.find(h => h.id === checkInHabit.id)) {
+  //     setCheckInHabit(null)
+  //     return
+  //   }
+  //   const habitsNeedingCheckIn = getHabitsNeedingCheckIn(state.habits, state.completedToday)
+  //   if (habitsNeedingCheckIn.length > 0 && !checkInHabit) {
+  //     setCheckInHabit(habitsNeedingCheckIn[0])
+  //   }
+  // }, [state.habits, state.completedToday, checkInHabit])
 
   // Handle check-in completion
   const handleCheckInComplete = (habitId, completed) => {
@@ -185,22 +182,15 @@ function App() {
       markHabitDone(habitId)
     }
     // In future: if !completed, trigger Apple Pay here
-    
     setCheckInHabit(null)
-    
-    // Check if there are more habits needing check-in after a delay
-    // Use setState callback to get fresh state
-    setTimeout(() => {
-      setState(prev => {
-        const remaining = getHabitsNeedingCheckIn(prev.habits, prev.completedToday)
-        if (remaining.length > 0) {
-          // Use a separate effect to set this to avoid state update during render
-          setTimeout(() => setCheckInHabit(remaining[0]), 0)
-        }
-        return prev // no state change
-      })
-    }, 500)
   }
+
+  // Safety: redirect to home if on education screen but habit is null
+  useEffect(() => {
+    if (screen === 'habit-education' && !newlyAddedHabit) {
+      setScreen('home')
+    }
+  }, [screen, newlyAddedHabit])
 
   // Check if we should show the main nav bar (not on editor screens)
   const showMainNav = screen === 'home'
