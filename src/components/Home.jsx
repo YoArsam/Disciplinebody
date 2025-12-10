@@ -219,9 +219,9 @@ function Home({
     }
   }, [habitsExpanded])
 
-  // Update time every minute
+  // Update time every minute for countdown timers
   useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(new Date()), 60000)
+    const interval = setInterval(() => setCurrentTime(new Date()), 30000) // every 30 seconds
     return () => clearInterval(interval)
   }, [])
 
@@ -237,6 +237,39 @@ function Home({
   }
 
   const isHabitDone = (habit) => completedToday.includes(habit.id)
+
+  // Calculate time remaining for a habit
+  const getTimeRemaining = (habit) => {
+    const now = currentTime
+    let endTime
+    
+    if (habit.allDay) {
+      // End of day (midnight)
+      endTime = new Date(now)
+      endTime.setHours(23, 59, 59, 999)
+    } else {
+      // Parse habit end time
+      const [endHour, endMin] = habit.endTime.split(':').map(Number)
+      endTime = new Date(now)
+      endTime.setHours(endHour, endMin, 0, 0)
+    }
+    
+    const diffMs = endTime - now
+    
+    if (diffMs <= 0) {
+      return { text: 'Expired', expired: true }
+    }
+    
+    const diffMins = Math.floor(diffMs / 60000)
+    const hours = Math.floor(diffMins / 60)
+    const mins = diffMins % 60
+    
+    if (hours > 0) {
+      return { text: `${hours}h ${mins}m`, expired: false }
+    } else {
+      return { text: `${mins}m`, expired: false }
+    }
+  }
 
   return (
     <div className={`h-full flex flex-col bg-gray-200 px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
@@ -342,17 +375,12 @@ function Home({
               })
               .map((habit, index) => {
               const isDone = isHabitDone(habit)
-              const isFirst = index === 0 && !isDone
               
               return (
                 <div
                   key={habit.id}
                   className={`w-full p-4 rounded-2xl transition-all flex items-center justify-between ${
-                    isDone
-                      ? 'bg-gray-50'
-                      : isFirst
-                        ? 'bg-gray-100'
-                        : 'bg-gray-50'
+                    isDone ? 'bg-gray-100' : 'bg-gray-50'
                   }`}
                 >
                   {/* Habit Info - Clickable to edit */}
@@ -375,19 +403,20 @@ function Home({
                     </span>
                   </button>
                   
-                  {/* Done Button */}
+                  {/* Time Remaining / Done Status */}
                   {isDone ? (
                     <span className="text-gray-300 text-lg font-medium ml-4">Done</span>
                   ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onMarkDone(habit.id)
-                      }}
-                      className="ml-4 text-lg font-medium transition-colors text-gray-600 active:scale-95"
-                    >
-                      Done
-                    </button>
+                    (() => {
+                      const timeLeft = getTimeRemaining(habit)
+                      return (
+                        <span className={`ml-4 text-lg font-medium ${
+                          timeLeft.expired ? 'text-red-400' : 'text-gray-500'
+                        }`}>
+                          {timeLeft.text}
+                        </span>
+                      )
+                    })()
                   )}
                 </div>
               )
