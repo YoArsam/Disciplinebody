@@ -257,7 +257,7 @@ function Home({
     const diffMs = endTime - now
     
     if (diffMs <= 0) {
-      return { text: 'Expired', expired: true }
+      return { text: 'Check in', expired: true }
     }
     
     const diffMins = Math.floor(diffMs / 60000)
@@ -411,7 +411,7 @@ function Home({
                       const timeLeft = getTimeRemaining(habit)
                       return (
                         <span className={`ml-4 text-lg font-medium ${
-                          timeLeft.expired ? 'text-red-400' : 'text-gray-500'
+                          timeLeft.expired ? 'text-gray-400' : 'text-gray-500'
                         }`}>
                           {timeLeft.text}
                         </span>
