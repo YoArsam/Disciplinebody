@@ -297,7 +297,7 @@ function Home({
         return (
           <div className="flex-shrink-0 bg-white rounded-3xl px-6 py-6 shadow-sm mb-4">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
                 {progress.icon}
               </div>
               <span className="text-gray-500 text-sm font-medium">Your Progress</span>
@@ -320,8 +320,8 @@ function Home({
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-              <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+              <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
