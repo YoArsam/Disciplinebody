@@ -4,6 +4,7 @@ import EditHabitScreen from './screens/EditHabitScreen'
 import EditWalletScreen from './screens/EditWalletScreen'
 import EditSkipCostScreen from './screens/EditSkipCostScreen'
 import HabitEducation from './components/HabitEducation'
+import CheckInModal from './components/CheckInModal'
 
 // Load from localStorage or use defaults
 const loadState = () => {
@@ -30,6 +31,7 @@ function App() {
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null) // For education screen
+  const [checkInHabit, setCheckInHabit] = useState(null) // For check-in popup
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -144,23 +146,29 @@ function App() {
     setScreen('habit-adder')
   }
 
-  // Find habits that need check-in (past their end time, not completed today)
-  const getHabitsNeedingCheckIn = (habits, completedToday) => {
+  // Find first habit that needs check-in (past end time, not completed)
+  const findHabitNeedingCheckIn = () => {
     const now = new Date()
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
     
-    return habits.filter(habit => {
-      // Already completed today
-      if (completedToday.includes(habit.id)) return false
-      
-      // Check if past end time
+    for (const habit of state.habits) {
+      if (state.completedToday.includes(habit.id)) continue
       const [endHour, endMin] = habit.endTime.split(':').map(Number)
       const endMinutes = endHour * 60 + endMin
-      
-      return currentMinutes > endMinutes
-    })
+      if (currentMinutes > endMinutes) {
+        return habit
+      }
+    }
+    return null
   }
 
+  // Show check-in popup on app load (once)
+  useEffect(() => {
+    const habit = findHabitNeedingCheckIn()
+    if (habit) {
+      setCheckInHabit(habit)
+    }
+  }, [])
 
   // Safety: redirect to home if on education screen but habit is null
   useEffect(() => {
@@ -294,6 +302,20 @@ function App() {
           </div>
         )}
 
+      {/* Check-in Modal */}
+      {checkInHabit && (
+        <CheckInModal
+          habitName={checkInHabit.name}
+          onYes={() => {
+            markHabitDone(checkInHabit.id)
+            setCheckInHabit(null)
+          }}
+          onNo={() => {
+            setCheckInHabit(null)
+          }}
+          onClose={() => setCheckInHabit(null)}
+        />
+      )}
     </div>
   )
 }
