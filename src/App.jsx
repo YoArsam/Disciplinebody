@@ -312,20 +312,18 @@ function App() {
             const id = checkInHabit.id
             const newAnswered = [...answeredToday, id]
             setAnsweredToday(newAnswered)
-            setCheckInHabit(null)
             markHabitDone(id)
-            // Show next habit
+            // Show next habit or close
             const next = findHabitNeedingCheckIn(newAnswered)
-            if (next) setCheckInHabit(next)
+            setCheckInHabit(next) // null if no more
           }}
           onNo={() => {
             const id = checkInHabit.id
             const newAnswered = [...answeredToday, id]
             setAnsweredToday(newAnswered)
-            setCheckInHabit(null)
-            // Show next habit
+            // Show next habit or close
             const next = findHabitNeedingCheckIn(newAnswered)
-            if (next) setCheckInHabit(next)
+            setCheckInHabit(next) // null if no more
           }}
         />
       )}
