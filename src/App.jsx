@@ -310,22 +310,11 @@ function App() {
           skipCost={state.skipCost}
           onYes={() => {
             const id = checkInHabit.id
-            const newAnswered = [...answeredToday, id]
-            setAnsweredToday(newAnswered)
             setCheckInHabit(null)
             markHabitDone(id)
-            // Show next habit
-            const next = findHabitNeedingCheckIn(newAnswered)
-            if (next) setCheckInHabit(next)
           }}
           onNo={() => {
-            const id = checkInHabit.id
-            const newAnswered = [...answeredToday, id]
-            setAnsweredToday(newAnswered)
             setCheckInHabit(null)
-            // Show next habit
-            const next = findHabitNeedingCheckIn(newAnswered)
-            if (next) setCheckInHabit(next)
           }}
         />
       )}
