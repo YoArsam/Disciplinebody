@@ -3,6 +3,8 @@ import HomeScreen from './screens/HomeScreen'
 import EditHabitScreen from './screens/EditHabitScreen'
 import EditWalletScreen from './screens/EditWalletScreen'
 import EditSkipCostScreen from './screens/EditSkipCostScreen'
+import HabitEducation from './components/HabitEducation'
+import CheckInModal from './components/CheckInModal'
 
 // Load from localStorage or use defaults
 const loadState = () => {
@@ -28,6 +30,8 @@ function App() {
   const [editingHabit, setEditingHabit] = useState(null)
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
+  const [newlyAddedHabit, setNewlyAddedHabit] = useState(null) // For education screen
+  const [checkInHabit, setCheckInHabit] = useState(null) // For check-in modal
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -142,6 +146,60 @@ function App() {
     setScreen('habit-adder')
   }
 
+  // Find habits that need check-in (past their end time, not completed today)
+  const getHabitsNeedingCheckIn = () => {
+    const now = new Date()
+    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    
+    return state.habits.filter(habit => {
+      // Already completed today
+      if (state.completedToday.includes(habit.id)) return false
+      
+      // Check if past end time
+      const [endHour, endMin] = habit.endTime.split(':').map(Number)
+      const endMinutes = endHour * 60 + endMin
+      
+      return currentMinutes > endMinutes
+    })
+  }
+
+  // Check for habits needing check-in when app loads
+  useEffect(() => {
+    const habitsNeedingCheckIn = getHabitsNeedingCheckIn()
+    if (habitsNeedingCheckIn.length > 0 && !checkInHabit) {
+      // Show check-in for the first habit that needs it
+      setCheckInHabit(habitsNeedingCheckIn[0])
+    }
+  }, [state.habits, state.completedToday])
+
+  // Handle check-in responses
+  const handleCheckInYes = (habitId) => {
+    markHabitDone(habitId)
+    setCheckInHabit(null)
+    
+    // Check if there are more habits needing check-in
+    setTimeout(() => {
+      const remaining = getHabitsNeedingCheckIn()
+      if (remaining.length > 0) {
+        setCheckInHabit(remaining[0])
+      }
+    }, 100)
+  }
+
+  const handleCheckInNo = (habitId) => {
+    // Mark as checked (but not done) - for now just close
+    // In future: trigger Apple Pay here
+    setCheckInHabit(null)
+    
+    // Check if there are more habits needing check-in
+    setTimeout(() => {
+      const remaining = getHabitsNeedingCheckIn()
+      if (remaining.length > 0) {
+        setCheckInHabit(remaining[0])
+      }
+    }, 100)
+  }
+
   // Check if we should show the main nav bar (not on editor screens)
   const showMainNav = screen === 'home'
 
@@ -176,12 +234,20 @@ function App() {
           onSave={(habit) => {
             if (editingHabit) {
               updateHabit(habit)
+              setEditingHabit(null)
+              setScreen(previousScreen)
+              setPreviousScreen('home')
             } else {
-              addHabit(habit)
+              // New habit - add it and show education screen
+              const newHabit = { ...habit, id: Date.now() }
+              setState(prev => ({
+                ...prev,
+                habits: [...prev.habits, newHabit],
+              }))
+              setNewlyAddedHabit(newHabit)
+              setEditingHabit(null)
+              setScreen('habit-education')
             }
-            setEditingHabit(null)
-            setScreen(previousScreen)
-            setPreviousScreen('home')
           }}
           onDelete={editingHabit ? () => {
             deleteHabit(editingHabit.id)
@@ -193,6 +259,16 @@ function App() {
             setEditingHabit(null)
             setScreen(previousScreen)
             setPreviousScreen('home')
+          }}
+        />
+      )}
+      {screen === 'habit-education' && newlyAddedHabit && (
+        <HabitEducation
+          habit={newlyAddedHabit}
+          skipCost={state.skipCost}
+          onDone={() => {
+            setNewlyAddedHabit(null)
+            setScreen('home')
           }}
         />
       )}
@@ -248,6 +324,17 @@ function App() {
             </div>
           </div>
         )}
+
+      {/* Check-in Modal - overlays everything */}
+      {checkInHabit && (
+        <CheckInModal
+          habit={checkInHabit}
+          skipCost={state.skipCost}
+          onYes={handleCheckInYes}
+          onNo={handleCheckInNo}
+          onClose={() => setCheckInHabit(null)}
+        />
+      )}
     </div>
   )
 }
