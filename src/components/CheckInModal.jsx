@@ -1,13 +1,14 @@
 import { useState } from 'react'
 
-function CheckInModal({ habit, skipCost, onYes, onNo, onClose }) {
+function CheckInModal({ habit, skipCost, onComplete, onClose }) {
   const [showCelebration, setShowCelebration] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
 
   const handleYes = () => {
     setShowCelebration(true)
+    // Show celebration for 1.5s, then close
     setTimeout(() => {
-      onYes(habit.id)
+      onComplete(habit.id, true) // true = completed
     }, 1500)
   }
 
@@ -18,13 +19,13 @@ function CheckInModal({ habit, skipCost, onYes, onNo, onClose }) {
   const handlePayment = () => {
     // This will trigger Apple Pay in the future
     // For now, just mark as missed and close
-    onNo(habit.id)
+    onComplete(habit.id, false) // false = missed
   }
 
   // Celebration view
   if (showCelebration) {
     return (
-      <div className="fixed inset-0 bg-green-500 flex flex-col items-center justify-center z-50 animate-fadeIn">
+      <div className="fixed inset-0 bg-green-500 flex flex-col items-center justify-center z-50">
         <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center mb-6 animate-bounce">
           <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />

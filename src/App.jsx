@@ -172,32 +172,22 @@ function App() {
     }
   }, [state.habits, state.completedToday])
 
-  // Handle check-in responses
-  const handleCheckInYes = (habitId) => {
-    markHabitDone(habitId)
+  // Handle check-in completion
+  const handleCheckInComplete = (habitId, completed) => {
+    if (completed) {
+      markHabitDone(habitId)
+    }
+    // In future: if !completed, trigger Apple Pay here
+    
     setCheckInHabit(null)
     
-    // Check if there are more habits needing check-in
+    // Check if there are more habits needing check-in after a delay
     setTimeout(() => {
       const remaining = getHabitsNeedingCheckIn()
       if (remaining.length > 0) {
         setCheckInHabit(remaining[0])
       }
-    }, 100)
-  }
-
-  const handleCheckInNo = (habitId) => {
-    // Mark as checked (but not done) - for now just close
-    // In future: trigger Apple Pay here
-    setCheckInHabit(null)
-    
-    // Check if there are more habits needing check-in
-    setTimeout(() => {
-      const remaining = getHabitsNeedingCheckIn()
-      if (remaining.length > 0) {
-        setCheckInHabit(remaining[0])
-      }
-    }, 100)
+    }, 500)
   }
 
   // Check if we should show the main nav bar (not on editor screens)
@@ -330,8 +320,7 @@ function App() {
         <CheckInModal
           habit={checkInHabit}
           skipCost={state.skipCost}
-          onYes={handleCheckInYes}
-          onNo={handleCheckInNo}
+          onComplete={handleCheckInComplete}
           onClose={() => setCheckInHabit(null)}
         />
       )}
