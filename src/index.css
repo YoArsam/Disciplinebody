@@ -179,7 +179,7 @@ body {
   }
   to {
     opacity: 1;
-    max-height: 150px;
+    max-height: 200px;
     margin-top: 0.75rem;
     padding-top: 0.75rem;
   }
