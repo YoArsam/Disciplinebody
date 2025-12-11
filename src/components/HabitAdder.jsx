@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [name, setName] = useState(habit?.name || '')
@@ -8,6 +8,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
+  const customInputRef = useRef(null)
+
+  // Scroll custom input into view when it appears
+  useEffect(() => {
+    if (showCustomInput && customInputRef.current) {
+      setTimeout(() => {
+        customInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
+    }
+  }, [showCustomInput])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -198,7 +208,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             </div>
             
             {showCustomInput && (
-              <div className="mt-3 flex gap-2">
+              <div ref={customInputRef} className="mt-3 flex gap-2 mb-4">
                 <div className="relative flex-1">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
                   <input
