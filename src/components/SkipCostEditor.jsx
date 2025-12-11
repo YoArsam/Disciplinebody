@@ -24,7 +24,7 @@ function SkipCostEditor({ skipCost, onSave, onBack }) {
   const presets = [0.25, 0.5, 1, 2, 5, 10]
 
   return (
-    <div className="h-full flex flex-col bg-[#fafafa] px-6 pt-[max(1rem,env(safe-area-inset-top))] pb-8">
+    <div className="h-full flex flex-col bg-[#f7f7f7] px-6 pt-[max(1rem,env(safe-area-inset-top))] pb-8">
       {/* Header */}
       <div className="flex items-center gap-4 py-4 mb-4">
         <button 
