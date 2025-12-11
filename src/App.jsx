@@ -191,7 +191,7 @@ function App() {
 
   return (
     <div className="h-full w-full">
-        {screen === 'home' && (
+        <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
           <HomeScreen
             wallet={state.wallet}
             habits={state.habits}
@@ -214,7 +214,7 @@ function App() {
             onMarkDone={markHabitDone}
             onToggleHabits={() => setHabitsExpanded(!habitsExpanded)}
           />
-        )}
+        </div>
       {screen === 'habit-adder' && (
         <EditHabitScreen
           habit={editingHabit}
