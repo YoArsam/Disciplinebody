@@ -446,7 +446,7 @@ function Home({
                   
                   {/* Grid Chart - Only show when expanded */}
                   {habitsExpanded && (
-                    <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="border-t border-gray-100 grid-chart-enter">
                       <div className="grid grid-cols-7 gap-1">
                         {last28Days.map((date, i) => {
                           const isCompleted = habitDates.includes(date)
