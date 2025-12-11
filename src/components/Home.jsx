@@ -194,26 +194,32 @@ function Home({
   // Calculate expanded position - only use transform and height (animatable)
   useEffect(() => {
     if (habitsExpanded && widgetRef.current) {
-      const rect = widgetRef.current.getBoundingClientRect()
-      const navHeight = 80
-      
-      // Slide up to cover profile/cost buttons (start from top of screen)
-      const moveUp = rect.top
-      const newHeight = window.innerHeight - navHeight
-      
-      // First extend height, then move up
-      setWidgetStyle({
-        height: `${newHeight}px`,
-        marginBottom: `-${moveUp}px`,
-      })
-      
-      setTimeout(() => {
+      // Small delay to ensure DOM is ready after navigation
+      const timer = setTimeout(() => {
+        if (!widgetRef.current) return
+        const rect = widgetRef.current.getBoundingClientRect()
+        const navHeight = 80
+        
+        // Slide up to cover profile/cost buttons (start from top of screen)
+        const moveUp = rect.top
+        const newHeight = window.innerHeight - navHeight
+        
+        // First extend height, then move up
         setWidgetStyle({
-          transform: `translateY(-${moveUp}px)`,
           height: `${newHeight}px`,
           marginBottom: `-${moveUp}px`,
         })
-      }, 50)
+        
+        setTimeout(() => {
+          setWidgetStyle({
+            transform: `translateY(-${moveUp}px)`,
+            height: `${newHeight}px`,
+            marginBottom: `-${moveUp}px`,
+          })
+        }, 50)
+      }, 10)
+      
+      return () => clearTimeout(timer)
     } else {
       setWidgetStyle({})
     }
