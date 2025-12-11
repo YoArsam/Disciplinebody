@@ -60,7 +60,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       </div>
 
       {/* Scrollable Form Content */}
-      <div className="flex-1 overflow-y-auto min-h-0 pb-40">
+      <div className="flex-1 overflow-y-auto min-h-0 pb-36">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Habit Name */}
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
@@ -155,7 +155,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">What's at stake?</span>
             </div>
             <p className="text-gray-400 text-xs mb-4 ml-10">
-              How much will you pay if you skip this habit?
+              What should be the cost of skipping this habit?
             </p>
             
             <div className="grid grid-cols-3 gap-2 mb-2">
