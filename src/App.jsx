@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import HomeScreen from './screens/HomeScreen'
 import EditHabitScreen from './screens/EditHabitScreen'
 import EditWalletScreen from './screens/EditWalletScreen'
-import EditSkipCostScreen from './screens/EditSkipCostScreen'
+// EditSkipCostScreen removed - skip cost is now per-habit
 import HabitEducation from './components/HabitEducation'
 import CheckInModal from './components/CheckInModal'
 
@@ -14,8 +14,7 @@ const loadState = () => {
   }
   return {
     wallet: 100,
-    skipCost: 0.5,
-    habits: [],
+        habits: [],
     completedToday: [], // habit IDs completed today
     paidToday: [], // habit IDs paid for today
     lastCheckedDate: new Date().toDateString(),
@@ -86,19 +85,15 @@ function App() {
           localStorage.setItem(penaltyKey, 'true')
           setState(prev => ({
             ...prev,
-            wallet: Math.max(0, prev.wallet - prev.skipCost),
+            wallet: Math.max(0, prev.wallet - (habit.skipCost || 0)),
           }))
         }
       }
     })
-  }, [state.habits, state.completedToday, state.lastCheckedDate, state.skipCost])
+  }, [state.habits, state.completedToday, state.lastCheckedDate])
 
   const updateWallet = (amount) => {
     setState(prev => ({ ...prev, wallet: amount }))
-  }
-
-  const updateSkipCost = (amount) => {
-    setState(prev => ({ ...prev, skipCost: amount }))
   }
 
   const addHabit = (habit) => {
@@ -198,7 +193,6 @@ function App() {
         {screen === 'home' && (
           <HomeScreen
             wallet={state.wallet}
-            skipCost={state.skipCost}
             habits={state.habits}
             completedToday={state.completedToday}
             paidToday={state.paidToday || []}
@@ -206,8 +200,7 @@ function App() {
             longestStreak={state.longestStreak || 0}
             habitHistory={state.habitHistory || {}}
             habitsExpanded={habitsExpanded}
-            onEditSkipCost={() => setScreen('skip-cost-editor')}
-            onAddHabit={() => {
+                        onAddHabit={() => {
               setEditingHabit(null)
               setScreen('habit-adder')
             }}
@@ -256,7 +249,6 @@ function App() {
       {screen === 'habit-education' && newlyAddedHabit && (
         <HabitEducation
           habit={newlyAddedHabit}
-          skipCost={state.skipCost}
           onDone={() => {
             setNewlyAddedHabit(null)
             setScreen('home')
@@ -273,17 +265,7 @@ function App() {
           onBack={() => setScreen('home')}
         />
       )}
-      {screen === 'skip-cost-editor' && (
-        <EditSkipCostScreen
-          skipCost={state.skipCost}
-          onSave={(amount) => {
-            updateSkipCost(amount)
-            setScreen('home')
-          }}
-          onBack={() => setScreen('home')}
-        />
-      )}
-
+      
         {/* Global Bottom Nav - Outside all screen transitions */}
         {showMainNav && (
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-50">
@@ -335,7 +317,7 @@ function App() {
         <CheckInModal
           key={currentCheckIn.id}
           habitName={currentCheckIn.name}
-          skipCost={state.skipCost}
+          skipCost={currentCheckIn.skipCost}
           onYes={() => {
             const id = currentCheckIn.id
             markHabitDone(id)

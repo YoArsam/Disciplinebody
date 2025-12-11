@@ -5,6 +5,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [allDay, setAllDay] = useState(habit?.allDay ?? false)
   const [startTime, setStartTime] = useState(habit?.startTime || '06:00')
   const [endTime, setEndTime] = useState(habit?.endTime || '07:00')
+  const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -16,6 +17,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       allDay,
       startTime: allDay ? '00:00' : startTime,
       endTime: allDay ? '23:59' : endTime,
+      skipCost,
     })
   }
 
@@ -129,23 +131,58 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             )}
           </div>
 
-          {/* Preview */}
+          {/* Stakes */}
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
                 <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Preview</span>
+              <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">What's at stake?</span>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <span className="font-bold text-base text-gray-700 block">{name || 'Your habit'}</span>
-              <span className="text-gray-400 text-sm">
-                {allDay ? 'All Day' : `${formatTime(startTime)} - ${formatTime(endTime)}`}
-              </span>
+            <p className="text-gray-400 text-xs mb-4 ml-10">
+              How much will you pay if you skip this habit?
+            </p>
+            
+            <div className="grid grid-cols-4 gap-2 mb-3">
+              {[0, 0.5, 1, 2].map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setSkipCost(val)}
+                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                    skipCost === val
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-50 text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  {val === 0 ? 'Free' : `$${val}`}
+                </button>
+              ))}
             </div>
+            <div className="grid grid-cols-3 gap-2">
+              {[5, 10, 20].map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setSkipCost(val)}
+                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                    skipCost === val
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-50 text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  ${val}
+                </button>
+              ))}
+            </div>
+            
+            {skipCost === null && (
+              <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                Please select your stakes to continue
+              </p>
+            )}
           </div>
         </form>
       </div>
@@ -155,7 +192,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
         <div className="max-w-md mx-auto space-y-3">
           <button
             onClick={handleSubmit}
-            disabled={!name.trim()}
+            disabled={!name.trim() || skipCost === null}
             className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {habit ? 'Save Changes' : 'Add Habit'}

@@ -1,4 +1,4 @@
-function HabitEducation({ habit, skipCost, onDone }) {
+function HabitEducation({ habit, onDone }) {
   // Safety check - if habit is null/undefined, don't render
   if (!habit) {
     return null
@@ -85,7 +85,7 @@ function HabitEducation({ habit, skipCost, onDone }) {
                 </svg>
               </div>
               <p className="text-gray-600 text-sm">
-                <span className="font-medium text-gray-900">Missed it?</span> Pay ${skipCost.toFixed(2)}
+                <span className="font-medium text-gray-900">Missed it?</span> {habit.skipCost === 0 ? 'No penalty (free habit)' : `Pay $${habit.skipCost.toFixed(2)}`}
               </p>
             </div>
           </div>

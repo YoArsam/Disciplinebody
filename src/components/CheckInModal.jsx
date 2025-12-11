@@ -3,8 +3,37 @@ import { useState } from 'react'
 function CheckInModal({ habitName, skipCost, onYes, onNo }) {
   const [showPayment, setShowPayment] = useState(false)
 
-  // Payment view
+  // Payment view (or free habit confirmation)
   if (showPayment) {
+    // Free habit - just confirm
+    if (skipCost === 0) {
+      return (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex flex-col items-center justify-center z-50 px-6">
+          <div className="bg-white rounded-3xl p-8 w-full max-w-sm flex flex-col items-center border border-gray-200">
+            <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-6">
+              <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">No worries</h1>
+            <p className="text-gray-500 text-center mb-8">
+              This is a free habit — no penalty.<br/>
+              Try again tomorrow!
+            </p>
+
+            <button
+              onClick={onNo}
+              className="w-full bg-gray-900 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    // Paid habit - show payment
     return (
       <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex flex-col items-center justify-center z-50 px-6">
         <div className="bg-white rounded-3xl p-8 w-full max-w-sm flex flex-col items-center border border-gray-200">
