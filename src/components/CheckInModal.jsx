@@ -22,7 +22,7 @@ function CheckInModal({ habit, onYes, onNo }) {
   // Success view - simple, no animations
   if (showSuccess) {
     return (
-      <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-sm flex flex-col items-center justify-center z-50 px-6">
+      <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-[2px] flex flex-col items-center justify-center z-50 px-6">
         <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center mb-6">
           <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -47,7 +47,7 @@ function CheckInModal({ habit, onYes, onNo }) {
     // Free habit - just confirm
     if (skipCost === 0) {
       return (
-        <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-sm flex flex-col items-center justify-center z-50 px-6">
+        <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-[2px] flex flex-col items-center justify-center z-50 px-6">
           <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mb-6">
             <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -72,7 +72,7 @@ function CheckInModal({ habit, onYes, onNo }) {
 
     // Paid habit - show payment
     return (
-      <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-sm flex flex-col items-center justify-center z-50 px-6">
+      <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-[2px] flex flex-col items-center justify-center z-50 px-6">
         <div className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mb-6">
           <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -102,7 +102,7 @@ function CheckInModal({ habit, onYes, onNo }) {
 
   // Question view
   return (
-    <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-sm flex flex-col items-center justify-center z-50 px-6">
+    <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-[2px] flex flex-col items-center justify-center z-50 px-6">
       <h1 className="text-3xl font-bold text-white mb-4 text-center">Did you complete<br/>this habit?</h1>
       
       {/* Habit Card */}
