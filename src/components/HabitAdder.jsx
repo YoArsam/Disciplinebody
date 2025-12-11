@@ -126,7 +126,15 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     <input
                       type="time"
                       value={startTime}
-                      onChange={(e) => setStartTime(e.target.value)}
+                      onChange={(e) => {
+                        const newStart = e.target.value
+                        setStartTime(newStart)
+                        // Auto-adjust end time to 1 hour after start
+                        const [hours, mins] = newStart.split(':').map(Number)
+                        const endHours = (hours + 1) % 24
+                        const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
+                        setEndTime(newEnd)
+                      }}
                       className="w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-lg font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
                     />
                   </div>
