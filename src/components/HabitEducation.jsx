@@ -12,9 +12,9 @@ function HabitEducation({ habit, onDone }) {
 
   const getCueTime = () => {
     if (habit.allDay) {
-      return "Tomorrow morning"
+      return "in the morning"
     }
-    return `After ${formatTime(habit.endTime)}`
+    return formatTime(habit.endTime)
   }
 
   return (
@@ -38,14 +38,8 @@ function HabitEducation({ habit, onDone }) {
       <div className="flex-1 space-y-4">
         {/* YOUR CUE - The main focus */}
         <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-5">
-          <p className="text-orange-600 text-xs font-bold uppercase tracking-wider mb-2">
-            Your Cue
-          </p>
-          <p className="text-gray-900 text-2xl font-bold mb-1">
-            {getCueTime()}
-          </p>
-          <p className="text-gray-600 text-sm">
-            Come back to check in on this habit
+          <p className="text-gray-900 text-2xl font-bold">
+            Come back to this app tomorrow after {getCueTime()}
           </p>
         </div>
 
