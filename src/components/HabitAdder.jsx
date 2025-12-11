@@ -6,6 +6,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [startTime, setStartTime] = useState(habit?.startTime || '06:00')
   const [endTime, setEndTime] = useState(habit?.endTime || '07:00')
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
+  const [showCustomInput, setShowCustomInput] = useState(false)
+  const [customAmount, setCustomAmount] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -145,14 +147,17 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               How much will you pay if you skip this habit?
             </p>
             
-            <div className="grid grid-cols-4 gap-2 mb-3">
-              {[0, 0.5, 1, 2].map((val) => (
+            <div className="grid grid-cols-3 gap-2 mb-2">
+              {[0, 0.5, 1].map((val) => (
                 <button
                   key={val}
                   type="button"
-                  onClick={() => setSkipCost(val)}
+                  onClick={() => {
+                    setSkipCost(val)
+                    setShowCustomInput(false)
+                  }}
                   className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    skipCost === val
+                    skipCost === val && !showCustomInput
                       ? 'bg-orange-500 text-white'
                       : 'bg-gray-50 text-gray-700 border border-gray-200'
                   }`}
@@ -162,13 +167,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               ))}
             </div>
             <div className="grid grid-cols-3 gap-2">
-              {[5, 10, 20].map((val) => (
+              {[2, 5].map((val) => (
                 <button
                   key={val}
                   type="button"
-                  onClick={() => setSkipCost(val)}
+                  onClick={() => {
+                    setSkipCost(val)
+                    setShowCustomInput(false)
+                  }}
                   className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    skipCost === val
+                    skipCost === val && !showCustomInput
                       ? 'bg-orange-500 text-white'
                       : 'bg-gray-50 text-gray-700 border border-gray-200'
                   }`}
@@ -176,7 +184,48 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   ${val}
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => setShowCustomInput(true)}
+                className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                  showCustomInput
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-gray-50 text-gray-700 border border-gray-200'
+                }`}
+              >
+                Custom
+              </button>
             </div>
+            
+            {showCustomInput && (
+              <div className="mt-3 flex gap-2">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
+                  <input
+                    type="number"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                    autoFocus
+                    className="w-full pl-7 pr-3 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const val = parseFloat(customAmount)
+                    if (!isNaN(val) && val >= 0) {
+                      setSkipCost(val)
+                    }
+                  }}
+                  className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
+                >
+                  Set
+                </button>
+              </div>
+            )}
             
             {skipCost === null && (
               <p className="text-orange-500 text-xs mt-3 text-center font-medium">
