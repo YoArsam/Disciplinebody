@@ -15,7 +15,7 @@ export default function HabitsPage({ habits, completedToday = [], isClosing, onA
   const animationClass = isClosing ? 'animate-sheetDown' : 'animate-sheetUp'
 
   return (
-    <div className={`fixed inset-0 bg-[#fafafa] flex flex-col px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] z-40 ${animationClass}`}>
+    <div className={`fixed inset-0 bg-[#fcfcfc] flex flex-col px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] z-40 ${animationClass}`}>
       {/* Header - matches Home habits card header */}
       <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
         <div className="flex items-center gap-2">
