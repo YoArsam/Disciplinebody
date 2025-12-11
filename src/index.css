@@ -25,7 +25,7 @@ html, body, #root {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
-  background: #f0f0f0;
+  background: #fafafa;
   overscroll-behavior: none;
 }
 

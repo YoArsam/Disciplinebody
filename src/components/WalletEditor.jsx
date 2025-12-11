@@ -17,7 +17,7 @@ function WalletEditor({ wallet, onSave, onBack }) {
   }
 
   return (
-    <div className="max-w-md mx-auto p-5">
+    <div className="max-w-md mx-auto p-5 min-h-full bg-[#fafafa]">
       {/* Header */}
       <div className="flex items-center justify-between py-4 mb-6">
         <button 

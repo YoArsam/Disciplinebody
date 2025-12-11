@@ -274,7 +274,7 @@ function Home({
   }
 
   return (
-    <div className={`h-full flex flex-col bg-[#f0f0f0] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
+    <div className={`h-full flex flex-col bg-[#fafafa] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
       {/* Top Row: Profile Icon + Skip Cost Badge */}
       <div className="flex-shrink-0 mb-4 flex items-center justify-between">
         <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
