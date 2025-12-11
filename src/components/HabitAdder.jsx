@@ -166,66 +166,65 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               What should be the cost of skipping this habit?
             </p>
             
-            <div className="grid grid-cols-3 gap-1.5 mb-1.5">
-              {[0, 0.5, 1].map((val) => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => {
-                    setSkipCost(val)
-                    setShowCustomInput(false)
-                    setIsCustomValue(false)
-                  }}
-                  className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    skipCost === val && !isCustomValue
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-50 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  {val === 0 ? 'Free' : `$${val}`}
-                </button>
-              ))}
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {[2, 5].map((val) => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => {
-                    setSkipCost(val)
-                    setShowCustomInput(false)
-                    setIsCustomValue(false)
-                  }}
-                  className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    skipCost === val && !isCustomValue
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-50 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  ${val}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCustomInput(true)
-                  // Pre-fill with current custom value if exists
-                  if (isCustomValue && skipCost !== null) {
-                    setCustomAmount(skipCost.toString())
-                  }
-                }}
-                className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                  isCustomValue || showCustomInput
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-50 text-gray-700 border border-gray-200'
-                }`}
-              >
-                {isCustomValue && skipCost !== null ? `$${skipCost}` : 'Custom'}
-              </button>
-            </div>
-            
-            {showCustomInput && (
-              <div ref={customInputRef} className="mt-3 flex gap-2 mb-4">
+            {!showCustomInput ? (
+              <>
+                <div className="grid grid-cols-3 gap-1.5 mb-1.5">
+                  {[0, 0.5, 1].map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      onClick={() => {
+                        setSkipCost(val)
+                        setIsCustomValue(false)
+                      }}
+                      className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                        skipCost === val && !isCustomValue
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-gray-50 text-gray-700 border border-gray-200'
+                      }`}
+                    >
+                      {val === 0 ? 'Free' : `$${val}`}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[2, 5].map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      onClick={() => {
+                        setSkipCost(val)
+                        setIsCustomValue(false)
+                      }}
+                      className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                        skipCost === val && !isCustomValue
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-gray-50 text-gray-700 border border-gray-200'
+                      }`}
+                    >
+                      ${val}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCustomInput(true)
+                      if (isCustomValue && skipCost !== null) {
+                        setCustomAmount(skipCost.toString())
+                      }
+                    }}
+                    className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                      isCustomValue
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-50 text-gray-700 border border-gray-200'
+                    }`}
+                  >
+                    {isCustomValue && skipCost !== null ? `$${skipCost}` : 'Custom'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex gap-2">
                 <div className="relative flex-1">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
                   <input
@@ -259,10 +258,17 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 >
                   Set
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomInput(false)}
+                  className="px-3 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl active:scale-95 transition-transform"
+                >
+                  ✕
+                </button>
               </div>
             )}
             
-            {skipCost === null && (
+            {skipCost === null && !showCustomInput && (
               <p className="text-orange-500 text-xs mt-3 text-center font-medium">
                 Please select your stakes to continue
               </p>
