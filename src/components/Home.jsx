@@ -377,9 +377,13 @@ function Home({
               .sort((a, b) => {
                 const aDone = completedToday.includes(a.id)
                 const bDone = completedToday.includes(b.id)
+                const aPaid = (paidToday || []).includes(a.id)
+                const bPaid = (paidToday || []).includes(b.id)
+                const aResolved = aDone || aPaid
+                const bResolved = bDone || bPaid
                 // Done habits go to bottom
-                if (aDone && !bDone) return 1
-                if (!aDone && bDone) return -1
+                if (aResolved && !bResolved) return 1
+                if (!aResolved && bResolved) return -1
                 // Sort by start time
                 const aTime = a.allDay ? 0 : a.startTime
                 const bTime = b.allDay ? 0 : b.startTime
