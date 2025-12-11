@@ -30,6 +30,7 @@ function App() {
   const [editingHabit, setEditingHabit] = useState(null)
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
+  const [previousHabitsExpanded, setPreviousHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null) // For education screen
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
@@ -201,10 +202,12 @@ function App() {
             habitHistory={state.habitHistory || {}}
             habitsExpanded={habitsExpanded}
                         onAddHabit={() => {
+              setPreviousHabitsExpanded(habitsExpanded)
               setEditingHabit(null)
               setScreen('habit-adder')
             }}
             onEditHabit={(habit) => {
+              setPreviousHabitsExpanded(habitsExpanded)
               setEditingHabit(habit)
               setScreen('habit-adder')
             }}
@@ -243,6 +246,7 @@ function App() {
             setEditingHabit(null)
             setScreen(previousScreen)
             setPreviousScreen('home')
+            setHabitsExpanded(previousHabitsExpanded)
           }}
         />
       )}
