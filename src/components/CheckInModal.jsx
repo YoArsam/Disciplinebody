@@ -103,7 +103,7 @@ function CheckInModal({ habit, onYes, onNo }) {
   // Question view
   return (
     <div className="fixed inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-50 px-6">
-      <p className="text-gray-400 text-sm mb-4">Did you complete this habit?</p>
+      <h1 className="text-xl font-bold text-white mb-4">Did you complete this habit?</h1>
       
       {/* Habit Card */}
       <div className="w-full bg-white/10 rounded-2xl p-5 mb-8">
