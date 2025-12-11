@@ -61,7 +61,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
       {/* Scrollable Form Content */}
       <div className="flex-1 overflow-y-auto min-h-0 pb-36">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {/* Habit Name */}
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
@@ -166,7 +166,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               What should be the cost of skipping this habit?
             </p>
             
-            <div className="grid grid-cols-3 gap-2 mb-2">
+            <div className="grid grid-cols-3 gap-1.5 mb-1.5">
               {[0, 0.5, 1].map((val) => (
                 <button
                   key={val}
@@ -176,7 +176,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     setShowCustomInput(false)
                     setIsCustomValue(false)
                   }}
-                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                  className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
                     skipCost === val && !isCustomValue
                       ? 'bg-orange-500 text-white'
                       : 'bg-gray-50 text-gray-700 border border-gray-200'
@@ -186,7 +186,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </button>
               ))}
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5">
               {[2, 5].map((val) => (
                 <button
                   key={val}
@@ -196,7 +196,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     setShowCustomInput(false)
                     setIsCustomValue(false)
                   }}
-                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                  className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
                     skipCost === val && !isCustomValue
                       ? 'bg-orange-500 text-white'
                       : 'bg-gray-50 text-gray-700 border border-gray-200'
@@ -214,7 +214,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     setCustomAmount(skipCost.toString())
                   }
                 }}
-                className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
                   isCustomValue || showCustomInput
                     ? 'bg-orange-500 text-white'
                     : 'bg-gray-50 text-gray-700 border border-gray-200'
