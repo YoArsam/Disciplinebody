@@ -39,7 +39,9 @@ function HabitEducation({ habit, onDone }) {
         {/* YOUR CUE - The main focus */}
         <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-5">
           <p className="text-gray-900 text-2xl font-bold">
-            Come back to this app tomorrow after {getCueTime()}
+            {habit.allDay 
+              ? "Come back to this app tomorrow" 
+              : `Come back to this app tomorrow after ${getCueTime()}`}
           </p>
         </div>
 
