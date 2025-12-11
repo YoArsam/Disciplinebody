@@ -27,7 +27,7 @@ function HabitEducation({ habit, onDone }) {
           </svg>
         </div>
         <h1 className="text-xl font-bold text-gray-900 mb-1">
-          Commitment Locked
+          Habit Locked
         </h1>
         <p className="text-gray-500 text-lg font-medium">
           "{habit.name}"
@@ -37,8 +37,8 @@ function HabitEducation({ habit, onDone }) {
       {/* Main Content */}
       <div className="flex-1 space-y-4">
         {/* YOUR CUE - The main focus */}
-        <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-5">
-          <p className="text-green-600 text-xs font-bold uppercase tracking-wider mb-2">
+        <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-5">
+          <p className="text-orange-600 text-xs font-bold uppercase tracking-wider mb-2">
             Your Cue
           </p>
           <p className="text-gray-900 text-2xl font-bold mb-1">
