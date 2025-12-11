@@ -390,47 +390,84 @@ function Home({
               const isPaid = paidToday?.includes(habit.id)
               const isResolved = isDone || isPaid
               
+              // Get last 28 days for grid chart (4 weeks)
+              const habitDates = habitHistory[habit.id] || []
+              const last28Days = Array.from({ length: 28 }, (_, i) => {
+                const date = new Date()
+                date.setDate(date.getDate() - (27 - i))
+                return date.toISOString().split('T')[0]
+              })
+              
               return (
                 <div
                   key={habit.id}
-                  className={`w-full p-4 rounded-2xl transition-all flex items-center justify-between ${
+                  className={`w-full p-4 rounded-2xl transition-all ${
                     isResolved ? 'bg-white/50' : 'bg-white'
                   } border border-gray-200`}
                 >
-                  {/* Habit Info - Clickable to edit */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onEditHabit(habit)
-                    }}
-                    className="flex-1 min-w-0 text-left"
-                  >
-                    <span className={`font-semibold text-lg block truncate ${
-                      isResolved ? 'text-gray-300' : 'text-gray-900'
-                    }`}>
-                      {habit.name}
-                    </span>
-                    <span className={`text-sm ${
-                      isResolved ? 'text-gray-300' : 'text-gray-500'
-                    }`}>
-                      {formatTimeRange(habit)}
-                    </span>
-                  </button>
+                  {/* Top row: Habit info + status */}
+                  <div className="flex items-center justify-between">
+                    {/* Habit Info - Clickable to edit */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEditHabit(habit)
+                      }}
+                      className="flex-1 min-w-0 text-left"
+                    >
+                      <span className={`font-semibold text-lg block truncate ${
+                        isResolved ? 'text-gray-300' : 'text-gray-900'
+                      }`}>
+                        {habit.name}
+                      </span>
+                      <span className={`text-sm ${
+                        isResolved ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        {formatTimeRange(habit)}
+                      </span>
+                    </button>
+                    
+                    {/* Time Remaining / Done / Paid Status */}
+                    {isResolved ? (
+                      <span className="text-gray-300 text-lg font-medium ml-4">{isPaid ? 'Paid' : 'Done'}</span>
+                    ) : (
+                      (() => {
+                        const timeLeft = getTimeRemaining(habit)
+                        return (
+                          <span className={`ml-4 text-lg font-medium ${
+                            timeLeft.expired ? 'text-gray-400' : 'text-gray-500'
+                          }`}>
+                            {timeLeft.text}
+                          </span>
+                        )
+                      })()
+                    )}
+                  </div>
                   
-                  {/* Time Remaining / Done / Paid Status */}
-                  {isResolved ? (
-                    <span className="text-gray-300 text-lg font-medium ml-4">{isPaid ? 'Paid' : 'Done'}</span>
-                  ) : (
-                    (() => {
-                      const timeLeft = getTimeRemaining(habit)
-                      return (
-                        <span className={`ml-4 text-lg font-medium ${
-                          timeLeft.expired ? 'text-gray-400' : 'text-gray-500'
-                        }`}>
-                          {timeLeft.text}
-                        </span>
-                      )
-                    })()
+                  {/* Grid Chart - Only show when expanded */}
+                  {habitsExpanded && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="grid grid-cols-7 gap-1">
+                        {last28Days.map((date, i) => {
+                          const isCompleted = habitDates.includes(date)
+                          const isToday = date === new Date().toISOString().split('T')[0]
+                          return (
+                            <div
+                              key={date}
+                              className={`aspect-square rounded-sm ${
+                                isCompleted 
+                                  ? 'bg-green-500' 
+                                  : isToday 
+                                    ? 'bg-orange-200' 
+                                    : 'bg-gray-100'
+                              }`}
+                              title={date}
+                            />
+                          )
+                        })}
+                      </div>
+                      <p className="text-xs text-gray-400 mt-2 text-center">Last 4 weeks</p>
+                    </div>
                   )}
                 </div>
               )
