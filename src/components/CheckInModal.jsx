@@ -1,48 +1,28 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 function CheckInModal({ habitName, skipCost, onYes, onNo }) {
   const [showPayment, setShowPayment] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
-  const [animateIn, setAnimateIn] = useState(false)
 
-  // Trigger animation after success screen mounts
-  useEffect(() => {
-    if (showSuccess) {
-      setTimeout(() => setAnimateIn(true), 50)
-    }
-  }, [showSuccess])
-
-  // Success celebration view
+  // Success view - simple, no animations
   if (showSuccess) {
     return (
-      <div 
-        className="fixed inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-50 px-6"
-        onClick={onYes}
-      >
-        <div className={`w-24 h-24 rounded-full bg-green-500 flex items-center justify-center mb-6 transition-all duration-500 ${
-          animateIn ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
-        }`}>
-          <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="fixed inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-50 px-6">
+        <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center mb-6">
+          <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
         </div>
         
-        <h1 className={`text-3xl font-bold text-white mb-2 transition-all duration-500 delay-100 ${
-          animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
-          Crushed it!
-        </h1>
-        <p className={`text-green-400 font-semibold text-xl mb-8 transition-all duration-500 delay-200 ${
-          animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
-          +1 Streak
-        </p>
+        <h1 className="text-2xl font-bold text-white mb-2">Nice work!</h1>
+        <p className="text-green-400 font-medium text-lg mb-8">+1 Streak</p>
 
-        <p className={`text-gray-500 text-sm transition-all duration-500 delay-300 ${
-          animateIn ? 'opacity-100' : 'opacity-0'
-        }`}>
-          Tap anywhere to continue
-        </p>
+        <button
+          onClick={onYes}
+          className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
+        >
+          Continue
+        </button>
       </div>
     )
   }
