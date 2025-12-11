@@ -60,7 +60,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       </div>
 
       {/* Scrollable Form Content */}
-      <div className="flex-1 overflow-y-auto min-h-0 pb-52">
+      <div className="flex-1 overflow-y-auto min-h-0 pb-44">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Habit Name */}
           <div className="bg-white border border-gray-200 rounded-2xl p-4">
