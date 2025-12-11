@@ -320,8 +320,7 @@ function App() {
       {currentCheckIn && (
         <CheckInModal
           key={currentCheckIn.id}
-          habitName={currentCheckIn.name}
-          skipCost={currentCheckIn.skipCost}
+          habit={currentCheckIn}
           onYes={() => {
             const id = currentCheckIn.id
             markHabitDone(id)
