@@ -8,6 +8,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
+  const [isCustomValue, setIsCustomValue] = useState(false) // Track if current skipCost is a custom value
   const customInputRef = useRef(null)
 
   // Scroll custom input into view when it appears
@@ -165,9 +166,10 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   onClick={() => {
                     setSkipCost(val)
                     setShowCustomInput(false)
+                    setIsCustomValue(false)
                   }}
                   className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    skipCost === val && !showCustomInput
+                    skipCost === val && !isCustomValue
                       ? 'bg-orange-500 text-white'
                       : 'bg-gray-50 text-gray-700 border border-gray-200'
                   }`}
@@ -184,9 +186,10 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   onClick={() => {
                     setSkipCost(val)
                     setShowCustomInput(false)
+                    setIsCustomValue(false)
                   }}
                   className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    skipCost === val && !showCustomInput
+                    skipCost === val && !isCustomValue
                       ? 'bg-orange-500 text-white'
                       : 'bg-gray-50 text-gray-700 border border-gray-200'
                   }`}
@@ -196,14 +199,20 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               ))}
               <button
                 type="button"
-                onClick={() => setShowCustomInput(true)}
+                onClick={() => {
+                  setShowCustomInput(true)
+                  // Pre-fill with current custom value if exists
+                  if (isCustomValue && skipCost !== null) {
+                    setCustomAmount(skipCost.toString())
+                  }
+                }}
                 className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                  showCustomInput
+                  isCustomValue || showCustomInput
                     ? 'bg-orange-500 text-white'
                     : 'bg-gray-50 text-gray-700 border border-gray-200'
                 }`}
               >
-                Custom
+                {isCustomValue && skipCost !== null ? `$${skipCost}` : 'Custom'}
               </button>
             </div>
             
@@ -212,12 +221,18 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 <div className="relative flex-1">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     value={customAmount}
-                    onChange={(e) => setCustomAmount(e.target.value)}
+                    onChange={(e) => {
+                      // Only allow numbers and decimal point
+                      const val = e.target.value.replace(/[^0-9.]/g, '')
+                      // Prevent multiple decimal points
+                      const parts = val.split('.')
+                      if (parts.length > 2) return
+                      setCustomAmount(val)
+                    }}
                     placeholder="0.00"
-                    step="0.01"
-                    min="0"
                     autoFocus
                     className="w-full pl-7 pr-3 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
@@ -228,6 +243,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     const val = parseFloat(customAmount)
                     if (!isNaN(val) && val >= 0) {
                       setSkipCost(val)
+                      setIsCustomValue(true)
+                      setShowCustomInput(false)
                     }
                   }}
                   className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
