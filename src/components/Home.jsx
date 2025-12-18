@@ -162,8 +162,6 @@ function Home({
   habits, 
   completedToday,
   paidToday,
-  currentStreak,
-  longestStreak,
   habitHistory,
   habitsExpanded,
   onAddHabit, 
@@ -230,6 +228,10 @@ function Home({
     const interval = setInterval(() => setCurrentTime(new Date()), 30000) // every 30 seconds
     return () => clearInterval(interval)
   }, [])
+
+  const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
+  const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(currentTime.getDay())
+  const todaysHabits = habits.filter(isHabitScheduledToday)
 
   const formatTimeRange = (habit) => {
     if (habit.allDay) return 'All Day'
@@ -310,7 +312,13 @@ function Home({
 
       {/* Your Progress Card */}
       {(() => {
-        const progress = getProgressMessage(habits, completedToday, paidToday, habitHistory)
+        const progress = todaysHabits.length === 0 && habits.length > 0
+          ? {
+              icon: ProgressIcons.moon,
+              headline: 'Rest day',
+              subtext: 'No habits scheduled today',
+            }
+          : getProgressMessage(todaysHabits, completedToday, paidToday, habitHistory)
         return (
           <div className="flex-shrink-0 bg-white border border-gray-200 rounded-3xl px-6 py-6 mb-4">
             <div className="flex items-center gap-3 mb-2">
@@ -378,9 +386,28 @@ function Home({
                 <span className="text-orange-700 font-medium">Add Your First Habits</span>
               </div>
             </button>
+          ) : todaysHabits.length === 0 ? (
+            <button 
+              onClick={(e) => {
+                e.stopPropagation()
+                onAddHabit()
+              }}
+              className="flex-1 flex flex-col items-center justify-center w-full"
+            >
+              {/* Plus Icon Circle */}
+              <div className="w-20 h-20 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-4">
+                <svg className="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <p className="text-gray-500 mb-4 text-center">No habits scheduled today</p>
+              <div className="bg-white rounded-full px-8 py-3 border border-gray-200">
+                <span className="text-orange-700 font-medium">Add a Habit</span>
+              </div>
+            </button>
           ) : (
             // Sort habits: by time, then done habits go to bottom
-            [...habits]
+            [...todaysHabits]
               .sort((a, b) => {
                 const aDone = completedToday.includes(a.id)
                 const bDone = completedToday.includes(b.id)

@@ -6,6 +6,9 @@ import EditWalletScreen from './screens/EditWalletScreen'
 import HabitEducation from './components/HabitEducation'
 import CheckInModal from './components/CheckInModal'
 
+const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
+const isHabitScheduledOnDay = (habit, dayKey) => getHabitDays(habit).includes(dayKey)
+
 // Load from localStorage or use defaults
 const loadState = () => {
   const saved = localStorage.getItem('accountability-app-state')
@@ -46,8 +49,12 @@ function App() {
     
     if (state.lastCheckedDate !== today) {
       // New day - check if all habits were done yesterday, update streak
-      const allDoneYesterday = state.habits.length > 0 && 
-        state.habits.every(h => state.completedToday.includes(h.id))
+      const yesterday = new Date(state.lastCheckedDate)
+      const yesterdayDayKey = yesterday.getDay()
+      const scheduledYesterday = state.habits.filter(h => isHabitScheduledOnDay(h, yesterdayDayKey))
+
+      const allDoneYesterday = scheduledYesterday.length > 0 && 
+        scheduledYesterday.every(h => state.completedToday.includes(h.id))
       
       setState(prev => {
         const newStreak = allDoneYesterday ? prev.currentStreak + 1 : 0
@@ -65,8 +72,10 @@ function App() {
     // Check for missed habits (past end time and not completed)
     const now = new Date()
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    const todayDayKey = now.getDay()
 
     state.habits.forEach(habit => {
+      if (!isHabitScheduledOnDay(habit, todayDayKey)) return
       const [endHour, endMin] = habit.endTime.split(':').map(Number)
       const endMinutes = endHour * 60 + endMin
 
@@ -158,8 +167,10 @@ function App() {
   const getHabitsNeedingCheckIn = () => {
     const now = new Date()
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    const todayDayKey = now.getDay()
     
     return state.habits.filter(habit => {
+      if (!isHabitScheduledOnDay(habit, todayDayKey)) return false
       if (state.completedToday.includes(habit.id)) return false
       if (state.paidToday?.includes(habit.id)) return false
       const [endHour, endMin] = habit.endTime.split(':').map(Number)

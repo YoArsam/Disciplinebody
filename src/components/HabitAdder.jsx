@@ -6,10 +6,40 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [startTime, setStartTime] = useState(habit?.startTime || '06:00')
   const [endTime, setEndTime] = useState(habit?.endTime || '07:00')
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
+  const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
+  const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'self')
+  const [charityName, setCharityName] = useState(habit?.charityName || '')
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
   const [isCustomValue, setIsCustomValue] = useState(false) // Track if current skipCost is a custom value
   const customInputRef = useRef(null)
+
+  const habitIdeas = [
+    'Go to the gym',
+    "Don't watch porn",
+    'Wake up at 7:15',
+    'Read 10 pages',
+    'Meditate 10 min',
+    'No sugar today',
+  ]
+
+  const dayLabels = [
+    { key: 1, label: 'M' },
+    { key: 2, label: 'T' },
+    { key: 3, label: 'W' },
+    { key: 4, label: 'T' },
+    { key: 5, label: 'F' },
+    { key: 6, label: 'S' },
+    { key: 0, label: 'S' },
+  ]
+
+  const toggleDay = (dayKey) => {
+    setDaysOfWeek(prev => {
+      const has = prev.includes(dayKey)
+      const next = has ? prev.filter(d => d !== dayKey) : [...prev, dayKey]
+      return next.sort((a, b) => a - b)
+    })
+  }
 
   // Scroll custom input into view when it appears
   useEffect(() => {
@@ -24,6 +54,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     e.preventDefault()
     if (!name.trim()) return
 
+    if (stakeDestination === 'charity' && !charityName.trim()) return
+
     onSave({
       ...(habit || {}),
       name: name.trim(),
@@ -31,6 +63,9 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       startTime: allDay ? '00:00' : startTime,
       endTime: allDay ? '23:59' : endTime,
       skipCost,
+      daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
+      stakeDestination,
+      charityName: stakeDestination === 'charity' ? charityName.trim() : '',
     })
   }
 
@@ -71,6 +106,22 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </svg>
               </div>
               <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Habit Name</span>
+            </div>
+
+            <div className="mb-3">
+              <p className="text-gray-400 text-xs font-medium mb-2">Not sure what to add? Try one of these:</p>
+              <div className="flex flex-wrap gap-2">
+                {habitIdeas.map((idea) => (
+                  <button
+                    key={idea}
+                    type="button"
+                    onClick={() => setName(idea)}
+                    className="px-3 py-1.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-xs font-semibold active:scale-95 transition-transform"
+                  >
+                    {idea}
+                  </button>
+                ))}
+              </div>
             </div>
             <input
               type="text"
@@ -150,6 +201,61 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </div>
               </>
             )}
+
+            <div className="mt-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Days</span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDaysOfWeek([1, 2, 3, 4, 5])}
+                    className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
+                  >
+                    Weekdays
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDaysOfWeek([0, 6])}
+                    className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
+                  >
+                    Weekends
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDaysOfWeek([0, 1, 2, 3, 4, 5, 6])}
+                    className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
+                  >
+                    Every day
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-7 gap-2">
+                {dayLabels.map((d) => {
+                  const selected = daysOfWeek.includes(d.key)
+                  return (
+                    <button
+                      key={d.key}
+                      type="button"
+                      onClick={() => toggleDay(d.key)}
+                      className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                        selected
+                          ? 'bg-orange-500 border-orange-500 text-white'
+                          : 'bg-gray-50 border-gray-200 text-gray-600'
+                      }`}
+                    >
+                      {d.label}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {daysOfWeek.length === 0 && (
+                <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                  Select at least one day
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Stakes */}
@@ -273,6 +379,53 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 Please select your stakes to continue
               </p>
             )}
+
+            <div className="mt-5 border-t border-gray-100 pt-4">
+              <p className="text-gray-400 text-xs mb-3 text-center font-medium">
+                Where should the money go?
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStakeDestination('self')}
+                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                    stakeDestination === 'self'
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-50 text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  Wallet
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStakeDestination('charity')}
+                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                    stakeDestination === 'charity'
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-50 text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  Charity
+                </button>
+              </div>
+
+              {stakeDestination === 'charity' && (
+                <div className="mt-3">
+                  <input
+                    type="text"
+                    value={charityName}
+                    onChange={(e) => setCharityName(e.target.value)}
+                    placeholder="e.g., Red Crescent, UNICEF..."
+                    className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                  />
+                  {!charityName.trim() && (
+                    <p className="text-orange-500 text-xs mt-2 text-center font-medium">
+                      Please enter a charity name
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </form>
       </div>
@@ -282,7 +435,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
         <div className="max-w-md mx-auto space-y-3">
           <button
             onClick={handleSubmit}
-            disabled={!name.trim() || skipCost === null}
+            disabled={!name.trim() || skipCost === null || daysOfWeek.length === 0 || (stakeDestination === 'charity' && !charityName.trim())}
             className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {habit ? 'Save Changes' : 'Add Habit'}
