@@ -145,7 +145,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
       {/* Scrollable Form Content */}
       <div className={`flex-1 overflow-y-auto min-h-0 ${onDelete ? 'pb-48' : 'pb-36'}`}>
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form id="habit-form" onSubmit={handleSubmit} className="space-y-3">
 
           {step === 1 && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
@@ -566,6 +566,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           ) : (
             <button
               type="submit"
+              form="habit-form"
               disabled={!canGoNext()}
               className={`w-full py-4 rounded-2xl font-semibold text-white active:scale-95 transition-transform ${
                 canGoNext() ? 'bg-orange-500' : 'bg-gray-300'
