@@ -53,10 +53,17 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     3: 'Stakes + destination',
   }
 
+  const getCustomSkipCost = () => {
+    if (!showCustomInput) return null
+    const val = parseFloat(customAmount)
+    if (Number.isNaN(val) || val < 0) return null
+    return val
+  }
+
   const canGoNext = () => {
     if (step === 1) return !!name.trim()
     if (step === 2) return daysOfWeek.length > 0
-    if (step === 3) return skipCost !== null
+    if (step === 3) return skipCost !== null || getCustomSkipCost() !== null
     return false
   }
 
@@ -82,13 +89,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     e.preventDefault()
     if (!name.trim()) return
 
+    const computedSkipCost = skipCost !== null ? skipCost : getCustomSkipCost()
+    if (computedSkipCost === null) return
+
     onSave({
       ...(habit || {}),
       name: name.trim(),
       allDay,
       startTime: allDay ? '00:00' : startTime,
       endTime: allDay ? '23:59' : endTime,
-      skipCost,
+      skipCost: computedSkipCost,
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
       stakeDestination,
       charityName: '',
