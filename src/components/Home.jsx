@@ -358,12 +358,17 @@ function Home({
             <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
           </div>
           <button 
+            type="button"
+            onPointerDown={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               if (onAddHabit) onAddHabit()
             }}
-            className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
+            className="relative z-50 w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
           >
             <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -375,6 +380,11 @@ function Home({
         <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
           {habits.length === 0 ? (
             <button 
+              type="button"
+              onPointerDown={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+              }}
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
@@ -395,6 +405,11 @@ function Home({
             </button>
           ) : todaysHabits.length === 0 ? (
             <button 
+              type="button"
+              onPointerDown={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+              }}
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
