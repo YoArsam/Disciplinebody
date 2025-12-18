@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 
 function HabitAdder({ habit, onSave, onDelete, onBack }) {
+  const [step, setStep] = useState(1)
   const [name, setName] = useState(habit?.name || '')
   const [allDay, setAllDay] = useState(habit?.allDay ?? false)
   const [startTime, setStartTime] = useState(habit?.startTime || '06:00')
@@ -39,6 +40,34 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       const next = has ? prev.filter(d => d !== dayKey) : [...prev, dayKey]
       return next.sort((a, b) => a - b)
     })
+  }
+
+  const stepTitles = {
+    1: 'Name your habit',
+    2: 'Choose timing',
+    3: 'Pick days',
+    4: 'Set stakes',
+  }
+
+  const canGoNext = () => {
+    if (step === 1) return !!name.trim()
+    if (step === 2) return true
+    if (step === 3) return daysOfWeek.length > 0
+    if (step === 4) {
+      if (skipCost === null) return false
+      if (stakeDestination === 'charity' && !charityName.trim()) return false
+      return true
+    }
+    return false
+  }
+
+  const goNext = () => {
+    if (!canGoNext()) return
+    setStep(prev => Math.min(4, prev + 1))
+  }
+
+  const goBackStep = () => {
+    setStep(prev => Math.max(1, prev - 1))
   }
 
   // Scroll custom input into view when it appears
@@ -88,121 +117,152 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-xl font-bold text-gray-800 tracking-tight">
-          {habit ? 'Edit Habit' : 'New Habit'}
-        </h1>
+        <div className="flex flex-col items-center">
+          <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+            {stepTitles[step]}
+          </h1>
+          <div className="flex items-center gap-1.5 mt-1">
+            {[1, 2, 3, 4].map((s) => (
+              <div
+                key={s}
+                className={`h-1.5 rounded-full transition-all ${
+                  s === step ? 'w-8 bg-orange-500' : s < step ? 'w-4 bg-orange-200' : 'w-4 bg-gray-200'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
         <div className="w-10"></div>
       </div>
 
       {/* Scrollable Form Content */}
       <div className={`flex-1 overflow-y-auto min-h-0 ${onDelete ? 'pb-48' : 'pb-36'}`}>
         <form onSubmit={handleSubmit} className="space-y-3">
-          {/* Habit Name */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </div>
-              <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Habit Name</span>
-            </div>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Wake up, Exercise, Read..."
-              className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-4 text-base font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-            />
 
-            <div className="mt-3">
-              <p className="text-gray-400 text-xs font-medium mb-2">Not sure what to add? Try one of these:</p>
-              <div className="flex flex-wrap gap-2">
-                {habitIdeas.map((idea) => (
-                  <button
-                    key={idea}
-                    type="button"
-                    onClick={() => setName(idea)}
-                    className="px-3 py-1.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-xs font-semibold active:scale-95 transition-transform"
-                  >
-                    {idea}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Time Frame */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Time Window</span>
-            </div>
-            
-            {/* All Day Toggle */}
-            <button
-              type="button"
-              onClick={() => setAllDay(!allDay)}
-              className={`w-full flex items-center justify-between p-3 rounded-xl mb-4 transition-all ${
-                allDay ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50 border border-transparent'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                  allDay ? 'bg-orange-500' : 'bg-gray-300'
-                }`}>
-                  {allDay && (
-                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
+          {step === 1 && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
                 </div>
-                <span className={`font-medium text-sm ${allDay ? 'text-orange-700' : 'text-gray-600'}`}>All Day</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Habit Name</span>
               </div>
-              <span className="text-xs text-gray-400">No specific time</span>
-            </button>
 
-            {!allDay && (
-              <>
-                <p className="text-gray-400 text-xs mb-3">
-                  Complete this habit between these times
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Wake up, Exercise, Read..."
+                className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-4 text-base font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+              />
+
+              <div className="mt-3">
+                <p className="text-gray-400 text-xs font-medium mb-2">Not sure what to add? Try one of these:</p>
+                <div className="flex flex-wrap gap-2">
+                  {habitIdeas.map((idea) => (
+                    <button
+                      key={idea}
+                      type="button"
+                      onClick={() => setName(idea)}
+                      className="px-3 py-1.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-xs font-semibold active:scale-95 transition-transform"
+                    >
+                      {idea}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {!name.trim() && (
+                <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                  Enter a habit name to continue
                 </p>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="min-w-0">
-                    <label className="block text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-wide">From</label>
-                    <input
-                      type="time"
-                      value={startTime}
-                      onChange={(e) => {
-                        const newStart = e.target.value
-                        setStartTime(newStart)
-                        // Auto-adjust end time to 1 hour after start
-                        const [hours, mins] = newStart.split(':').map(Number)
-                        const endHours = (hours + 1) % 24
-                        const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
-                        setEndTime(newEnd)
-                      }}
-                      className="w-full max-w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-base font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <label className="block text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-wide">Until</label>
-                    <input
-                      type="time"
-                      value={endTime}
-                      onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full max-w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-base font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
+              )}
+            </div>
+          )}
 
-            <div className="mt-5">
+          {step === 2 && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Time Window</span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAllDay(!allDay)}
+                className={`w-full flex items-center justify-between p-3 rounded-xl mb-4 transition-all ${
+                  allDay ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50 border border-transparent'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                    allDay ? 'bg-orange-500' : 'bg-gray-300'
+                  }`}>
+                    {allDay && (
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className={`font-medium text-sm ${allDay ? 'text-orange-700' : 'text-gray-600'}`}>All Day</span>
+                </div>
+                <span className="text-xs text-gray-400">No specific time</span>
+              </button>
+
+              {!allDay && (
+                <>
+                  <p className="text-gray-400 text-xs mb-3">
+                    Complete this habit between these times
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="min-w-0">
+                      <label className="block text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-wide">From</label>
+                      <input
+                        type="time"
+                        value={startTime}
+                        onChange={(e) => {
+                          const newStart = e.target.value
+                          setStartTime(newStart)
+                          const [hours, mins] = newStart.split(':').map(Number)
+                          const endHours = (hours + 1) % 24
+                          const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
+                          setEndTime(newEnd)
+                        }}
+                        className="w-full max-w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-base font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <label className="block text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-wide">Until</label>
+                      <input
+                        type="time"
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                        className="w-full max-w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-base font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Schedule</span>
+              </div>
+
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Days</span>
                 <div className="flex gap-2">
@@ -256,190 +316,210 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </p>
               )}
             </div>
-          </div>
+          )}
 
-          {/* Stakes */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">What's at stake?</span>
-            </div>
-            <p className="text-gray-400 text-xs mb-4 ml-10">
-              What should be the cost of skipping this habit?
-            </p>
-            
-            {!showCustomInput ? (
-              <>
-                <div className="grid grid-cols-3 gap-1.5 mb-1.5">
-                  {[0, 0.5, 1].map((val) => (
-                    <button
-                      key={val}
-                      type="button"
-                      onClick={() => {
-                        setSkipCost(val)
-                        setIsCustomValue(false)
-                      }}
-                      className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                        skipCost === val && !isCustomValue
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-50 text-gray-700 border border-gray-200'
-                      }`}
-                    >
-                      {val === 0 ? 'Free' : `$${val}`}
-                    </button>
-                  ))}
+          {step === 4 && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {[2, 5].map((val) => (
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">What's at stake?</span>
+              </div>
+              <p className="text-gray-400 text-xs mb-4 ml-10">
+                What should be the cost of skipping this habit?
+              </p>
+              
+              {!showCustomInput ? (
+                <>
+                  <div className="grid grid-cols-3 gap-1.5 mb-1.5">
+                    {[0, 0.5, 1].map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => {
+                          setSkipCost(val)
+                          setIsCustomValue(false)
+                        }}
+                        className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                          skipCost === val && !isCustomValue
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-50 text-gray-700 border border-gray-200'
+                        }`}
+                      >
+                        {val === 0 ? 'Free' : `$${val}`}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {[2, 5].map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => {
+                          setSkipCost(val)
+                          setIsCustomValue(false)
+                        }}
+                        className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                          skipCost === val && !isCustomValue
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-50 text-gray-700 border border-gray-200'
+                        }`}
+                      >
+                        ${val}
+                      </button>
+                    ))}
                     <button
-                      key={val}
                       type="button"
                       onClick={() => {
-                        setSkipCost(val)
-                        setIsCustomValue(false)
+                        setShowCustomInput(true)
+                        if (isCustomValue && skipCost !== null) {
+                          setCustomAmount(skipCost.toString())
+                        }
                       }}
                       className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                        skipCost === val && !isCustomValue
+                        isCustomValue
                           ? 'bg-orange-500 text-white'
                           : 'bg-gray-50 text-gray-700 border border-gray-200'
                       }`}
                     >
-                      ${val}
+                      {isCustomValue && skipCost !== null ? `$${skipCost}` : 'Custom'}
                     </button>
-                  ))}
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={customAmount}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9.]/g, '')
+                        const parts = val.split('.')
+                        if (parts.length > 2) return
+                        setCustomAmount(val)
+                      }}
+                      placeholder="0.00"
+                      autoFocus
+                      className="w-full pl-7 pr-3 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={() => {
-                      setShowCustomInput(true)
-                      if (isCustomValue && skipCost !== null) {
-                        setCustomAmount(skipCost.toString())
+                      const val = parseFloat(customAmount)
+                      if (!isNaN(val) && val >= 0) {
+                        setSkipCost(val)
+                        setIsCustomValue(true)
+                        setShowCustomInput(false)
                       }
                     }}
-                    className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                      isCustomValue
+                    className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
+                  >
+                    Set
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomInput(false)}
+                    className="px-3 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl active:scale-95 transition-transform"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
+              {skipCost === null && !showCustomInput && (
+                <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                  Please select your stakes to continue
+                </p>
+              )}
+
+              <div className="mt-5 border-t border-gray-100 pt-4">
+                <p className="text-gray-400 text-xs mb-3 text-center font-medium">
+                  Where should the money go?
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setStakeDestination('self')}
+                    className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                      stakeDestination === 'self'
                         ? 'bg-orange-500 text-white'
                         : 'bg-gray-50 text-gray-700 border border-gray-200'
                     }`}
                   >
-                    {isCustomValue && skipCost !== null ? `$${skipCost}` : 'Custom'}
+                    Wallet
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStakeDestination('charity')}
+                    className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                      stakeDestination === 'charity'
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-50 text-gray-700 border border-gray-200'
+                    }`}
+                  >
+                    Charity
                   </button>
                 </div>
-              </>
-            ) : (
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={customAmount}
-                    onChange={(e) => {
-                      // Only allow numbers and decimal point
-                      const val = e.target.value.replace(/[^0-9.]/g, '')
-                      // Prevent multiple decimal points
-                      const parts = val.split('.')
-                      if (parts.length > 2) return
-                      setCustomAmount(val)
-                    }}
-                    placeholder="0.00"
-                    autoFocus
-                    className="w-full pl-7 pr-3 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const val = parseFloat(customAmount)
-                    if (!isNaN(val) && val >= 0) {
-                      setSkipCost(val)
-                      setIsCustomValue(true)
-                      setShowCustomInput(false)
-                    }
-                  }}
-                  className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
-                >
-                  Set
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowCustomInput(false)}
-                  className="px-3 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl active:scale-95 transition-transform"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
-            
-            {skipCost === null && !showCustomInput && (
-              <p className="text-orange-500 text-xs mt-3 text-center font-medium">
-                Please select your stakes to continue
-              </p>
-            )}
 
-            <div className="mt-5 border-t border-gray-100 pt-4">
-              <p className="text-gray-400 text-xs mb-3 text-center font-medium">
-                Where should the money go?
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setStakeDestination('self')}
-                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    stakeDestination === 'self'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-50 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  Wallet
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStakeDestination('charity')}
-                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    stakeDestination === 'charity'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-50 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  Charity
-                </button>
+                {stakeDestination === 'charity' && (
+                  <div className="mt-3">
+                    <input
+                      type="text"
+                      value={charityName}
+                      onChange={(e) => setCharityName(e.target.value)}
+                      placeholder="e.g., Red Crescent, UNICEF..."
+                      className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                    />
+                    {!charityName.trim() && (
+                      <p className="text-orange-500 text-xs mt-2 text-center font-medium">
+                        Please enter a charity name
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
-
-              {stakeDestination === 'charity' && (
-                <div className="mt-3">
-                  <input
-                    type="text"
-                    value={charityName}
-                    onChange={(e) => setCharityName(e.target.value)}
-                    placeholder="e.g., Red Crescent, UNICEF..."
-                    className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                  />
-                  {!charityName.trim() && (
-                    <p className="text-orange-500 text-xs mt-2 text-center font-medium">
-                      Please enter a charity name
-                    </p>
-                  )}
-                </div>
-              )}
             </div>
-          </div>
+          )}
         </form>
       </div>
 
       {/* Fixed Bottom Actions */}
       <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] z-50">
         <div className="max-w-md mx-auto space-y-3">
-          <button
-            onClick={handleSubmit}
-            disabled={!name.trim() || skipCost === null || daysOfWeek.length === 0 || (stakeDestination === 'charity' && !charityName.trim())}
-            className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {habit ? 'Save Changes' : 'Add Habit'}
-          </button>
+          {step < 4 ? (
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={goBackStep}
+                disabled={step === 1}
+                className="w-full bg-white text-gray-700 py-4 rounded-xl font-bold text-base border border-gray-200 active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={goNext}
+                disabled={!canGoNext()}
+                className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={!canGoNext()}
+              className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {habit ? 'Save Changes' : 'Add Habit'}
+            </button>
+          )}
 
           {onDelete && (
             <button
