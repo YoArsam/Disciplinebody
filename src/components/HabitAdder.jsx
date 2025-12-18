@@ -107,8 +107,15 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               </div>
               <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Habit Name</span>
             </div>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g., Wake up, Exercise, Read..."
+              className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-4 text-base font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+            />
 
-            <div className="mb-3">
+            <div className="mt-3">
               <p className="text-gray-400 text-xs font-medium mb-2">Not sure what to add? Try one of these:</p>
               <div className="flex flex-wrap gap-2">
                 {habitIdeas.map((idea) => (
@@ -123,13 +130,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 ))}
               </div>
             </div>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Wake up, Exercise, Read..."
-              className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-4 text-base font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-            />
           </div>
 
           {/* Time Frame */}
@@ -172,7 +172,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   Complete this habit between these times
                 </p>
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-wide">From</label>
                     <input
                       type="time"
@@ -186,16 +186,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
                         setEndTime(newEnd)
                       }}
-                      className="w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-lg font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                      className="w-full max-w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-base font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
                     />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-wide">Until</label>
                     <input
                       type="time"
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-lg font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                      className="w-full max-w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-base font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
                     />
                   </div>
                 </div>
