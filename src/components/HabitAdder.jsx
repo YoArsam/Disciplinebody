@@ -37,8 +37,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     { key: 0, label: 'S' },
   ]
 
-  const charityOptions = ['Red Crescent', 'UNICEF', 'WWF']
-
   const toggleDay = (dayKey) => {
     setDaysOfWeek(prev => {
       const has = prev.includes(dayKey)
@@ -58,7 +56,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const canGoNext = () => {
     if (step === 1) return !!name.trim()
     if (step === 2) return daysOfWeek.length > 0
-    if (step === 3) return skipCost !== null && (stakeDestination !== 'charity' || !!charityName.trim())
+    if (step === 3) return skipCost !== null
     return false
   }
 
@@ -84,8 +82,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     e.preventDefault()
     if (!name.trim()) return
 
-    if (stakeDestination === 'charity' && !charityName.trim()) return
-
     onSave({
       ...(habit || {}),
       name: name.trim(),
@@ -95,7 +91,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       skipCost,
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
       stakeDestination,
-      charityName: stakeDestination === 'charity' ? charityName.trim() : '',
+      charityName: '',
       pausedUntil: pausedUntil || '',
     })
   }
@@ -526,34 +522,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     Charity
                   </button>
                 </div>
-
-                {stakeDestination === 'charity' && (
-                  <div className="mt-3">
-                    <div className="grid grid-cols-3 gap-2">
-                      {charityOptions.map((c) => (
-                        <button
-                          key={c}
-                          type="button"
-                          onClick={() => {
-                            setCharityName(c)
-                          }}
-                          className={`py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
-                            charityName === c
-                              ? 'bg-orange-500 text-white'
-                              : 'bg-gray-50 text-gray-700 border border-gray-200'
-                          }`}
-                        >
-                          {c}
-                        </button>
-                      ))}
-                    </div>
-                    {!charityName.trim() && (
-                      <p className="text-orange-500 text-xs mt-2 text-center font-medium">
-                        Please enter a charity name
-                      </p>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
           )}

@@ -359,8 +359,9 @@ function Home({
           </div>
           <button 
             onClick={(e) => {
+              e.preventDefault()
               e.stopPropagation()
-              onAddHabit()
+              if (onAddHabit) onAddHabit()
             }}
             className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
           >
@@ -375,8 +376,9 @@ function Home({
           {habits.length === 0 ? (
             <button 
               onClick={(e) => {
+                e.preventDefault()
                 e.stopPropagation()
-                onAddHabit()
+                if (onAddHabit) onAddHabit()
               }}
               className="flex-1 flex flex-col items-center justify-center w-full"
             >
@@ -394,8 +396,9 @@ function Home({
           ) : todaysHabits.length === 0 ? (
             <button 
               onClick={(e) => {
+                e.preventDefault()
                 e.stopPropagation()
-                onAddHabit()
+                if (onAddHabit) onAddHabit()
               }}
               className="flex-1 flex flex-col items-center justify-center w-full"
             >
