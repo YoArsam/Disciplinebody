@@ -167,11 +167,11 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 <button
                   type="button"
                   onClick={() => setShowIdeas((v) => !v)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-transparent text-gray-400 text-xs font-medium"
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-transparent text-gray-400 text-sm font-medium"
                 >
                   <span>Need ideas?</span>
                   <svg
-                    className={`w-4 h-4 transition-transform ${showIdeas ? 'rotate-180' : ''}`}
+                    className={`w-5 h-5 transition-transform ${showIdeas ? 'rotate-180' : ''}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -187,7 +187,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         key={idea}
                         type="button"
                         onClick={() => setName(idea)}
-                        className="px-3 py-1.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-xs font-semibold active:scale-95 transition-transform"
+                        className="px-4 py-2 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-sm font-semibold active:scale-95 transition-transform"
                       >
                         {idea}
                       </button>
