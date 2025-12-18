@@ -10,6 +10,9 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
   const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'self')
   const [charityName, setCharityName] = useState(habit?.charityName || '')
+  const [showCharityCustom, setShowCharityCustom] = useState(false)
+  const [pausedUntil, setPausedUntil] = useState(habit?.pausedUntil || '')
+  const [pauseDays, setPauseDays] = useState('')
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
   const [isCustomValue, setIsCustomValue] = useState(false) // Track if current skipCost is a custom value
@@ -34,6 +37,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     { key: 0, label: 'S' },
   ]
 
+  const charityOptions = ['Red Crescent', 'UNICEF', 'WWF']
+
   const toggleDay = (dayKey) => {
     setDaysOfWeek(prev => {
       const has = prev.includes(dayKey)
@@ -41,6 +46,15 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       return next.sort((a, b) => a - b)
     })
   }
+
+  const isSameDays = (a, b) => {
+    if (a.length !== b.length) return false
+    const as = [...a].sort().join(',')
+    const bs = [...b].sort().join(',')
+    return as === bs
+  }
+
+  const formatISODate = (d) => d.toISOString().split('T')[0]
 
   const stepTitles = {
     1: 'Name your habit',
@@ -91,6 +105,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
       stakeDestination,
       charityName: stakeDestination === 'charity' ? charityName.trim() : '',
+      pausedUntil: pausedUntil || '',
     })
   }
 
@@ -260,31 +275,33 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Days</span>
                 </div>
 
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Schedule</span>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setDaysOfWeek([1, 2, 3, 4, 5])}
-                      className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
-                    >
-                      Weekdays
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDaysOfWeek([0, 6])}
-                      className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
-                    >
-                      Weekends
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDaysOfWeek([0, 1, 2, 3, 4, 5, 6])}
-                      className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
-                    >
-                      Every day
-                    </button>
-                  </div>
+                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide block mb-2">Schedule</span>
+
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  {(() => {
+                    const presets = [
+                      { label: 'Weekdays', value: [1, 2, 3, 4, 5] },
+                      { label: 'Weekends', value: [0, 6] },
+                      { label: 'Every day', value: [0, 1, 2, 3, 4, 5, 6] },
+                    ]
+                    return presets.map(p => {
+                      const selected = isSameDays(daysOfWeek, p.value)
+                      return (
+                        <button
+                          key={p.label}
+                          type="button"
+                          onClick={() => setDaysOfWeek(p.value)}
+                          className={`py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
+                            selected
+                              ? 'bg-orange-500 text-white'
+                              : 'bg-gray-50 text-gray-700 border border-gray-200'
+                          }`}
+                        >
+                          {p.label}
+                        </button>
+                      )
+                    })
+                  })()}
                 </div>
 
                 <div className="grid grid-cols-7 gap-2">
@@ -313,6 +330,64 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </p>
                 )}
               </div>
+
+              {habit && (
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Pause</span>
+                  </div>
+
+                  {pausedUntil ? (
+                    <>
+                      <p className="text-gray-500 text-sm text-center">Paused until {pausedUntil}</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPausedUntil('')
+                          setPauseDays('')
+                        }}
+                        className="mt-3 w-full py-3 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
+                      >
+                        Resume Habit
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={pauseDays}
+                          onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
+                          placeholder="Days"
+                          className="flex-1 bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const n = parseInt(pauseDays, 10)
+                            if (!n || n <= 0) return
+                            const d = new Date()
+                            d.setDate(d.getDate() + n)
+                            setPausedUntil(formatISODate(d))
+                          }}
+                          className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
+                        >
+                          Pause
+                        </button>
+                      </div>
+                      <p className="text-gray-400 text-xs mt-2 text-center">
+                        Pause hides the habit and skips penalties while paused
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -479,13 +554,50 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
               {stakeDestination === 'charity' && (
                 <div className="mt-3">
-                  <input
-                    type="text"
-                    value={charityName}
-                    onChange={(e) => setCharityName(e.target.value)}
-                    placeholder="e.g., Red Crescent, UNICEF..."
-                    className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                  />
+                  <div className="grid grid-cols-3 gap-2">
+                    {charityOptions.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => {
+                          setCharityName(c)
+                          setShowCharityCustom(false)
+                        }}
+                        className={`py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
+                          charityName === c && !showCharityCustom
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-50 text-gray-700 border border-gray-200'
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCharityCustom(true)
+                      if (charityOptions.includes(charityName)) setCharityName('')
+                    }}
+                    className={`mt-2 w-full py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
+                      showCharityCustom
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-50 text-gray-700 border border-gray-200'
+                    }`}
+                  >
+                    Custom
+                  </button>
+
+                  {showCharityCustom && (
+                    <input
+                      type="text"
+                      value={charityName}
+                      onChange={(e) => setCharityName(e.target.value)}
+                      placeholder="Type a charity name"
+                      className="mt-2 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                    />
+                  )}
                   {!charityName.trim() && (
                     <p className="text-orange-500 text-xs mt-2 text-center font-medium">
                       Please enter a charity name

@@ -8,6 +8,11 @@ import CheckInModal from './components/CheckInModal'
 
 const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
 const isHabitScheduledOnDay = (habit, dayKey) => getHabitDays(habit).includes(dayKey)
+const isHabitPausedOnDate = (habit, date) => {
+  if (!habit?.pausedUntil) return false
+  const day = date.toISOString().split('T')[0]
+  return habit.pausedUntil >= day
+}
 
 // Load from localStorage or use defaults
 const loadState = () => {
@@ -51,7 +56,7 @@ function App() {
       // New day - check if all habits were done yesterday, update streak
       const yesterday = new Date(state.lastCheckedDate)
       const yesterdayDayKey = yesterday.getDay()
-      const scheduledYesterday = state.habits.filter(h => isHabitScheduledOnDay(h, yesterdayDayKey))
+      const scheduledYesterday = state.habits.filter(h => isHabitScheduledOnDay(h, yesterdayDayKey) && !isHabitPausedOnDate(h, yesterday))
 
       const allDoneYesterday = scheduledYesterday.length > 0 && 
         scheduledYesterday.every(h => state.completedToday.includes(h.id))
@@ -76,6 +81,7 @@ function App() {
 
     state.habits.forEach(habit => {
       if (!isHabitScheduledOnDay(habit, todayDayKey)) return
+      if (isHabitPausedOnDate(habit, now)) return
       const [endHour, endMin] = habit.endTime.split(':').map(Number)
       const endMinutes = endHour * 60 + endMin
 
@@ -171,6 +177,7 @@ function App() {
     
     return state.habits.filter(habit => {
       if (!isHabitScheduledOnDay(habit, todayDayKey)) return false
+      if (isHabitPausedOnDate(habit, now)) return false
       if (state.completedToday.includes(habit.id)) return false
       if (state.paidToday?.includes(habit.id)) return false
       const [endHour, endMin] = habit.endTime.split(':').map(Number)

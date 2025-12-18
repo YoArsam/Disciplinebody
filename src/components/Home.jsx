@@ -230,7 +230,12 @@ function Home({
   }, [])
 
   const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
-  const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(currentTime.getDay())
+  const isHabitPausedToday = (habit) => {
+    if (!habit?.pausedUntil) return false
+    const todayIso = currentTime.toISOString().split('T')[0]
+    return habit.pausedUntil >= todayIso
+  }
+  const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(currentTime.getDay()) && !isHabitPausedToday(habit)
   const todaysHabits = habits.filter(isHabitScheduledToday)
 
   const formatTimeRange = (habit) => {
@@ -439,9 +444,10 @@ function Home({
               return (
                 <div
                   key={habit.id}
+                  onClick={() => onEditHabit(habit)}
                   className={`w-full p-4 rounded-2xl transition-all ${
                     isResolved ? 'bg-white/50' : 'bg-white'
-                  } border border-gray-200`}
+                  } border border-gray-200 cursor-pointer`}
                 >
                   {/* Top row: Habit info + status */}
                   <div className="flex items-center justify-between">
