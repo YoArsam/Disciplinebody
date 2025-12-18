@@ -47,13 +47,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     })
   }
 
-  const isSameDays = (a, b) => {
-    if (a.length !== b.length) return false
-    const as = [...a].sort().join(',')
-    const bs = [...b].sort().join(',')
-    return as === bs
-  }
-
   const formatISODate = (d) => d.toISOString().split('T')[0]
 
   const stepTitles = {
@@ -207,8 +200,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               <button
                 type="button"
                 onClick={() => setAllDay(!allDay)}
-                className={`w-full flex items-center justify-between p-3 rounded-xl mb-4 transition-all ${
-                  allDay ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50 border border-transparent'
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-full mb-4 transition-all border ${
+                  allDay ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -221,9 +214,9 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       </svg>
                     )}
                   </div>
-                  <span className={`font-medium text-sm ${allDay ? 'text-orange-700' : 'text-gray-600'}`}>All Day</span>
+                  <span className={`font-semibold text-sm ${allDay ? 'text-orange-700' : 'text-gray-700'}`}>All Day</span>
                 </div>
-                <span className="text-xs text-gray-400">No specific time</span>
+                <span className="text-xs text-gray-400">No time window</span>
               </button>
 
               {!allDay && (
@@ -233,7 +226,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </p>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="min-w-0">
-                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex flex-col items-center">
+                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 flex flex-col items-center">
                         <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">From</span>
                         <input
                           type="time"
@@ -246,18 +239,18 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                             const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
                             setEndTime(newEnd)
                           }}
-                          className="w-full bg-transparent text-gray-800 text-base font-bold text-center focus:outline-none"
+                          className="w-full bg-transparent text-gray-800 text-sm font-bold text-center focus:outline-none"
                         />
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex flex-col items-center">
+                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 flex flex-col items-center">
                         <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Until</span>
                         <input
                           type="time"
                           value={endTime}
                           onChange={(e) => setEndTime(e.target.value)}
-                          className="w-full bg-transparent text-gray-800 text-base font-bold text-center focus:outline-none"
+                          className="w-full bg-transparent text-gray-800 text-sm font-bold text-center focus:outline-none"
                         />
                       </div>
                     </div>
@@ -276,33 +269,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </div>
 
                 <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide block mb-2">Schedule</span>
-
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  {(() => {
-                    const presets = [
-                      { label: 'Weekdays', value: [1, 2, 3, 4, 5] },
-                      { label: 'Weekends', value: [0, 6] },
-                      { label: 'Every day', value: [0, 1, 2, 3, 4, 5, 6] },
-                    ]
-                    return presets.map(p => {
-                      const selected = isSameDays(daysOfWeek, p.value)
-                      return (
-                        <button
-                          key={p.label}
-                          type="button"
-                          onClick={() => setDaysOfWeek(p.value)}
-                          className={`py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
-                            selected
-                              ? 'bg-orange-500 text-white'
-                              : 'bg-gray-50 text-gray-700 border border-gray-200'
-                          }`}
-                        >
-                          {p.label}
-                        </button>
-                      )
-                    })
-                  })()}
-                </div>
 
                 <div className="grid grid-cols-7 gap-2">
                   {dayLabels.map((d) => {
@@ -537,7 +503,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       : 'bg-gray-50 text-gray-700 border border-gray-200'
                   }`}
                 >
-                  Wallet
+                  Discipline Fund
                 </button>
                 <button
                   type="button"
