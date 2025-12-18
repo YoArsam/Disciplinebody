@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 
-function CheckInModal({ habit, mode = 'window', onYes, onNo }) {
+function CheckInModal({ habit, onYes, onNo }) {
   const [showPayment, setShowPayment] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
@@ -18,14 +18,6 @@ function CheckInModal({ habit, mode = 'window', onYes, onNo }) {
     if (allDay) return 'All Day'
     return `${formatTime(startTime)} - ${formatTime(endTime)}`
   }
-
-  const windowTitle = useMemo(() => {
-    if (allDay) return 'All day check-in'
-    return `Between ${formatTime(startTime)} and ${formatTime(endTime)}`
-  }, [allDay, startTime, endTime])
-
-  const isPenaltyMode = mode === 'penalty'
-  const canCheckIn = !isPenaltyMode
 
   // Success view - simple, no animations
   if (showSuccess) {
@@ -51,7 +43,7 @@ function CheckInModal({ habit, mode = 'window', onYes, onNo }) {
   }
 
   // Payment view (or free habit confirmation)
-  if (showPayment || isPenaltyMode) {
+  if (showPayment) {
     // Free habit - just confirm
     if (skipCost === 0) {
       return (
@@ -87,15 +79,10 @@ function CheckInModal({ habit, mode = 'window', onYes, onNo }) {
           </svg>
         </div>
         
-        <h1 className="text-2xl font-bold text-white mb-2">
-          {isPenaltyMode ? 'Window closed' : "That's okay"}
-        </h1>
+        <h1 className="text-2xl font-bold text-white mb-2">That's okay</h1>
         <p className="text-gray-400 text-center mb-8">
-          {isPenaltyMode ? (
-            <>You can only check in {windowTitle}.<br/>Pay now to stay accountable.</>
-          ) : (
-            <>Tomorrow's a fresh start.<br/>Pay up and move forward.</>
-          )}
+          Tomorrow's a fresh start.<br/>
+          Pay up and move forward.
         </p>
 
         <div className="bg-white/10 rounded-2xl p-6 w-full mb-6 text-center">
@@ -107,7 +94,7 @@ function CheckInModal({ habit, mode = 'window', onYes, onNo }) {
           onClick={onNo}
           className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
         >
-          {isPenaltyMode ? 'Pay now' : 'Pay with Apple Pay'}
+          Pay with Apple Pay
         </button>
       </div>
     )
@@ -116,9 +103,7 @@ function CheckInModal({ habit, mode = 'window', onYes, onNo }) {
   // Question view
   return (
     <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-[3px] flex flex-col items-center justify-center z-50 px-6">
-      <h1 className="text-3xl font-bold text-white mb-4 text-center">
-        Did you complete<br/>this habit?
-      </h1>
+      <h1 className="text-3xl font-bold text-white mb-4 text-center">Did you complete<br/>this habit?</h1>
       
       {/* Habit Card */}
       <div className="w-full bg-white/10 rounded-2xl p-5 mb-8">
@@ -132,26 +117,18 @@ function CheckInModal({ habit, mode = 'window', onYes, onNo }) {
       </div>
 
       <div className="w-full space-y-3">
-        {canCheckIn && (
-          <button
-            onClick={() => setShowSuccess(true)}
-            className="w-full bg-green-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
-          >
-            Yes, I did it! ✓
-          </button>
-        )}
+        <button
+          onClick={() => setShowSuccess(true)}
+          className="w-full bg-green-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
+        >
+          Yes, I did it! ✓
+        </button>
         
         <button
-          onClick={() => {
-            if (isPenaltyMode) {
-              setShowPayment(true)
-            } else {
-              setShowPayment(true)
-            }
-          }}
+          onClick={() => setShowPayment(true)}
           className="w-full bg-white/10 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
         >
-          {canCheckIn ? 'No, I missed it' : 'Pay for missing it'}
+          No, I missed it
         </button>
       </div>
     </div>
