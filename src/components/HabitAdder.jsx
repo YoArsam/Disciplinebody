@@ -53,21 +53,19 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const stepTitles = {
     1: 'Name your habit',
     2: 'Timing + days',
-    3: 'Stakes',
-    4: 'Destination',
+    3: 'Stakes + destination',
   }
 
   const canGoNext = () => {
     if (step === 1) return !!name.trim()
     if (step === 2) return daysOfWeek.length > 0
-    if (step === 3) return skipCost !== null
-    if (step === 4) return stakeDestination !== 'charity' || !!charityName.trim()
+    if (step === 3) return skipCost !== null && (stakeDestination !== 'charity' || !!charityName.trim())
     return false
   }
 
   const goNext = () => {
     if (!canGoNext()) return
-    setStep(prev => Math.min(4, prev + 1))
+    setStep(prev => Math.min(3, prev + 1))
   }
 
   const goBackStep = () => {
@@ -127,7 +125,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             {stepTitles[step]}
           </h1>
           <div className="flex items-center gap-1.5 mt-1">
-            {[1, 2, 3, 4].map((s) => (
+            {[1, 2, 3].map((s) => (
               <div
                 key={s}
                 className={`h-1.5 rounded-full transition-all ${
@@ -494,116 +492,115 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   Please select your stakes to continue
                 </p>
               )}
-            </div>
-          )}
 
-          {step === 4 && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Destination</span>
-              </div>
-              <p className="text-gray-400 text-xs mb-4 ml-10">
-                Where should the money go if you miss the habit?
-              </p>
-
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setStakeDestination('self')}
-                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    stakeDestination === 'self'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-50 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  Discipline Fund
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStakeDestination('charity')}
-                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                    stakeDestination === 'charity'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-gray-50 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  Charity
-                </button>
-              </div>
-
-              {stakeDestination === 'charity' && (
-                <div className="mt-3">
-                  <div className="grid grid-cols-3 gap-2">
-                    {charityOptions.map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => {
-                          setCharityName(c)
-                          setShowCharityCustom(false)
-                        }}
-                        className={`py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
-                          charityName === c && !showCharityCustom
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-gray-50 text-gray-700 border border-gray-200'
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    ))}
+              <div className="mt-5 pt-4 border-t border-gray-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Destination</span>
+                </div>
+                <p className="text-gray-400 text-xs mb-4 ml-10">
+                  Where should the money go if you miss the habit?
+                </p>
 
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowCharityCustom(true)
-                      if (charityOptions.includes(charityName)) setCharityName('')
-                    }}
-                    className={`mt-2 w-full py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
-                      showCharityCustom
+                    onClick={() => setStakeDestination('self')}
+                    className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                      stakeDestination === 'self'
                         ? 'bg-orange-500 text-white'
                         : 'bg-gray-50 text-gray-700 border border-gray-200'
                     }`}
                   >
-                    Custom
+                    Discipline Fund
                   </button>
-
-                  {showCharityCustom && (
-                    <input
-                      type="text"
-                      value={charityName}
-                      onChange={(e) => setCharityName(e.target.value)}
-                      placeholder="Type a charity name"
-                      className="mt-2 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                    />
-                  )}
-                  {!charityName.trim() && (
-                    <p className="text-orange-500 text-xs mt-2 text-center font-medium">
-                      Please enter a charity name
-                    </p>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setStakeDestination('charity')}
+                    className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                      stakeDestination === 'charity'
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-50 text-gray-700 border border-gray-200'
+                    }`}
+                  >
+                    Charity
+                  </button>
                 </div>
-              )}
+
+                {stakeDestination === 'charity' && (
+                  <div className="mt-3">
+                    <div className="grid grid-cols-3 gap-2">
+                      {charityOptions.map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={() => {
+                            setCharityName(c)
+                            setShowCharityCustom(false)
+                          }}
+                          className={`py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
+                            charityName === c && !showCharityCustom
+                              ? 'bg-orange-500 text-white'
+                              : 'bg-gray-50 text-gray-700 border border-gray-200'
+                          }`}
+                        >
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowCharityCustom(true)
+                        if (charityOptions.includes(charityName)) setCharityName('')
+                      }}
+                      className={`mt-2 w-full py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
+                        showCharityCustom
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-gray-50 text-gray-700 border border-gray-200'
+                      }`}
+                    >
+                      Custom
+                    </button>
+
+                    {showCharityCustom && (
+                      <input
+                        type="text"
+                        value={charityName}
+                        onChange={(e) => setCharityName(e.target.value)}
+                        placeholder="Type a charity name"
+                        className="mt-2 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                      />
+                    )}
+                    {!charityName.trim() && (
+                      <p className="text-orange-500 text-xs mt-2 text-center font-medium">
+                        Please enter a charity name
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </form>
+
       </div>
 
       {/* Fixed Bottom Actions */}
       <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] z-50">
         <div className="max-w-md mx-auto space-y-3">
-          {step < 4 ? (
+          {step < 3 ? (
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={goBackStep}
+                onClick={step === 1 ? onBack : goBackStep}
+                className="py-4 rounded-2xl font-semibold bg-gray-100 text-gray-700 active:scale-95 transition-transform"
                 disabled={step === 1}
-                className="w-full bg-white text-gray-700 py-4 rounded-xl font-bold text-base border border-gray-200 active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Back
               </button>
@@ -611,16 +608,20 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 type="button"
                 onClick={goNext}
                 disabled={!canGoNext()}
-                className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`py-4 rounded-2xl font-semibold text-white active:scale-95 transition-transform ${
+                  canGoNext() ? 'bg-orange-500' : 'bg-gray-300'
+                }`}
               >
                 Next
               </button>
             </div>
           ) : (
             <button
-              onClick={handleSubmit}
+              type="submit"
               disabled={!canGoNext()}
-              className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`w-full py-4 rounded-2xl font-semibold text-white active:scale-95 transition-transform ${
+                canGoNext() ? 'bg-orange-500' : 'bg-gray-300'
+              }`}
             >
               {habit ? 'Save Changes' : 'Add Habit'}
             </button>
@@ -630,7 +631,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             <button
               type="button"
               onClick={onDelete}
-              className="w-full bg-white text-rose-500 py-4 rounded-xl font-bold text-base border border-rose-100 active:bg-rose-50 transition-colors"
+              className="w-full bg-white text-rose-500 py-4 rounded-2xl font-bold text-base border border-rose-100 active:bg-rose-50 transition-colors"
             >
               Delete Habit
             </button>
