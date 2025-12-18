@@ -288,17 +288,24 @@ function Home({
         </div>
         
         {/* Total Completions Pill */}
-        <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 h-10">
-          <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
-            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <span className="text-green-700 font-bold text-sm">
-            {Object.values(habitHistory).reduce((sum, dates) => sum + (dates?.length || 0), 0)}
-          </span>
-          <span className="text-green-600 text-sm font-medium">completed</span>
-        </div>
+        {(() => {
+          const totalCompletions = Object.values(habitHistory).reduce((sum, dates) => sum + (dates?.length || 0), 0)
+          const hasCompletions = totalCompletions > 0
+          
+          return (
+            <div className={`flex items-center gap-2 ${hasCompletions ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} border rounded-full px-4 h-10`}>
+              <div className={`w-5 h-5 rounded-full ${hasCompletions ? 'bg-green-500' : 'bg-yellow-500'} flex items-center justify-center`}>
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <span className={`${hasCompletions ? 'text-green-700' : 'text-yellow-700'} font-bold text-sm`}>
+                {totalCompletions}
+              </span>
+              <span className={`${hasCompletions ? 'text-green-600' : 'text-yellow-600'} text-sm font-medium`}>completed</span>
+            </div>
+          )
+        })()}
       </div>
 
       {/* Your Progress Card */}
