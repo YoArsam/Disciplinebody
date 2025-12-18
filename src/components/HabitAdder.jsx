@@ -10,7 +10,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
   const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'self')
   const [charityName, setCharityName] = useState(habit?.charityName || '')
-  const [showCharityCustom, setShowCharityCustom] = useState(false)
   const [pausedUntil, setPausedUntil] = useState(habit?.pausedUntil || '')
   const [pauseDays, setPauseDays] = useState('')
   const [showIdeas, setShowIdeas] = useState(false)
@@ -500,11 +499,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Destination</span>
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Where should the money go?</span>
                 </div>
-                <p className="text-gray-400 text-xs mb-4 ml-10">
-                  Where should the money go if you miss the habit?
-                </p>
 
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -540,10 +536,9 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                           type="button"
                           onClick={() => {
                             setCharityName(c)
-                            setShowCharityCustom(false)
                           }}
                           className={`py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
-                            charityName === c && !showCharityCustom
+                            charityName === c
                               ? 'bg-orange-500 text-white'
                               : 'bg-gray-50 text-gray-700 border border-gray-200'
                           }`}
@@ -552,31 +547,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         </button>
                       ))}
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowCharityCustom(true)
-                        if (charityOptions.includes(charityName)) setCharityName('')
-                      }}
-                      className={`mt-2 w-full py-2.5 rounded-xl font-semibold text-xs transition-all active:scale-95 ${
-                        showCharityCustom
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-50 text-gray-700 border border-gray-200'
-                      }`}
-                    >
-                      Custom
-                    </button>
-
-                    {showCharityCustom && (
-                      <input
-                        type="text"
-                        value={charityName}
-                        onChange={(e) => setCharityName(e.target.value)}
-                        placeholder="Type a charity name"
-                        className="mt-2 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                      />
-                    )}
                     {!charityName.trim() && (
                       <p className="text-orange-500 text-xs mt-2 text-center font-medium">
                         Please enter a charity name
