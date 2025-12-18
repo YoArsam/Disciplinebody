@@ -13,6 +13,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [showCharityCustom, setShowCharityCustom] = useState(false)
   const [pausedUntil, setPausedUntil] = useState(habit?.pausedUntil || '')
   const [pauseDays, setPauseDays] = useState('')
+  const [showIdeas, setShowIdeas] = useState(false)
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
   const [isCustomValue, setIsCustomValue] = useState(false) // Track if current skipCost is a custom value
@@ -163,19 +164,36 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               />
 
               <div className="mt-3">
-                <p className="text-gray-400 text-xs font-medium mb-2">Not sure what to add? Try one of these:</p>
-                <div className="flex flex-wrap gap-2">
-                  {habitIdeas.map((idea) => (
-                    <button
-                      key={idea}
-                      type="button"
-                      onClick={() => setName(idea)}
-                      className="px-3 py-1.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-xs font-semibold active:scale-95 transition-transform"
-                    >
-                      {idea}
-                    </button>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowIdeas((v) => !v)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-transparent text-gray-400 text-xs font-medium"
+                >
+                  <span>Need ideas?</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform ${showIdeas ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {showIdeas && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {habitIdeas.map((idea) => (
+                      <button
+                        key={idea}
+                        type="button"
+                        onClick={() => setName(idea)}
+                        className="px-3 py-1.5 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-xs font-semibold active:scale-95 transition-transform"
+                      >
+                        {idea}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {!name.trim() && (
