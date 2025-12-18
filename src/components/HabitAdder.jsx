@@ -44,20 +44,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
   const stepTitles = {
     1: 'Name your habit',
-    2: 'Choose timing',
-    3: 'Pick days',
-    4: 'Set stakes',
+    2: 'Timing + days',
+    3: 'Stakes',
+    4: 'Destination',
   }
 
   const canGoNext = () => {
     if (step === 1) return !!name.trim()
-    if (step === 2) return true
-    if (step === 3) return daysOfWeek.length > 0
-    if (step === 4) {
-      if (skipCost === null) return false
-      if (stakeDestination === 'charity' && !charityName.trim()) return false
-      return true
-    }
+    if (step === 2) return daysOfWeek.length > 0
+    if (step === 3) return skipCost !== null
+    if (step === 4) return stakeDestination !== 'charity' || !!charityName.trim()
     return false
   }
 
@@ -190,7 +186,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Time Window</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Timing</span>
               </div>
 
               <button
@@ -222,103 +218,105 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </p>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="min-w-0">
-                      <label className="block text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-wide">From</label>
-                      <input
-                        type="time"
-                        value={startTime}
-                        onChange={(e) => {
-                          const newStart = e.target.value
-                          setStartTime(newStart)
-                          const [hours, mins] = newStart.split(':').map(Number)
-                          const endHours = (hours + 1) % 24
-                          const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
-                          setEndTime(newEnd)
-                        }}
-                        className="w-full max-w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-base font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                      />
+                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex flex-col items-center">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">From</span>
+                        <input
+                          type="time"
+                          value={startTime}
+                          onChange={(e) => {
+                            const newStart = e.target.value
+                            setStartTime(newStart)
+                            const [hours, mins] = newStart.split(':').map(Number)
+                            const endHours = (hours + 1) % 24
+                            const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
+                            setEndTime(newEnd)
+                          }}
+                          className="w-full bg-transparent text-gray-800 text-base font-bold text-center focus:outline-none"
+                        />
+                      </div>
                     </div>
                     <div className="min-w-0">
-                      <label className="block text-gray-400 text-[10px] font-bold mb-1 uppercase tracking-wide">Until</label>
-                      <input
-                        type="time"
-                        value={endTime}
-                        onChange={(e) => setEndTime(e.target.value)}
-                        className="w-full max-w-full bg-gray-50 text-gray-800 rounded-xl p-3 text-base font-bold text-center focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                      />
+                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex flex-col items-center">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Until</span>
+                        <input
+                          type="time"
+                          value={endTime}
+                          onChange={(e) => setEndTime(e.target.value)}
+                          className="w-full bg-transparent text-gray-800 text-base font-bold text-center focus:outline-none"
+                        />
+                      </div>
                     </div>
                   </div>
                 </>
               )}
+
+              <div className="mt-5 pt-4 border-t border-gray-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Days</span>
+                </div>
+
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Schedule</span>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setDaysOfWeek([1, 2, 3, 4, 5])}
+                      className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
+                    >
+                      Weekdays
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDaysOfWeek([0, 6])}
+                      className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
+                    >
+                      Weekends
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDaysOfWeek([0, 1, 2, 3, 4, 5, 6])}
+                      className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
+                    >
+                      Every day
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-7 gap-2">
+                  {dayLabels.map((d) => {
+                    const selected = daysOfWeek.includes(d.key)
+                    return (
+                      <button
+                        key={d.key}
+                        type="button"
+                        onClick={() => toggleDay(d.key)}
+                        className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                          selected
+                            ? 'bg-orange-500 border-orange-500 text-white'
+                            : 'bg-gray-50 border-gray-200 text-gray-600'
+                        }`}
+                      >
+                        {d.label}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {daysOfWeek.length === 0 && (
+                  <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                    Select at least one day
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
           {step === 3 && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Schedule</span>
-              </div>
-
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Days</span>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setDaysOfWeek([1, 2, 3, 4, 5])}
-                    className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
-                  >
-                    Weekdays
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDaysOfWeek([0, 6])}
-                    className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
-                  >
-                    Weekends
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDaysOfWeek([0, 1, 2, 3, 4, 5, 6])}
-                    className="text-[10px] font-bold text-gray-400 hover:text-gray-600"
-                  >
-                    Every day
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-7 gap-2">
-                {dayLabels.map((d) => {
-                  const selected = daysOfWeek.includes(d.key)
-                  return (
-                    <button
-                      key={d.key}
-                      type="button"
-                      onClick={() => toggleDay(d.key)}
-                      className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
-                        selected
-                          ? 'bg-orange-500 border-orange-500 text-white'
-                          : 'bg-gray-50 border-gray-200 text-gray-600'
-                      }`}
-                    >
-                      {d.label}
-                    </button>
-                  )
-                })}
-              </div>
-
-              {daysOfWeek.length === 0 && (
-                <p className="text-orange-500 text-xs mt-3 text-center font-medium">
-                  Select at least one day
-                </p>
-              )}
-            </div>
-          )}
-
-          {step === 4 && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
@@ -331,7 +329,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               <p className="text-gray-400 text-xs mb-4 ml-10">
                 What should be the cost of skipping this habit?
               </p>
-              
+
               {!showCustomInput ? (
                 <>
                   <div className="grid grid-cols-3 gap-1.5 mb-1.5">
@@ -437,53 +435,64 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   Please select your stakes to continue
                 </p>
               )}
+            </div>
+          )}
 
-              <div className="mt-5 border-t border-gray-100 pt-4">
-                <p className="text-gray-400 text-xs mb-3 text-center font-medium">
-                  Where should the money go?
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setStakeDestination('self')}
-                    className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                      stakeDestination === 'self'
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-gray-50 text-gray-700 border border-gray-200'
-                    }`}
-                  >
-                    Wallet
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStakeDestination('charity')}
-                    className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                      stakeDestination === 'charity'
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-gray-50 text-gray-700 border border-gray-200'
-                    }`}
-                  >
-                    Charity
-                  </button>
+          {step === 4 && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
-
-                {stakeDestination === 'charity' && (
-                  <div className="mt-3">
-                    <input
-                      type="text"
-                      value={charityName}
-                      onChange={(e) => setCharityName(e.target.value)}
-                      placeholder="e.g., Red Crescent, UNICEF..."
-                      className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                    />
-                    {!charityName.trim() && (
-                      <p className="text-orange-500 text-xs mt-2 text-center font-medium">
-                        Please enter a charity name
-                      </p>
-                    )}
-                  </div>
-                )}
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Destination</span>
               </div>
+              <p className="text-gray-400 text-xs mb-4 ml-10">
+                Where should the money go if you miss the habit?
+              </p>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStakeDestination('self')}
+                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                    stakeDestination === 'self'
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-50 text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  Wallet
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStakeDestination('charity')}
+                  className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                    stakeDestination === 'charity'
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-50 text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  Charity
+                </button>
+              </div>
+
+              {stakeDestination === 'charity' && (
+                <div className="mt-3">
+                  <input
+                    type="text"
+                    value={charityName}
+                    onChange={(e) => setCharityName(e.target.value)}
+                    placeholder="e.g., Red Crescent, UNICEF..."
+                    className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                  />
+                  {!charityName.trim() && (
+                    <p className="text-orange-500 text-xs mt-2 text-center font-medium">
+                      Please enter a charity name
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </form>
