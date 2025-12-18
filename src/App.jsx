@@ -34,6 +34,12 @@ function App() {
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null) // For education screen
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
+  const [currentTime, setCurrentTime] = useState(new Date())
+
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -42,7 +48,7 @@ function App() {
 
   // Check for missed habits and reset daily completions
   useEffect(() => {
-    const today = new Date().toDateString()
+    const today = currentTime.toDateString()
     
     if (state.lastCheckedDate !== today) {
       // New day - check if all habits were done yesterday, update streak
@@ -63,7 +69,7 @@ function App() {
     }
 
     // Check for missed habits (past end time and not completed)
-    const now = new Date()
+    const now = currentTime
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
 
     state.habits.forEach(habit => {
@@ -91,7 +97,7 @@ function App() {
         }
       }
     })
-  }, [state.habits, state.completedToday, state.lastCheckedDate])
+  }, [state.habits, state.completedToday, state.lastCheckedDate, currentTime])
 
   const updateWallet = (amount) => {
     setState(prev => ({ ...prev, wallet: amount }))
@@ -154,27 +160,52 @@ function App() {
     setScreen('habit-adder')
   }
 
-  // Find ALL habits that need check-in (past end time, not completed, not paid)
-  const getHabitsNeedingCheckIn = () => {
-    const now = new Date()
-    const currentMinutes = now.getHours() * 60 + now.getMinutes()
-    
-    return state.habits.filter(habit => {
-      if (state.completedToday.includes(habit.id)) return false
-      if (state.paidToday?.includes(habit.id)) return false
-      const [endHour, endMin] = habit.endTime.split(':').map(Number)
-      const endMinutes = endHour * 60 + endMin
-      return currentMinutes > endMinutes
-    })
-  }
-
-  // Populate check-in queue on app load (once)
   useEffect(() => {
-    const habitsNeedingCheckIn = getHabitsNeedingCheckIn()
-    if (habitsNeedingCheckIn.length > 0) {
-      setCheckInQueue(habitsNeedingCheckIn)
-    }
-  }, [])
+    const now = currentTime
+    const today = now.toDateString()
+    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    const completedToday = state.completedToday
+    const paidToday = state.paidToday || []
+
+    const withinWindow = []
+    const overdue = []
+
+    state.habits.forEach(habit => {
+      if (habit.allDay) return
+      if (completedToday.includes(habit.id)) return
+      if (paidToday.includes(habit.id)) return
+
+      const [startHour, startMin] = habit.startTime.split(':').map(Number)
+      const [endHour, endMin] = habit.endTime.split(':').map(Number)
+      const startMinutes = startHour * 60 + startMin
+      const endMinutes = endHour * 60 + endMin
+
+      const createdAt = new Date(habit.id)
+      const isCreatedToday = createdAt.toDateString() === today
+      const createdMinutes = createdAt.getHours() * 60 + createdAt.getMinutes()
+      if (isCreatedToday && createdMinutes > endMinutes) {
+        return
+      }
+
+      if (currentMinutes >= startMinutes && currentMinutes <= endMinutes) {
+        withinWindow.push({ habit, mode: 'window' })
+      } else if (currentMinutes > endMinutes) {
+        overdue.push({ habit, mode: 'penalty' })
+      }
+    })
+
+    withinWindow.sort((a, b) => a.habit.startTime.localeCompare(b.habit.startTime))
+    overdue.sort((a, b) => a.habit.endTime.localeCompare(b.habit.endTime))
+
+    const nextQueue = [...withinWindow, ...overdue]
+
+    setCheckInQueue(prev => {
+      if (prev.length === nextQueue.length && prev.every((entry, index) => entry.habit.id === nextQueue[index].habit.id && entry.mode === nextQueue[index].mode)) {
+        return prev
+      }
+      return nextQueue
+    })
+  }, [state.habits, state.completedToday, state.paidToday, currentTime])
 
   // Current habit to show = first in queue
   const currentCheckIn = checkInQueue[0] || null
@@ -319,16 +350,17 @@ function App() {
       {/* Check-in Modal */}
       {currentCheckIn && (
         <CheckInModal
-          key={currentCheckIn.id}
-          habit={currentCheckIn}
+          key={`${currentCheckIn.habit.id}-${currentCheckIn.mode}`}
+          habit={currentCheckIn.habit}
+          mode={currentCheckIn.mode}
           onYes={() => {
-            const id = currentCheckIn.id
+            const id = currentCheckIn.habit.id
             markHabitDone(id)
             setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
             setShowSuccessToast(true) // Show good vibes
           }}
           onNo={() => {
-            const id = currentCheckIn.id
+            const id = currentCheckIn.habit.id
             markHabitPaid(id) // Mark as paid (separate from done)
             setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
           }}
