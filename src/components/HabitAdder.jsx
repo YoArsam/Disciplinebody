@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 
 function HabitAdder({ habit, onSave, onDelete, onBack }) {
+  const isEditing = !!habit
   const [step, setStep] = useState(1)
   const [name, setName] = useState(habit?.name || '')
   const [allDay, setAllDay] = useState(habit?.allDay ?? false)
@@ -61,6 +62,10 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   }
 
   const canGoNext = () => {
+    if (isEditing) {
+      const computedSkipCost = skipCost !== null ? skipCost : getCustomSkipCost()
+      return !!name.trim() && daysOfWeek.length > 0 && computedSkipCost !== null
+    }
     if (step === 1) return !!name.trim()
     if (step === 2) return daysOfWeek.length > 0
     if (step === 3) return skipCost !== null || getCustomSkipCost() !== null
@@ -127,18 +132,20 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
         </button>
         <div className="flex flex-col items-center">
           <h1 className="text-xl font-bold text-gray-800 tracking-tight">
-            {stepTitles[step]}
+            {isEditing ? 'Edit habit' : stepTitles[step]}
           </h1>
-          <div className="flex items-center gap-1.5 mt-1">
-            {[1, 2, 3].map((s) => (
-              <div
-                key={s}
-                className={`h-1.5 rounded-full transition-all ${
-                  s === step ? 'w-8 bg-orange-500' : s < step ? 'w-4 bg-orange-200' : 'w-4 bg-gray-200'
-                }`}
-              />
-            ))}
-          </div>
+          {!isEditing && (
+            <div className="flex items-center gap-1.5 mt-1">
+              {[1, 2, 3].map((s) => (
+                <div
+                  key={s}
+                  className={`h-1.5 rounded-full transition-all ${
+                    s === step ? 'w-8 bg-orange-500' : s < step ? 'w-4 bg-orange-200' : 'w-4 bg-gray-200'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
         <div className="w-10"></div>
       </div>
@@ -147,7 +154,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       <div className={`flex-1 overflow-y-auto min-h-0 ${onDelete ? 'pb-48' : 'pb-36'}`}>
         <form id="habit-form" onSubmit={handleSubmit} className="space-y-3">
 
-          {step === 1 && (
+          {(isEditing || step === 1) && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
@@ -207,7 +214,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             </div>
           )}
 
-          {step === 2 && (
+          {(isEditing || step === 2) && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
@@ -378,7 +385,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             </div>
           )}
 
-          {step === 3 && (
+          {(isEditing || step === 3) && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
@@ -542,7 +549,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       {/* Fixed Bottom Actions */}
       <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] z-50">
         <div className="max-w-md mx-auto space-y-3">
-          {step < 3 ? (
+          {!isEditing && step < 3 ? (
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
