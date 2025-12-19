@@ -234,113 +234,113 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {(isEditing || step === 2) && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
                   <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Timing</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Days</span>
               </div>
 
-              {!allDay && (
-                <>
-                  <p className="text-gray-400 text-xs mb-3">
-                    Complete this habit between these times
-                  </p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="min-w-0">
-                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex items-center justify-between">
-                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wide">From</span>
-                        <input
-                          type="time"
-                          value={startTime}
-                          onChange={(e) => {
-                            const newStart = e.target.value
-                            setStartTime(newStart)
-                            const [hours, mins] = newStart.split(':').map(Number)
-                            const endHours = (hours + 1) % 24
-                            const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
-                            setEndTime(newEnd)
-                          }}
-                          className="w-20 bg-transparent text-gray-800 text-sm font-bold text-right focus:outline-none"
-                        />
-                      </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex items-center justify-between">
-                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wide">Until</span>
-                        <input
-                          type="time"
-                          value={endTime}
-                          onChange={(e) => setEndTime(e.target.value)}
-                          className="w-20 bg-transparent text-gray-800 text-sm font-bold text-right focus:outline-none"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </>
+              <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide block mb-2">Schedule</span>
+
+              <div className="grid grid-cols-7 gap-2">
+                {dayLabels.map((d) => {
+                  const selected = daysOfWeek.includes(d.key)
+                  return (
+                    <button
+                      key={d.key}
+                      type="button"
+                      onClick={() => toggleDay(d.key)}
+                      className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                        selected
+                          ? 'bg-orange-500 border-orange-500 text-white'
+                          : 'bg-gray-50 border-gray-200 text-gray-600'
+                      }`}
+                    >
+                      {d.label}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {daysOfWeek.length === 0 && (
+                <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                  Select at least one day
+                </p>
               )}
 
-              <button
-                type="button"
-                onClick={() => setAllDay(!allDay)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-full mt-4 mb-4 transition-all border ${
-                  allDay ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                    allDay ? 'bg-orange-500' : 'bg-gray-300'
-                  }`}>
-                    {allDay && (
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                  <span className={`font-semibold text-sm ${allDay ? 'text-orange-700' : 'text-gray-700'}`}>All Day</span>
-                </div>
-                <span className="text-xs text-gray-400">No time window</span>
-              </button>
-
               <div className="mt-5 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
                     <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Days</span>
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Timing</span>
                 </div>
 
-                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide block mb-2">Schedule</span>
-
-                <div className="grid grid-cols-7 gap-2">
-                  {dayLabels.map((d) => {
-                    const selected = daysOfWeek.includes(d.key)
-                    return (
-                      <button
-                        key={d.key}
-                        type="button"
-                        onClick={() => toggleDay(d.key)}
-                        className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
-                          selected
-                            ? 'bg-orange-500 border-orange-500 text-white'
-                            : 'bg-gray-50 border-gray-200 text-gray-600'
-                        }`}
-                      >
-                        {d.label}
-                      </button>
-                    )
-                  })}
-                </div>
-
-                {daysOfWeek.length === 0 && (
-                  <p className="text-orange-500 text-xs mt-3 text-center font-medium">
-                    Select at least one day
-                  </p>
+                {!allDay && (
+                  <>
+                    <p className="text-gray-400 text-xs mb-3">
+                      Complete this habit between these times
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="min-w-0">
+                        <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex items-center justify-between">
+                          <span className="text-gray-400 text-xs font-bold uppercase tracking-wide">From</span>
+                          <input
+                            type="time"
+                            value={startTime}
+                            onChange={(e) => {
+                              const newStart = e.target.value
+                              setStartTime(newStart)
+                              const [hours, mins] = newStart.split(':').map(Number)
+                              const endHours = (hours + 1) % 24
+                              const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
+                              setEndTime(newEnd)
+                            }}
+                            className="w-20 bg-transparent text-gray-800 text-sm font-bold text-right focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex items-center justify-between">
+                          <span className="text-gray-400 text-xs font-bold uppercase tracking-wide">Until</span>
+                          <input
+                            type="time"
+                            value={endTime}
+                            onChange={(e) => setEndTime(e.target.value)}
+                            className="w-20 bg-transparent text-gray-800 text-sm font-bold text-right focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
+
+                <button
+                  type="button"
+                  onClick={() => setAllDay(!allDay)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-full mt-4 transition-all border ${
+                    allDay ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                      allDay ? 'bg-orange-500' : 'bg-gray-300'
+                    }`}>
+                      {allDay && (
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className={`font-semibold text-sm ${allDay ? 'text-orange-700' : 'text-gray-700'}`}>All Day</span>
+                  </div>
+                  <span className="text-xs text-gray-400">No time window</span>
+                </button>
               </div>
 
               {habit && (
@@ -374,14 +374,14 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     </>
                   ) : (
                     <>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 items-stretch">
                         <button
                           type="button"
                           onClick={() => {
                             setPauseDays('1')
                             setShowPauseCustom(false)
                           }}
-                          className={`py-3 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
+                          className={`h-12 px-4 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
                             pauseDays === '1' && !showPauseCustom
                               ? 'bg-orange-500 border-orange-500 text-white'
                               : 'bg-gray-50 border-gray-200 text-gray-700'
@@ -397,12 +397,12 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                               setShowPauseCustom(true)
                               if (pauseDays === '1') setPauseDays('')
                             }}
-                            className="py-3 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
+                            className="h-12 flex-1 px-4 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
                           >
                             Custom
                           </button>
                         ) : (
-                          <div className="relative flex-1">
+                          <div className="relative flex-1 min-w-0">
                             <input
                               type="text"
                               inputMode="numeric"
@@ -410,7 +410,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                               onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
                               placeholder="Days"
                               autoFocus
-                              className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 pr-9 text-sm font-medium border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                              className="h-12 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl pl-4 pr-10 text-sm font-semibold border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                             />
                             <button
                               type="button"
@@ -418,7 +418,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                                 setShowPauseCustom(false)
                                 setPauseDays('')
                               }}
-                              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-gray-100 text-gray-600 font-semibold active:scale-95 transition-transform"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 text-gray-600 font-semibold active:scale-95 transition-transform"
                             >
                               ✕
                             </button>
@@ -435,7 +435,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                             setPausedUntil(formatISODate(d))
                           }}
                           disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
-                          className={`px-4 py-3 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
+                          className={`h-12 px-4 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
                             !pauseDays || parseInt(pauseDays, 10) <= 0
                               ? 'bg-gray-200 text-gray-500'
                               : 'bg-orange-500 text-white'
