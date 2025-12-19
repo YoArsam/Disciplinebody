@@ -3,7 +3,6 @@ import HomeScreen from './screens/HomeScreen'
 import EditHabitScreen from './screens/EditHabitScreen'
 import EditWalletScreen from './screens/EditWalletScreen'
 // EditSkipCostScreen removed - skip cost is now per-habit
-import HabitEducation from './components/HabitEducation'
 import CheckInModal from './components/CheckInModal'
 
 const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
@@ -39,7 +38,6 @@ function App() {
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [previousHabitsExpanded, setPreviousHabitsExpanded] = useState(false)
-  const [newlyAddedHabit, setNewlyAddedHabit] = useState(null) // For education screen
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
 
@@ -197,13 +195,6 @@ function App() {
   // Current habit to show = first in queue
   const currentCheckIn = checkInQueue[0] || null
 
-  // Safety: redirect to home if on education screen but habit is null
-  useEffect(() => {
-    if (screen === 'habit-education' && !newlyAddedHabit) {
-      setScreen('home')
-    }
-  }, [screen, newlyAddedHabit])
-
   // Check if we should show the main nav bar (not on editor screens)
   const showMainNav = screen === 'home'
 
@@ -243,15 +234,14 @@ function App() {
               setScreen(previousScreen)
               setPreviousScreen('home')
             } else {
-              // New habit - add it and show education screen
+              // New habit - add it and go back home
               const newHabit = { ...habit, id: Date.now() }
               setState(prev => ({
                 ...prev,
                 habits: [...prev.habits, newHabit],
               }))
-              setNewlyAddedHabit(newHabit)
               setEditingHabit(null)
-              setScreen('habit-education')
+              setScreen('home')
             }
           }}
           onDelete={editingHabit ? () => {
@@ -265,20 +255,6 @@ function App() {
             setScreen(previousScreen)
             setPreviousScreen('home')
             setHabitsExpanded(previousHabitsExpanded)
-          }}
-        />
-      )}
-      {screen === 'habit-education' && newlyAddedHabit && (
-        <HabitEducation
-          habit={newlyAddedHabit}
-          onDone={() => {
-            setNewlyAddedHabit(null)
-            setScreen('home')
-          }}
-          onEdit={() => {
-            setEditingHabit(newlyAddedHabit)
-            setPreviousScreen('home')
-            setScreen('habit-adder')
           }}
         />
       )}
