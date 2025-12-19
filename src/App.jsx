@@ -88,16 +88,8 @@ function App() {
     const now = new Date()
     const todayKey = now.getDay()
 
-    const shouldNotifyForHabit = (habit) => {
-      if (!isHabitScheduledOnDay(habit, todayKey)) return false
-      if (isHabitPausedOnDate(habit, now)) return false
-      if (state.completedToday.includes(habit.id)) return false
-      if (state.paidToday?.includes(habit.id)) return false
-      return true
-    }
-
-    const getHabitEndDate = (habit) => {
-      const end = new Date(now)
+    const getHabitEndDate = (habit, baseDate) => {
+      const end = new Date(baseDate)
       if (habit.allDay) {
         end.setHours(23, 59, 0, 0)
         return end
@@ -107,11 +99,25 @@ function App() {
       return end
     }
 
-    state.habits.forEach((habit) => {
-      if (!shouldNotifyForHabit(habit)) return
+    const shouldNotifyForHabitOnDate = (habit, date, dayKey, isToday) => {
+      if (!isHabitScheduledOnDay(habit, dayKey)) return false
+      if (isHabitPausedOnDate(habit, date)) return false
+      if (isToday && state.completedToday.includes(habit.id)) return false
+      if (isToday && state.paidToday?.includes(habit.id)) return false
+      return true
+    }
 
-      const endAt = getHabitEndDate(habit)
-      const msUntil = endAt.getTime() - now.getTime()
+    state.habits.forEach((habit) => {
+      // If today's endTime already passed, schedule the first one for tomorrow.
+      const todayEndAt = getHabitEndDate(habit, now)
+      const scheduleForToday = todayEndAt.getTime() > now.getTime()
+      const targetBase = scheduleForToday ? now : new Date(now.getTime() + 24 * 60 * 60 * 1000)
+      const targetDayKey = scheduleForToday ? todayKey : targetBase.getDay()
+      const targetEndAt = getHabitEndDate(habit, targetBase)
+
+      if (!shouldNotifyForHabitOnDate(habit, targetBase, targetDayKey, scheduleForToday)) return
+
+      const msUntil = targetEndAt.getTime() - now.getTime()
       if (msUntil <= 0) return
 
       const timer = setTimeout(() => {
@@ -293,6 +299,7 @@ function App() {
     const now = new Date()
     const currentMinutes = now.getHours() * 60 + now.getMinutes()
     const todayDayKey = now.getDay()
+    const todayStr = now.toDateString()
     
     return state.habits.filter(habit => {
       if (!isHabitScheduledOnDay(habit, todayDayKey)) return false
@@ -301,6 +308,16 @@ function App() {
       if (state.paidToday?.includes(habit.id)) return false
       const [endHour, endMin] = habit.endTime.split(':').map(Number)
       const endMinutes = endHour * 60 + endMin
+
+      // If the habit was created today after the deadline, don't prompt today.
+      // First prompt should be tomorrow.
+      const createdAt = new Date(habit.id)
+      const isCreatedToday = createdAt.toDateString() === todayStr
+      const createdMinutes = createdAt.getHours() * 60 + createdAt.getMinutes()
+      if (isCreatedToday && createdMinutes > endMinutes) {
+        return false
+      }
+
       return currentMinutes > endMinutes
     })
   }
