@@ -522,7 +522,9 @@ function Home({
                     {isPaused ? (
                       <span className="text-gray-300 text-lg font-medium ml-4">Paused</span>
                     ) : isResolved ? (
-                      <span className="text-gray-300 text-lg font-medium ml-4">{isPaid ? 'Paid' : 'Done'}</span>
+                      <span className="text-gray-300 text-lg font-medium ml-4">
+                        {isPaid ? (habit.stakeDestination === 'charity' ? 'Donated' : 'Supported') : 'Done'}
+                      </span>
                     ) : (
                       (() => {
                         const timeLeft = getTimeRemaining(habit)
