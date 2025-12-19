@@ -440,12 +440,12 @@ function Home({
                 const bResolved = bDone || bPaid
                 const aPaused = isHabitPausedToday(a)
                 const bPaused = isHabitPausedToday(b)
+                // Paused habits go to the very bottom
+                if (aPaused && !bPaused) return 1
+                if (!aPaused && bPaused) return -1
                 // Done habits go to bottom
                 if (aResolved && !bResolved) return 1
                 if (!aResolved && bResolved) return -1
-                // Paused habits go below active habits
-                if (aPaused && !bPaused) return 1
-                if (!aPaused && bPaused) return -1
                 // Sort by start time
                 const aTime = a.allDay ? 0 : a.startTime
                 const bTime = b.allDay ? 0 : b.startTime

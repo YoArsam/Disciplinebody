@@ -1,5 +1,17 @@
+import { useEffect } from 'react'
+
 function HabitAdded({ habit, onDone }) {
   if (!habit) return null
+
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (!meta) return
+    const previous = meta.getAttribute('content')
+    meta.setAttribute('content', '#f97316')
+    return () => {
+      if (previous) meta.setAttribute('content', previous)
+    }
+  }, [])
 
   const formatTime = (timeStr) => {
     const [hour, min] = timeStr.split(':').map(Number)
