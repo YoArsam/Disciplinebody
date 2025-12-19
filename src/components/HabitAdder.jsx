@@ -47,7 +47,22 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     })
   }
 
-  const formatISODate = (d) => d.toISOString().split('T')[0]
+  const formatISODate = (date) => {
+    return date.toISOString().split('T')[0]
+  }
+
+  const getPauseDaysFromPausedUntil = () => {
+    if (!pausedUntil) return null
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const target = new Date(`${pausedUntil}T00:00:00`)
+    if (Number.isNaN(target.getTime())) return null
+
+    const diffMs = target.getTime() - today.getTime()
+    const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000))
+    return diffDays > 0 ? diffDays : 0
+  }
 
   const stepTitles = {
     1: 'Name your habit',
@@ -233,8 +248,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </p>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="min-w-0">
-                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex flex-col items-center">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">From</span>
+                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex items-center justify-between">
+                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wide">From</span>
                         <input
                           type="time"
                           value={startTime}
@@ -246,18 +261,18 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                             const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
                             setEndTime(newEnd)
                           }}
-                          className="w-full bg-transparent text-gray-800 text-sm font-bold text-center focus:outline-none"
+                          className="w-20 bg-transparent text-gray-800 text-sm font-bold text-right focus:outline-none"
                         />
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex flex-col items-center">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Until</span>
+                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex items-center justify-between">
+                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wide">Until</span>
                         <input
                           type="time"
                           value={endTime}
                           onChange={(e) => setEndTime(e.target.value)}
-                          className="w-full bg-transparent text-gray-800 text-sm font-bold text-center focus:outline-none"
+                          className="w-20 bg-transparent text-gray-800 text-sm font-bold text-right focus:outline-none"
                         />
                       </div>
                     </div>
@@ -339,7 +354,10 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
                   {pausedUntil ? (
                     <>
-                      <p className="text-gray-500 text-sm text-center">Paused until {pausedUntil}</p>
+                      <p className="text-gray-500 text-sm text-center">
+                        This habit is paused until {pausedUntil}
+                        {getPauseDaysFromPausedUntil() !== null ? ` (${getPauseDaysFromPausedUntil()} days)` : ''}
+                      </p>
                       <button
                         type="button"
                         onClick={() => {
@@ -354,28 +372,31 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     </>
                   ) : (
                     <>
-                      <div className="grid grid-cols-4 gap-2">
-                        {[1, 3, 7].map((n) => (
-                          <button
-                            key={n}
-                            type="button"
-                            onClick={() => {
-                              const d = new Date()
-                              d.setDate(d.getDate() + n)
-                              setPausedUntil(formatISODate(d))
-                              setShowPauseCustom(false)
-                              setPauseDays('')
-                            }}
-                            className="py-3 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
-                          >
-                            {n}d
-                          </button>
-                        ))}
+                      <div className="grid grid-cols-2 gap-2">
                         <button
                           type="button"
-                          onClick={() => setShowPauseCustom((v) => !v)}
+                          onClick={() => {
+                            setPauseDays('1')
+                            setShowPauseCustom(false)
+                          }}
                           className={`py-3 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
-                            showPauseCustom ? 'bg-orange-500 border-orange-500 text-white' : 'bg-gray-50 border-gray-200 text-gray-700'
+                            pauseDays === '1' && !showPauseCustom
+                              ? 'bg-orange-500 border-orange-500 text-white'
+                              : 'bg-gray-50 border-gray-200 text-gray-700'
+                          }`}
+                        >
+                          1 day
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowPauseCustom(true)
+                            if (pauseDays === '1') setPauseDays('')
+                          }}
+                          className={`py-3 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
+                            showPauseCustom
+                              ? 'bg-orange-500 border-orange-500 text-white'
+                              : 'bg-gray-50 border-gray-200 text-gray-700'
                           }`}
                         >
                           Custom
@@ -383,30 +404,36 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       </div>
 
                       {showPauseCustom && (
-                        <div className="mt-3 flex gap-2">
+                        <div className="mt-3">
                           <input
                             type="text"
                             inputMode="numeric"
                             value={pauseDays}
                             onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
                             placeholder="Days"
-                            className="flex-1 bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                           />
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const n = parseInt(pauseDays, 10)
-                              if (!n || n <= 0) return
-                              const d = new Date()
-                              d.setDate(d.getDate() + n)
-                              setPausedUntil(formatISODate(d))
-                            }}
-                            className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
-                          >
-                            Set
-                          </button>
                         </div>
                       )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const n = parseInt(pauseDays, 10)
+                          if (!n || n <= 0) return
+                          const d = new Date()
+                          d.setDate(d.getDate() + n)
+                          setPausedUntil(formatISODate(d))
+                        }}
+                        disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
+                        className={`mt-3 w-full py-3 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
+                          !pauseDays || parseInt(pauseDays, 10) <= 0
+                            ? 'bg-gray-200 text-gray-500'
+                            : 'bg-orange-500 text-white'
+                        }`}
+                      >
+                        Set
+                      </button>
                       <p className="text-gray-400 text-xs mt-2 text-center">
                         Pause hides the habit and skips penalties while paused
                       </p>
