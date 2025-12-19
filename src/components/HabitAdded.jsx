@@ -30,7 +30,9 @@ function HabitAdded({ habit, onDone }) {
 
   const formatTime = (timeStr) => {
     const [hour, min] = timeStr.split(':').map(Number)
-    return `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const displayHour = hour % 12 || 12
+    return `${displayHour}:${min.toString().padStart(2, '0')} ${ampm}`
   }
 
   const getTomorrowTimeText = () => {

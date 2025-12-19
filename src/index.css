@@ -76,36 +76,6 @@ body {
   animation: slideUp 0.3s ease-out forwards;
 }
 
-@keyframes sheetUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-@keyframes sheetDown {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(100%);
-  }
-}
-
-.animate-sheetUp {
-  will-change: transform;
-  transform: translateY(100%);
-  animation: sheetUp 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-}
-
-.animate-sheetDown {
-  will-change: transform;
-  transform: translateY(0);
-  animation: sheetDown 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-}
-
 /* Habits widget expand animation */
 .habits-widget {
   transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), 
