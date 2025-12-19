@@ -216,10 +216,12 @@ function Home({
       endTime.setHours(endHour, endMin, 0, 0)
     }
     
-    const diffMs = endTime - now
+    let diffMs = endTime - now
     
     if (diffMs <= 0) {
-      return { text: 'Check in', expired: true }
+      const tomorrowEndTime = new Date(endTime)
+      tomorrowEndTime.setDate(tomorrowEndTime.getDate() + 1)
+      diffMs = tomorrowEndTime - now
     }
     
     const diffMins = Math.floor(diffMs / 60000)
