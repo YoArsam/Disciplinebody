@@ -41,6 +41,7 @@ function App() {
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null)
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
+  const [habitsClosing, setHabitsClosing] = useState(false)
 
   const shownCheckInsRef = useRef(new Set())
 
@@ -361,9 +362,22 @@ function App() {
   // Check if we should show the main nav bar (not on editor screens)
   const showMainNav = screen === 'home' || screen === 'habits'
 
+  const openHabits = () => {
+    setHabitsClosing(false)
+    setScreen('habits')
+  }
+
+  const closeHabits = () => {
+    setHabitsClosing(true)
+    setTimeout(() => {
+      setHabitsClosing(false)
+      setScreen('home')
+    }, 250)
+  }
+
   return (
     <div className="h-full w-full">
-        <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
+        <div style={{ display: screen === 'home' || screen === 'habits' ? 'contents' : 'none' }}>
           <HomeScreen
             wallet={state.wallet}
             habits={state.habits}
@@ -383,6 +397,7 @@ function App() {
               setScreen('habit-adder')
             }}
             onMarkDone={markHabitDone}
+            onOpenHabits={openHabits}
           />
         </div>
 
@@ -392,6 +407,7 @@ function App() {
           completedToday={state.completedToday}
           paidToday={state.paidToday || []}
           habitHistory={state.habitHistory || {}}
+          isClosing={habitsClosing}
           onAddHabit={() => {
             setEditingHabit(null)
             setScreen('habit-adder')
@@ -401,6 +417,7 @@ function App() {
             setScreen('habit-adder')
           }}
           onMarkDone={markHabitDone}
+          onBack={closeHabits}
         />
       )}
 
@@ -464,7 +481,13 @@ function App() {
             <div className="max-w-md mx-auto flex justify-center items-center gap-12">
               {/* Home */}
               <button 
-                onClick={() => setScreen('home')}
+                onClick={() => {
+                  if (screen === 'habits') {
+                    closeHabits()
+                  } else {
+                    setScreen('home')
+                  }
+                }}
                 className="p-2"
               >
                 <svg className={`w-6 h-6 ${screen === 'home' ? 'text-orange-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -473,7 +496,10 @@ function App() {
               </button>
               {/* Heart */}
               <button 
-                onClick={() => setScreen('habits')}
+                onClick={() => {
+                  if (screen === 'habits') return
+                  openHabits()
+                }}
                 className="p-2"
               >
                 <svg className={`w-6 h-6 ${screen === 'habits' ? 'text-orange-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">

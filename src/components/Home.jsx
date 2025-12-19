@@ -167,7 +167,8 @@ function Home({
   onEnableNotifications,
   onAddHabit, 
   onEditHabit, 
-  onMarkDone
+  onMarkDone,
+  onOpenHabits
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
 
@@ -310,7 +311,12 @@ function Home({
       )}
 
       {/* Today's Habits Card */}
-      <div className="flex-1 bg-white border border-gray-200 rounded-3xl px-6 py-5 flex flex-col min-h-0">
+      <div
+        className={`flex-1 bg-white border border-gray-200 rounded-3xl px-6 py-5 flex flex-col min-h-0 ${onOpenHabits ? 'cursor-pointer' : ''}`}
+        onClick={() => {
+          if (onOpenHabits) onOpenHabits()
+        }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-3">

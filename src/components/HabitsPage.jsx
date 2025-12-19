@@ -3,10 +3,12 @@ export default function HabitsPage({
   completedToday = [],
   paidToday = [],
   habitHistory = {},
+  isClosing,
   onAddHabit,
   onEditHabit,
   onDeleteHabit,
   onMarkDone,
+  onBack,
 }) {
   const formatTimeRange = (habit) => {
     if (habit.allDay) return 'All Day'
@@ -23,10 +25,21 @@ export default function HabitsPage({
 
   const isHabitPaid = (habit) => (paidToday || []).includes(habit.id)
 
+  const animationClass = isClosing ? 'animate-sheetDown' : 'animate-sheetUp'
+
   return (
-    <div className="h-full flex flex-col bg-[#fcfcfc] px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]">
+    <div className={`fixed inset-0 bg-[#fcfcfc] flex flex-col px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] z-40 ${animationClass}`}>
       <div className="flex items-center justify-between mb-4 flex-shrink-0 w-full">
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onBack}
+            className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
+          >
+            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
           <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
             <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
