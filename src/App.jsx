@@ -43,6 +43,8 @@ function App() {
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
 
+  const shownCheckInsRef = useRef(new Set())
+
   const [notificationPermission, setNotificationPermission] = useState(() => {
     if (typeof window === 'undefined') return 'unsupported'
     if (!('Notification' in window)) return 'unsupported'
@@ -303,13 +305,39 @@ function App() {
     })
   }
 
-  // Populate check-in queue on app load (once)
+  // Populate / refresh check-in queue while app stays open
   useEffect(() => {
-    const habitsNeedingCheckIn = getHabitsNeedingCheckIn()
-    if (habitsNeedingCheckIn.length > 0) {
-      setCheckInQueue(habitsNeedingCheckIn)
+    // Reset shown set when the day rolls over
+    shownCheckInsRef.current = new Set()
+    setCheckInQueue([])
+  }, [state.lastCheckedDate])
+
+  useEffect(() => {
+    const enqueue = () => {
+      const habitsNeedingCheckIn = getHabitsNeedingCheckIn()
+      if (habitsNeedingCheckIn.length === 0) return
+
+      setCheckInQueue((prev) => {
+        const queuedIds = new Set(prev.map((h) => h.id))
+        const next = [...prev]
+
+        habitsNeedingCheckIn.forEach((h) => {
+          if (queuedIds.has(h.id)) return
+          if (shownCheckInsRef.current.has(h.id)) return
+          shownCheckInsRef.current.add(h.id)
+          next.push(h)
+        })
+
+        return next
+      })
     }
-  }, [])
+
+    // Run immediately + on an interval so you don't have to reload
+    enqueue()
+    const interval = setInterval(enqueue, 30 * 1000)
+    return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.habits, state.completedToday, state.paidToday, state.lastCheckedDate])
 
   // Current habit to show = first in queue
   const currentCheckIn = checkInQueue[0] || null
