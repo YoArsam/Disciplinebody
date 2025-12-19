@@ -235,7 +235,7 @@ function Home({
     const todayIso = currentTime.toISOString().split('T')[0]
     return habit.pausedUntil >= todayIso
   }
-  const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(currentTime.getDay()) && !isHabitPausedToday(habit)
+  const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(currentTime.getDay())
   const todaysHabits = habits.filter(isHabitScheduledToday)
 
   const formatTimeRange = (habit) => {
@@ -438,9 +438,14 @@ function Home({
                 const bPaid = (paidToday || []).includes(b.id)
                 const aResolved = aDone || aPaid
                 const bResolved = bDone || bPaid
+                const aPaused = isHabitPausedToday(a)
+                const bPaused = isHabitPausedToday(b)
                 // Done habits go to bottom
                 if (aResolved && !bResolved) return 1
                 if (!aResolved && bResolved) return -1
+                // Paused habits go below active habits
+                if (aPaused && !bPaused) return 1
+                if (!aPaused && bPaused) return -1
                 // Sort by start time
                 const aTime = a.allDay ? 0 : a.startTime
                 const bTime = b.allDay ? 0 : b.startTime
@@ -450,6 +455,7 @@ function Home({
               const isDone = isHabitDone(habit)
               const isPaid = paidToday?.includes(habit.id)
               const isResolved = isDone || isPaid
+              const isPaused = isHabitPausedToday(habit)
               
               // Get last 28 days for grid chart (4 weeks)
               const habitDates = habitHistory[habit.id] || []
@@ -464,8 +470,8 @@ function Home({
                   key={habit.id}
                   onClick={() => onEditHabit(habit)}
                   className={`w-full p-4 rounded-2xl transition-all ${
-                    isResolved ? 'bg-white/50' : 'bg-white'
-                  } border border-gray-200 cursor-pointer`}
+                    isResolved ? 'bg-white/50' : isPaused ? 'bg-gray-50' : 'bg-white'
+                  } border border-gray-200 cursor-pointer ${isPaused ? 'opacity-70' : ''}`}
                 >
                   {/* Top row: Habit info + status */}
                   <div className="flex items-center justify-between">
@@ -478,19 +484,21 @@ function Home({
                       className="flex-1 min-w-0 text-left"
                     >
                       <span className={`font-semibold text-lg block truncate ${
-                        isResolved ? 'text-gray-300' : 'text-gray-900'
+                        isResolved || isPaused ? 'text-gray-300' : 'text-gray-900'
                       }`}>
                         {habit.name}
                       </span>
                       <span className={`text-sm ${
-                        isResolved ? 'text-gray-300' : 'text-gray-500'
+                        isResolved || isPaused ? 'text-gray-300' : 'text-gray-500'
                       }`}>
-                        {formatTimeRange(habit)}
+                        {isPaused ? `Paused until ${habit.pausedUntil}` : formatTimeRange(habit)}
                       </span>
                     </button>
                     
                     {/* Time Remaining / Done / Paid Status */}
-                    {isResolved ? (
+                    {isPaused ? (
+                      <span className="text-gray-300 text-lg font-medium ml-4">Paused</span>
+                    ) : isResolved ? (
                       <span className="text-gray-300 text-lg font-medium ml-4">{isPaid ? 'Paid' : 'Done'}</span>
                     ) : (
                       (() => {
