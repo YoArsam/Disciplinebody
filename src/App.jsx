@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import HomeScreen from './screens/HomeScreen'
 import EditHabitScreen from './screens/EditHabitScreen'
 import EditWalletScreen from './screens/EditWalletScreen'
@@ -43,10 +43,120 @@ function App() {
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
 
+  const [notificationPermission, setNotificationPermission] = useState(() => {
+    if (typeof window === 'undefined') return 'unsupported'
+    if (!('Notification' in window)) return 'unsupported'
+    return Notification.permission
+  })
+
+  const notificationTimersRef = useRef({})
+
   // Save to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem('accountability-app-state', JSON.stringify(state))
   }, [state])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!('Notification' in window)) return
+    setNotificationPermission(Notification.permission)
+  }, [])
+
+  const requestNotificationPermission = async () => {
+    if (typeof window === 'undefined') return
+    if (!('Notification' in window)) return
+    try {
+      const res = await Notification.requestPermission()
+      setNotificationPermission(res)
+    } catch (e) {
+      setNotificationPermission(Notification.permission)
+    }
+  }
+
+  const clearNotificationTimers = () => {
+    Object.values(notificationTimersRef.current).forEach((t) => clearTimeout(t))
+    notificationTimersRef.current = {}
+  }
+
+  const scheduleEndTimeNotifications = () => {
+    if (typeof window === 'undefined') return
+    if (!('Notification' in window)) return
+    if (Notification.permission !== 'granted') return
+
+    const now = new Date()
+    const todayKey = now.getDay()
+
+    const shouldNotifyForHabit = (habit) => {
+      if (!isHabitScheduledOnDay(habit, todayKey)) return false
+      if (isHabitPausedOnDate(habit, now)) return false
+      if (state.completedToday.includes(habit.id)) return false
+      if (state.paidToday?.includes(habit.id)) return false
+      return true
+    }
+
+    const getHabitEndDate = (habit) => {
+      const end = new Date(now)
+      if (habit.allDay) {
+        end.setHours(23, 59, 0, 0)
+        return end
+      }
+      const [endHour, endMin] = habit.endTime.split(':').map(Number)
+      end.setHours(endHour, endMin, 0, 0)
+      return end
+    }
+
+    state.habits.forEach((habit) => {
+      if (!shouldNotifyForHabit(habit)) return
+
+      const endAt = getHabitEndDate(habit)
+      const msUntil = endAt.getTime() - now.getTime()
+      if (msUntil <= 0) return
+
+      const timer = setTimeout(() => {
+        const latest = loadState()
+        const latestNow = new Date()
+
+        const stillActive = latest.habits.find((h) => h.id === habit.id)
+        if (!stillActive) return
+        if (!isHabitScheduledOnDay(stillActive, latestNow.getDay())) return
+        if (isHabitPausedOnDate(stillActive, latestNow)) return
+        if ((latest.completedToday || []).includes(stillActive.id)) return
+        if ((latest.paidToday || []).includes(stillActive.id)) return
+
+        const title = 'Habit window ended'
+        const body = `Did you finish "${stillActive.name}"? Open the app to check in.`
+
+        try {
+          const n = new Notification(title, {
+            body,
+            tag: `habit-end-${stillActive.id}`,
+            renotify: false,
+          })
+
+          n.onclick = () => {
+            try {
+              window.focus()
+            } catch (e) {
+              // ignore
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      }, msUntil)
+
+      notificationTimersRef.current[habit.id] = timer
+    })
+  }
+
+  useEffect(() => {
+    clearNotificationTimers()
+    scheduleEndTimeNotifications()
+    return () => {
+      clearNotificationTimers()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.habits, state.completedToday, state.paidToday, state.lastCheckedDate, notificationPermission])
 
   // Safety: redirect to home if on habit added screen but habit is null
   useEffect(() => {
@@ -219,6 +329,8 @@ function App() {
             longestStreak={state.longestStreak || 0}
             habitHistory={state.habitHistory || {}}
             habitsExpanded={habitsExpanded}
+            notificationPermission={notificationPermission}
+            onEnableNotifications={requestNotificationPermission}
                         onAddHabit={() => {
               setPreviousHabitsExpanded(habitsExpanded)
               setEditingHabit(null)
