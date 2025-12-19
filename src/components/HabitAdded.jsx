@@ -3,6 +3,8 @@ import { useEffect } from 'react'
 function HabitAdded({ habit, onDone }) {
   if (!habit) return null
 
+  const ORANGE = '#f97316'
+
   useEffect(() => {
     const metaTheme = document.querySelector('meta[name="theme-color"]')
     const metaStatusBar = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
@@ -10,13 +12,13 @@ function HabitAdded({ habit, onDone }) {
     const previousTheme = metaTheme?.getAttribute('content')
     const previousStatusBar = metaStatusBar?.getAttribute('content')
 
-    if (metaTheme) metaTheme.setAttribute('content', '#f97316')
+    if (metaTheme) metaTheme.setAttribute('content', ORANGE)
     if (metaStatusBar) metaStatusBar.setAttribute('content', 'black-translucent')
 
     const prevHtmlBg = document.documentElement.style.backgroundColor
     const prevBodyBg = document.body.style.backgroundColor
-    document.documentElement.style.backgroundColor = '#f97316'
-    document.body.style.backgroundColor = '#f97316'
+    document.documentElement.style.backgroundColor = ORANGE
+    document.body.style.backgroundColor = ORANGE
 
     return () => {
       if (metaTheme && previousTheme) metaTheme.setAttribute('content', previousTheme)
@@ -46,7 +48,8 @@ function HabitAdded({ habit, onDone }) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-orange-500 px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-8">
+    <div className="h-full flex flex-col px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-8" style={{ backgroundColor: ORANGE }}>
+      <div className="fixed top-0 left-0 right-0 z-[70]" style={{ height: 'env(safe-area-inset-top)', backgroundColor: ORANGE }} />
       <div className="flex-1 flex flex-col">
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4">
@@ -98,11 +101,12 @@ function HabitAdded({ habit, onDone }) {
                   <div>
                     <p className="text-gray-900 font-bold text-lg">If you don't</p>
                     <p className="text-gray-500 text-sm">
-                      You'll pay {habit.skipCost === 0 ? 'nothing' : `$${habit.skipCost.toFixed(2)}`} to {getPenaltyDestinationText()}
+                      You'll pay {habit.skipCost === 0 ? 'nothing' : `$${habit.skipCost.toFixed(2)}`}
                     </p>
+                    <p className="text-gray-500 text-sm">to {getPenaltyDestinationText()}</p>
                   </div>
                 </div>
-                <span className="text-red-500 font-extrabold text-lg">
+                <span className="text-red-500 font-extrabold text-lg whitespace-nowrap">
                   {habit.skipCost === 0 ? 'Free' : `-$${habit.skipCost.toFixed(2)}`}
                 </span>
               </div>
