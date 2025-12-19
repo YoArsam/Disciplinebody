@@ -233,7 +233,7 @@ function Home({
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#fcfcfc] px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]">
+    <div className="h-full flex flex-col bg-[#fcfcfc] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))]">
       {/* Top Row: Profile Icon + Total Completions */}
       <div className="flex-shrink-0 mb-4 flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
