@@ -1,4 +1,5 @@
 export default function HabitsPage({
+  embedded,
   habits,
   completedToday = [],
   paidToday = [],
@@ -27,8 +28,12 @@ export default function HabitsPage({
 
   const animationClass = isClosing ? 'animate-sheetDown' : 'animate-sheetUp'
 
+  const containerClassName = embedded
+    ? 'h-full flex flex-col bg-[#fcfcfc] px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]'
+    : `fixed inset-0 bg-[#fcfcfc] flex flex-col px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] z-40 ${animationClass}`
+
   return (
-    <div className={`fixed inset-0 bg-[#fcfcfc] flex flex-col px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] z-40 ${animationClass}`}>
+    <div className={containerClassName}>
       <div className="flex items-center justify-between mb-4 flex-shrink-0 w-full">
         <div className="flex items-center gap-3">
           <button

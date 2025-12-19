@@ -168,7 +168,11 @@ function Home({
   onAddHabit, 
   onEditHabit, 
   onMarkDone,
-  onOpenHabits
+  onOpenHabits,
+  onCloseHabits,
+  habitsExpanded,
+  habitsCollapsing,
+  habitsContent
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
 
@@ -237,91 +241,109 @@ function Home({
 
   return (
     <div className="h-full flex flex-col bg-[#fcfcfc] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))]">
-      {/* Top Row: Profile Icon + Total Completions */}
-      <div className="flex-shrink-0 mb-4 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-          <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4.5 0 11-8 0 4.5 4.5 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        </div>
-        
-        {/* Total Completions Pill */}
-        {(() => {
-          const totalCompletions = Object.values(habitHistory).reduce((sum, dates) => sum + (dates?.length || 0), 0)
-          const hasCompletions = totalCompletions > 0
+      <div className={habitsExpanded ? 'home-fading-out pointer-events-none' : 'home-fading-in'}>
+        {/* Top Row: Profile Icon + Total Completions */}
+        <div className="flex-shrink-0 mb-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+            <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4.5 0 11-8 0 4.5 4.5 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
           
-          return (
-            <div className={`flex items-center gap-2 ${hasCompletions ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} border rounded-full px-4 h-10`}>
-              <div className={`w-5 h-5 rounded-full ${hasCompletions ? 'bg-green-500' : 'bg-yellow-500'} flex items-center justify-center`}>
-                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
+          {/* Total Completions Pill */}
+          {(() => {
+            const totalCompletions = Object.values(habitHistory).reduce((sum, dates) => sum + (dates?.length || 0), 0)
+            const hasCompletions = totalCompletions > 0
+            
+            return (
+              <div className={`flex items-center gap-2 ${hasCompletions ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} border rounded-full px-4 h-10`}>
+                <div className={`w-5 h-5 rounded-full ${hasCompletions ? 'bg-green-500' : 'bg-yellow-500'} flex items-center justify-center`}>
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className={`${hasCompletions ? 'text-green-700' : 'text-yellow-700'} font-bold text-sm`}>
+                  {totalCompletions}
+                </span>
+                <span className={`${hasCompletions ? 'text-green-600' : 'text-yellow-600'} text-sm font-medium`}>completed</span>
               </div>
-              <span className={`${hasCompletions ? 'text-green-700' : 'text-yellow-700'} font-bold text-sm`}>
-                {totalCompletions}
-              </span>
-              <span className={`${hasCompletions ? 'text-green-600' : 'text-yellow-600'} text-sm font-medium`}>completed</span>
+            )
+          })()}
+        </div>
+
+        {/* Your Progress Card */}
+        {(() => {
+          const progress = todaysHabits.length === 0 && habits.length > 0
+            ? {
+                icon: ProgressIcons.moon,
+                headline: 'Rest day',
+                subtext: 'No habits scheduled today',
+              }
+            : getProgressMessage(todaysHabits, completedToday, paidToday, habitHistory)
+          return (
+            <div className="flex-shrink-0 bg-white border border-gray-200 rounded-3xl px-6 py-6 mb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+                  {progress.icon}
+                </div>
+                <span className="text-gray-500 text-sm font-medium">Your Progress</span>
+              </div>
+              <div className="text-center py-2">
+                <span className="text-3xl font-bold text-gray-900 block">{progress.headline}</span>
+                <span className="text-gray-500 text-sm">{progress.subtext}</span>
+              </div>
             </div>
           )
         })()}
-      </div>
 
-      {/* Your Progress Card */}
-      {(() => {
-        const progress = todaysHabits.length === 0 && habits.length > 0
-          ? {
-              icon: ProgressIcons.moon,
-              headline: 'Rest day',
-              subtext: 'No habits scheduled today',
-            }
-          : getProgressMessage(todaysHabits, completedToday, paidToday, habitHistory)
-        return (
-          <div className="flex-shrink-0 bg-white border border-gray-200 rounded-3xl px-6 py-6 mb-4">
-            <div className="flex items-center gap-3 mb-2">
+        {notificationPermission === 'default' && onEnableNotifications && (
+          <button
+            type="button"
+            onClick={onEnableNotifications}
+            className="flex-shrink-0 bg-white border border-gray-200 rounded-3xl px-6 py-4 mb-4 active:scale-[0.99] transition-transform"
+          >
+            <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-                {progress.icon}
+                <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
               </div>
-              <span className="text-gray-500 text-sm font-medium">Your Progress</span>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="text-gray-900 font-bold text-base">Enable reminders</div>
+                <div className="text-gray-500 text-sm">We’ll notify you when a habit window ends</div>
+              </div>
+              <div className="text-orange-600 font-bold text-sm">Enable</div>
             </div>
-            <div className="text-center py-2">
-              <span className="text-3xl font-bold text-gray-900 block">{progress.headline}</span>
-              <span className="text-gray-500 text-sm">{progress.subtext}</span>
-            </div>
-          </div>
-        )
-      })()}
-
-      {notificationPermission === 'default' && onEnableNotifications && (
-        <button
-          type="button"
-          onClick={onEnableNotifications}
-          className="flex-shrink-0 bg-white border border-gray-200 rounded-3xl px-6 py-4 mb-4 active:scale-[0.99] transition-transform"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-              <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0 text-left">
-              <div className="text-gray-900 font-bold text-base">Enable reminders</div>
-              <div className="text-gray-500 text-sm">We’ll notify you when a habit window ends</div>
-            </div>
-            <div className="text-orange-600 font-bold text-sm">Enable</div>
-          </div>
-        </button>
-      )}
+          </button>
+        )}
+      </div>
 
       {/* Today's Habits Card */}
       <div
-        className={`flex-1 bg-white border border-gray-200 rounded-3xl px-6 py-5 flex flex-col min-h-0 ${onOpenHabits ? 'cursor-pointer' : ''}`}
+        className={`flex-1 bg-white border border-gray-200 rounded-3xl px-6 py-5 flex flex-col min-h-0 habits-card-base ${habitsExpanded ? 'habits-expanded' : ''} ${habitsExpanded && !habitsCollapsing ? 'habits-expanding' : ''} ${habitsCollapsing ? 'habits-collapsing' : ''} ${onOpenHabits && !habitsExpanded ? 'cursor-pointer' : ''}`}
         onClick={() => {
+          if (habitsExpanded) return
           if (onOpenHabits) onOpenHabits()
         }}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-3">
+            {habitsExpanded && onCloseHabits && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onCloseHabits()
+                }}
+                className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform"
+              >
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
             <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -350,7 +372,11 @@ function Home({
 
         {/* Habits List */}
         <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
-          {habits.length === 0 ? (
+          {habitsExpanded && habitsContent ? (
+            <div className="h-full">
+              {habitsContent}
+            </div>
+          ) : habits.length === 0 ? (
             <button 
               type="button"
               onPointerDown={(e) => {
@@ -423,7 +449,7 @@ function Home({
                 const bTime = b.allDay ? 0 : b.startTime
                 return aTime - bTime
               })
-              .map((habit, index) => {
+              .map((habit) => {
               const isDone = isHabitDone(habit)
               const isPaid = paidToday?.includes(habit.id)
               const isResolved = isDone || isPaid
