@@ -4,12 +4,25 @@ function HabitAdded({ habit, onDone }) {
   if (!habit) return null
 
   useEffect(() => {
-    const meta = document.querySelector('meta[name="theme-color"]')
-    if (!meta) return
-    const previous = meta.getAttribute('content')
-    meta.setAttribute('content', '#f97316')
+    const metaTheme = document.querySelector('meta[name="theme-color"]')
+    const metaStatusBar = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+
+    const previousTheme = metaTheme?.getAttribute('content')
+    const previousStatusBar = metaStatusBar?.getAttribute('content')
+
+    if (metaTheme) metaTheme.setAttribute('content', '#f97316')
+    if (metaStatusBar) metaStatusBar.setAttribute('content', 'black-translucent')
+
+    const prevHtmlBg = document.documentElement.style.backgroundColor
+    const prevBodyBg = document.body.style.backgroundColor
+    document.documentElement.style.backgroundColor = '#f97316'
+    document.body.style.backgroundColor = '#f97316'
+
     return () => {
-      if (previous) meta.setAttribute('content', previous)
+      if (metaTheme && previousTheme) metaTheme.setAttribute('content', previousTheme)
+      if (metaStatusBar && previousStatusBar) metaStatusBar.setAttribute('content', previousStatusBar)
+      document.documentElement.style.backgroundColor = prevHtmlBg
+      document.body.style.backgroundColor = prevBodyBg
     }
   }, [])
 
