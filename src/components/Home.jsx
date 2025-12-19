@@ -170,6 +170,7 @@ function Home({
   onToggleHabits 
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [selectedDayKey, setSelectedDayKey] = useState(new Date().getDay())
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
 
@@ -229,14 +230,37 @@ function Home({
     return () => clearInterval(interval)
   }, [])
 
+  useEffect(() => {
+    if (habitsExpanded) {
+      setSelectedDayKey(new Date().getDay())
+    }
+  }, [habitsExpanded])
+
   const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
+  const getDateForDayKey = (dayKey) => {
+    const now = currentTime
+    const currentDayKey = now.getDay()
+    const delta = (dayKey - currentDayKey + 7) % 7
+    const date = new Date(now)
+    date.setDate(date.getDate() + delta)
+    return date
+  }
+  const isHabitPausedOnDate = (habit, date) => {
+    if (!habit?.pausedUntil) return false
+    const day = date.toISOString().split('T')[0]
+    return habit.pausedUntil >= day
+  }
   const isHabitPausedToday = (habit) => {
     if (!habit?.pausedUntil) return false
     const todayIso = currentTime.toISOString().split('T')[0]
     return habit.pausedUntil >= todayIso
   }
-  const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(currentTime.getDay()) && !isHabitPausedToday(habit)
-  const todaysHabits = habits.filter(isHabitScheduledToday)
+  const isHabitScheduledOnSelectedDay = (habit) => {
+    const date = getDateForDayKey(selectedDayKey)
+    return getHabitDays(habit).includes(selectedDayKey) && !isHabitPausedOnDate(habit, date)
+  }
+  const isViewingToday = selectedDayKey === currentTime.getDay()
+  const habitsForSelectedDay = habits.filter(isHabitScheduledOnSelectedDay)
 
   const formatTimeRange = (habit) => {
     if (habit.allDay) return 'All Day'
@@ -317,13 +341,13 @@ function Home({
 
       {/* Your Progress Card */}
       {(() => {
-        const progress = todaysHabits.length === 0 && habits.length > 0
+        const progress = habitsForSelectedDay.length === 0 && habits.length > 0
           ? {
               icon: ProgressIcons.moon,
               headline: 'Rest day',
-              subtext: 'No habits scheduled today',
+              subtext: 'No habits scheduled',
             }
-          : getProgressMessage(todaysHabits, completedToday, paidToday, habitHistory)
+          : getProgressMessage(habitsForSelectedDay, completedToday, paidToday, habitHistory)
         return (
           <div className="flex-shrink-0 bg-white border border-gray-200 rounded-3xl px-6 py-6 mb-4">
             <div className="flex items-center gap-3 mb-2">
@@ -376,6 +400,28 @@ function Home({
           </button>
         </div>
 
+        {habitsExpanded && (
+          <div
+            className="flex items-center gap-2 overflow-x-auto pb-2 mb-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((label, dayKey) => (
+              <button
+                key={dayKey}
+                type="button"
+                onClick={() => setSelectedDayKey(dayKey)}
+                className={`flex-shrink-0 w-8 h-8 rounded-full text-sm font-semibold transition-colors ${
+                  selectedDayKey === dayKey
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-gray-100 text-gray-500'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Habits List */}
         <div className="flex-1 flex flex-col gap-2 min-h-0 w-full overflow-y-auto">
           {habits.length === 0 ? (
@@ -403,7 +449,7 @@ function Home({
                 <span className="text-orange-700 font-medium">Add Your First Habits</span>
               </div>
             </button>
-          ) : todaysHabits.length === 0 ? (
+          ) : habitsForSelectedDay.length === 0 ? (
             <button 
               type="button"
               onPointerDown={(e) => {
@@ -423,19 +469,19 @@ function Home({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
-              <p className="text-gray-500 mb-4 text-center">No habits scheduled today</p>
+              <p className="text-gray-500 mb-4 text-center">No habits scheduled</p>
               <div className="bg-white rounded-full px-8 py-3 border border-gray-200">
                 <span className="text-orange-700 font-medium">Add a Habit</span>
               </div>
             </button>
           ) : (
             // Sort habits: by time, then done habits go to bottom
-            [...todaysHabits]
+            [...habitsForSelectedDay]
               .sort((a, b) => {
-                const aDone = completedToday.includes(a.id)
-                const bDone = completedToday.includes(b.id)
-                const aPaid = (paidToday || []).includes(a.id)
-                const bPaid = (paidToday || []).includes(b.id)
+                const aDone = isViewingToday && completedToday.includes(a.id)
+                const bDone = isViewingToday && completedToday.includes(b.id)
+                const aPaid = isViewingToday && (paidToday || []).includes(a.id)
+                const bPaid = isViewingToday && (paidToday || []).includes(b.id)
                 const aResolved = aDone || aPaid
                 const bResolved = bDone || bPaid
                 // Done habits go to bottom
@@ -447,9 +493,9 @@ function Home({
                 return aTime - bTime
               })
               .map((habit, index) => {
-              const isDone = isHabitDone(habit)
-              const isPaid = paidToday?.includes(habit.id)
-              const isResolved = isDone || isPaid
+              const isDone = isViewingToday && isHabitDone(habit)
+              const isPaid = isViewingToday && paidToday?.includes(habit.id)
+              const isResolved = isViewingToday && (isDone || isPaid)
               
               // Get last 28 days for grid chart (4 weeks)
               const habitDates = habitHistory[habit.id] || []
@@ -494,7 +540,7 @@ function Home({
                       <span className="text-gray-300 text-lg font-medium ml-4">{isPaid ? 'Paid' : 'Done'}</span>
                     ) : (
                       (() => {
-                        const timeLeft = getTimeRemaining(habit)
+                        const timeLeft = isViewingToday ? getTimeRemaining(habit) : { text: formatTimeRange(habit), expired: false }
                         return (
                           <span className={`ml-4 text-lg font-medium ${
                             timeLeft.expired ? 'text-gray-400' : 'text-gray-500'
