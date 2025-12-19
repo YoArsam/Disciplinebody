@@ -115,6 +115,41 @@ function App() {
     return sub
   }
 
+  const syncPushSubscriptionToServer = async () => {
+    if (typeof window === 'undefined') return
+    if (!('serviceWorker' in navigator)) return
+    if (!('PushManager' in window)) return
+
+    const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY
+    if (!vapidPublicKey) return
+    if (Notification.permission !== 'granted') return
+
+    let subscription = null
+    try {
+      subscription = await ensurePushSubscription()
+    } catch (e) {
+      subscription = null
+    }
+
+    if (!subscription) return
+
+    const tzOffsetMinutes = new Date().getTimezoneOffset()
+
+    try {
+      await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subscription,
+          habits: state.habits,
+          tzOffsetMinutes,
+        }),
+      })
+    } catch (e) {
+      // ignore
+    }
+  }
+
   const requestNotificationPermission = async () => {
     if (typeof window === 'undefined') return
     if (!('Notification' in window)) return
@@ -226,6 +261,12 @@ function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.habits, state.completedToday, state.paidToday, state.lastCheckedDate, notificationPermission])
+
+  useEffect(() => {
+    if (notificationPermission !== 'granted') return
+    syncPushSubscriptionToServer()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notificationPermission, state.habits])
 
   // Safety: redirect to home if on habit added screen but habit is null
   useEffect(() => {
