@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 // SVG icons for progress messages
 const ProgressIcons = {
@@ -163,67 +163,13 @@ function Home({
   completedToday,
   paidToday,
   habitHistory,
-  habitsExpanded,
   notificationPermission,
   onEnableNotifications,
   onAddHabit, 
   onEditHabit, 
-  onMarkDone,
-  onToggleHabits 
+  onMarkDone
 }) {
   const [currentTime, setCurrentTime] = useState(new Date())
-  const widgetRef = useRef(null)
-  const [widgetStyle, setWidgetStyle] = useState({})
-
-  // Warm up CSS transitions on mount by doing a tiny invisible transition
-  useEffect(() => {
-    // Start with a tiny transform
-    setWidgetStyle({ transform: 'translateY(0.1px)' })
-    
-    // Then reset after transition completes - this activates the transition
-    setTimeout(() => {
-      setWidgetStyle({ transform: 'translateY(0)' })
-    }, 50)
-    
-    // Clear completely
-    setTimeout(() => {
-      setWidgetStyle({})
-    }, 500)
-  }, [])
-
-  // Calculate expanded position - only use transform and height (animatable)
-  useEffect(() => {
-    if (habitsExpanded && widgetRef.current) {
-      // Small delay to ensure DOM is ready after navigation
-      const timer = setTimeout(() => {
-        if (!widgetRef.current) return
-        const rect = widgetRef.current.getBoundingClientRect()
-        const navHeight = 80
-        
-        // Slide up to cover profile/cost buttons (start from top of screen)
-        const moveUp = rect.top
-        const newHeight = window.innerHeight - navHeight
-        
-        // First extend height, then move up
-        setWidgetStyle({
-          height: `${newHeight}px`,
-          marginBottom: `-${moveUp}px`,
-        })
-        
-        setTimeout(() => {
-          setWidgetStyle({
-            transform: `translateY(-${moveUp}px)`,
-            height: `${newHeight}px`,
-            marginBottom: `-${moveUp}px`,
-          })
-        }, 50)
-      }, 10)
-      
-      return () => clearTimeout(timer)
-    } else {
-      setWidgetStyle({})
-    }
-  }, [habitsExpanded])
 
   // Update time every minute for countdown timers
   useEffect(() => {
@@ -287,7 +233,7 @@ function Home({
   }
 
   return (
-    <div className={`h-full flex flex-col bg-[#fcfcfc] px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
+    <div className="h-full flex flex-col bg-[#fcfcfc] px-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]">
       {/* Top Row: Profile Icon + Total Completions */}
       <div className="flex-shrink-0 mb-4 flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
@@ -364,12 +310,7 @@ function Home({
       )}
 
       {/* Today's Habits Card */}
-      <div 
-        ref={widgetRef}
-        className="flex-1 bg-white border border-gray-200 rounded-3xl px-6 py-5 flex flex-col min-h-0 cursor-pointer habits-widget"
-        style={widgetStyle}
-        onClick={onToggleHabits}
-      >
+      <div className="flex-1 bg-white border border-gray-200 rounded-3xl px-6 py-5 flex flex-col min-h-0">
         {/* Header */}
         <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-3">
@@ -480,14 +421,6 @@ function Home({
               const isResolved = isDone || isPaid
               const isPaused = isHabitPausedToday(habit)
               
-              // Get last 28 days for grid chart (4 weeks)
-              const habitDates = habitHistory[habit.id] || []
-              const last28Days = Array.from({ length: 28 }, (_, i) => {
-                const date = new Date()
-                date.setDate(date.getDate() - (27 - i))
-                return date.toISOString().split('T')[0]
-              })
-              
               return (
                 <div
                   key={habit.id}
@@ -536,32 +469,6 @@ function Home({
                       })()
                     )}
                   </div>
-                  
-                  {/* Grid Chart - Only show when expanded */}
-                  {habitsExpanded && (
-                    <div className="border-t border-gray-100 grid-chart-enter">
-                      <div className="grid grid-cols-7 gap-1">
-                        {last28Days.map((date, i) => {
-                          const isCompleted = habitDates.includes(date)
-                          const isToday = date === new Date().toISOString().split('T')[0]
-                          return (
-                            <div
-                              key={date}
-                              className={`aspect-square rounded-sm ${
-                                isCompleted 
-                                  ? 'bg-green-500' 
-                                  : isToday 
-                                    ? 'bg-orange-200' 
-                                    : 'bg-gray-100'
-                              }`}
-                              title={date}
-                            />
-                          )
-                        })}
-                      </div>
-                      <p className="text-xs text-gray-400 mt-2 text-center">Last 4 weeks</p>
-                    </div>
-                  )}
                 </div>
               )
             })

@@ -5,6 +5,7 @@ import EditWalletScreen from './screens/EditWalletScreen'
 // EditSkipCostScreen removed - skip cost is now per-habit
 import HabitAdded from './components/HabitAdded'
 import CheckInModal from './components/CheckInModal'
+import HabitsPage from './components/HabitsPage'
 
 const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
 const isHabitScheduledOnDay = (habit, dayKey) => getHabitDays(habit).includes(dayKey)
@@ -34,11 +35,9 @@ const loadState = () => {
 
 function App() {
   const [state, setState] = useState(loadState)
-  const [screen, setScreen] = useState('home') // 'home' | 'habit-adder' | 'wallet-editor' | 'skip-cost-editor'
+  const [screen, setScreen] = useState('home') // 'home' | 'habits' | 'habit-adder' | 'wallet-editor' | 'skip-cost-editor'
   const [editingHabit, setEditingHabit] = useState(null)
   const [previousScreen, setPreviousScreen] = useState('home')
-  const [habitsExpanded, setHabitsExpanded] = useState(false)
-  const [previousHabitsExpanded, setPreviousHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null)
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
@@ -360,7 +359,7 @@ function App() {
   const currentCheckIn = checkInQueue[0] || null
 
   // Check if we should show the main nav bar (not on editor screens)
-  const showMainNav = screen === 'home'
+  const showMainNav = screen === 'home' || screen === 'habits'
 
   return (
     <div className="h-full w-full">
@@ -373,23 +372,38 @@ function App() {
             currentStreak={state.currentStreak || 0}
             longestStreak={state.longestStreak || 0}
             habitHistory={state.habitHistory || {}}
-            habitsExpanded={habitsExpanded}
             notificationPermission={notificationPermission}
             onEnableNotifications={requestNotificationPermission}
-                        onAddHabit={() => {
-              setPreviousHabitsExpanded(habitsExpanded)
+            onAddHabit={() => {
               setEditingHabit(null)
               setScreen('habit-adder')
             }}
             onEditHabit={(habit) => {
-              setPreviousHabitsExpanded(habitsExpanded)
               setEditingHabit(habit)
               setScreen('habit-adder')
             }}
             onMarkDone={markHabitDone}
-            onToggleHabits={() => setHabitsExpanded(!habitsExpanded)}
           />
         </div>
+
+      {screen === 'habits' && (
+        <HabitsPage
+          habits={state.habits}
+          completedToday={state.completedToday}
+          paidToday={state.paidToday || []}
+          habitHistory={state.habitHistory || {}}
+          onAddHabit={() => {
+            setEditingHabit(null)
+            setScreen('habit-adder')
+          }}
+          onEditHabit={(habit) => {
+            setEditingHabit(habit)
+            setScreen('habit-adder')
+          }}
+          onMarkDone={markHabitDone}
+        />
+      )}
+
       {screen === 'habit-adder' && (
         <EditHabitScreen
           habit={editingHabit}
@@ -421,7 +435,6 @@ function App() {
             setEditingHabit(null)
             setScreen(previousScreen)
             setPreviousScreen('home')
-            setHabitsExpanded(previousHabitsExpanded)
           }}
         />
       )}
@@ -451,19 +464,19 @@ function App() {
             <div className="max-w-md mx-auto flex justify-center items-center gap-12">
               {/* Home */}
               <button 
-                onClick={() => setHabitsExpanded(false)}
+                onClick={() => setScreen('home')}
                 className="p-2"
               >
-                <svg className={`w-6 h-6 ${!habitsExpanded ? 'text-orange-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg className={`w-6 h-6 ${screen === 'home' ? 'text-orange-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </button>
               {/* Heart */}
               <button 
-                onClick={() => setHabitsExpanded(true)}
+                onClick={() => setScreen('habits')}
                 className="p-2"
               >
-                <svg className={`w-6 h-6 ${habitsExpanded ? 'text-orange-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg className={`w-6 h-6 ${screen === 'habits' ? 'text-orange-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               </button>
