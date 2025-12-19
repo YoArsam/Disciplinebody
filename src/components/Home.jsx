@@ -164,7 +164,6 @@ function Home({
   paidToday,
   habitHistory,
   habitsExpanded,
-  newHabitId,
   onAddHabit, 
   onEditHabit, 
   onMarkDone,
@@ -451,7 +450,6 @@ function Home({
               const isDone = isHabitDone(habit)
               const isPaid = paidToday?.includes(habit.id)
               const isResolved = isDone || isPaid
-              const isNewlyAdded = newHabitId === habit.id
               
               // Get last 28 days for grid chart (4 weeks)
               const habitDates = habitHistory[habit.id] || []
@@ -467,7 +465,7 @@ function Home({
                   onClick={() => onEditHabit(habit)}
                   className={`w-full p-4 rounded-2xl transition-all ${
                     isResolved ? 'bg-white/50' : 'bg-white'
-                  } border border-gray-200 cursor-pointer ${isNewlyAdded ? 'new-habit-highlight' : ''}`}
+                  } border border-gray-200 cursor-pointer`}
                 >
                   {/* Top row: Habit info + status */}
                   <div className="flex items-center justify-between">

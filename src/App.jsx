@@ -38,7 +38,6 @@ function App() {
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [previousHabitsExpanded, setPreviousHabitsExpanded] = useState(false)
-  const [newHabitId, setNewHabitId] = useState(null)
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
 
@@ -46,13 +45,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem('accountability-app-state', JSON.stringify(state))
   }, [state])
-
-  // Clear new habit highlight after a short delay
-  useEffect(() => {
-    if (!newHabitId) return
-    const t = setTimeout(() => setNewHabitId(null), 1400)
-    return () => clearTimeout(t)
-  }, [newHabitId])
 
   // Check for missed habits and reset daily completions
   useEffect(() => {
@@ -218,7 +210,6 @@ function App() {
             longestStreak={state.longestStreak || 0}
             habitHistory={state.habitHistory || {}}
             habitsExpanded={habitsExpanded}
-            newHabitId={newHabitId}
                         onAddHabit={() => {
               setPreviousHabitsExpanded(habitsExpanded)
               setEditingHabit(null)
@@ -249,7 +240,6 @@ function App() {
                 ...prev,
                 habits: [...prev.habits, newHabit],
               }))
-              setNewHabitId(newHabit.id)
               setEditingHabit(null)
               setScreen('home')
             }
