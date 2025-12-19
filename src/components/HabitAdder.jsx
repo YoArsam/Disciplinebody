@@ -189,38 +189,40 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-4 text-base font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
               />
 
-              <div className="mt-3">
-                <button
-                  type="button"
-                  onClick={() => setShowIdeas((v) => !v)}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-transparent text-gray-400 text-sm font-medium"
-                >
-                  <span>Need ideas?</span>
-                  <svg
-                    className={`w-5 h-5 transition-transform ${showIdeas ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              {!isEditing && (
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowIdeas((v) => !v)}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-transparent text-gray-400 text-sm font-medium"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                    <span>Need ideas?</span>
+                    <svg
+                      className={`w-5 h-5 transition-transform ${showIdeas ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
 
-                {showIdeas && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {habitIdeas.map((idea) => (
-                      <button
-                        key={idea}
-                        type="button"
-                        onClick={() => setName(idea)}
-                        className="px-4 py-2 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-sm font-semibold active:scale-95 transition-transform"
-                      >
-                        {idea}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                  {showIdeas && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {habitIdeas.map((idea) => (
+                        <button
+                          key={idea}
+                          type="button"
+                          onClick={() => setName(idea)}
+                          className="px-4 py-2 rounded-full bg-gray-50 text-gray-700 border border-gray-200 text-sm font-semibold active:scale-95 transition-transform"
+                        >
+                          {idea}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {!name.trim() && (
                 <p className="text-orange-500 text-xs mt-3 text-center font-medium">
@@ -372,7 +374,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     </>
                   ) : (
                     <>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="flex gap-2">
                         <button
                           type="button"
                           onClick={() => {
@@ -387,53 +389,61 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         >
                           1 day
                         </button>
+
+                        {!showPauseCustom ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowPauseCustom(true)
+                              if (pauseDays === '1') setPauseDays('')
+                            }}
+                            className="py-3 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
+                          >
+                            Custom
+                          </button>
+                        ) : (
+                          <div className="relative flex-1">
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={pauseDays}
+                              onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
+                              placeholder="Days"
+                              autoFocus
+                              className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 pr-9 text-sm font-medium border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowPauseCustom(false)
+                                setPauseDays('')
+                              }}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-gray-100 text-gray-600 font-semibold active:scale-95 transition-transform"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        )}
+
                         <button
                           type="button"
                           onClick={() => {
-                            setShowPauseCustom(true)
-                            if (pauseDays === '1') setPauseDays('')
+                            const n = parseInt(pauseDays, 10)
+                            if (!n || n <= 0) return
+                            const d = new Date()
+                            d.setDate(d.getDate() + n)
+                            setPausedUntil(formatISODate(d))
                           }}
-                          className={`py-3 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
-                            showPauseCustom
-                              ? 'bg-orange-500 border-orange-500 text-white'
-                              : 'bg-gray-50 border-gray-200 text-gray-700'
+                          disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
+                          className={`px-4 py-3 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
+                            !pauseDays || parseInt(pauseDays, 10) <= 0
+                              ? 'bg-gray-200 text-gray-500'
+                              : 'bg-orange-500 text-white'
                           }`}
                         >
-                          Custom
+                          Set
                         </button>
                       </div>
-
-                      {showPauseCustom && (
-                        <div className="mt-3">
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            value={pauseDays}
-                            onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
-                            placeholder="Days"
-                            className="w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                          />
-                        </div>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const n = parseInt(pauseDays, 10)
-                          if (!n || n <= 0) return
-                          const d = new Date()
-                          d.setDate(d.getDate() + n)
-                          setPausedUntil(formatISODate(d))
-                        }}
-                        disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
-                        className={`mt-3 w-full py-3 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
-                          !pauseDays || parseInt(pauseDays, 10) <= 0
-                            ? 'bg-gray-200 text-gray-500'
-                            : 'bg-orange-500 text-white'
-                        }`}
-                      >
-                        Set
-                      </button>
                       <p className="text-gray-400 text-xs mt-2 text-center">
                         Pause hides the habit and skips penalties while paused
                       </p>
