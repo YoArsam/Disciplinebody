@@ -3,6 +3,7 @@ import HomeScreen from './screens/HomeScreen'
 import EditHabitScreen from './screens/EditHabitScreen'
 import EditWalletScreen from './screens/EditWalletScreen'
 // EditSkipCostScreen removed - skip cost is now per-habit
+import HabitAdded from './components/HabitAdded'
 import CheckInModal from './components/CheckInModal'
 
 const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
@@ -38,6 +39,7 @@ function App() {
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [previousHabitsExpanded, setPreviousHabitsExpanded] = useState(false)
+  const [newlyAddedHabit, setNewlyAddedHabit] = useState(null)
   const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
   const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
 
@@ -45,6 +47,13 @@ function App() {
   useEffect(() => {
     localStorage.setItem('accountability-app-state', JSON.stringify(state))
   }, [state])
+
+  // Safety: redirect to home if on habit added screen but habit is null
+  useEffect(() => {
+    if (screen === 'habit-added' && !newlyAddedHabit) {
+      setScreen('home')
+    }
+  }, [screen, newlyAddedHabit])
 
   // Check for missed habits and reset daily completions
   useEffect(() => {
@@ -234,14 +243,15 @@ function App() {
               setScreen(previousScreen)
               setPreviousScreen('home')
             } else {
-              // New habit - add it and go back home
+              // New habit - add it and show confirmation
               const newHabit = { ...habit, id: Date.now() }
               setState(prev => ({
                 ...prev,
                 habits: [...prev.habits, newHabit],
               }))
+              setNewlyAddedHabit(newHabit)
               setEditingHabit(null)
-              setScreen('home')
+              setScreen('habit-added')
             }
           }}
           onDelete={editingHabit ? () => {
@@ -255,6 +265,15 @@ function App() {
             setScreen(previousScreen)
             setPreviousScreen('home')
             setHabitsExpanded(previousHabitsExpanded)
+          }}
+        />
+      )}
+      {screen === 'habit-added' && newlyAddedHabit && (
+        <HabitAdded
+          habit={newlyAddedHabit}
+          onDone={() => {
+            setNewlyAddedHabit(null)
+            setScreen('home')
           }}
         />
       )}
