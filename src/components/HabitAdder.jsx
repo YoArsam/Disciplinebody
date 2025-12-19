@@ -13,6 +13,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [charityName, setCharityName] = useState(habit?.charityName || '')
   const [pausedUntil, setPausedUntil] = useState(habit?.pausedUntil || '')
   const [pauseDays, setPauseDays] = useState('')
+  const [showPauseCustom, setShowPauseCustom] = useState(false)
   const [showIdeas, setShowIdeas] = useState(false)
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
@@ -106,7 +107,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       skipCost: computedSkipCost,
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
       stakeDestination,
-      charityName: '',
+      charityName: stakeDestination === 'charity' ? charityName : '',
       pausedUntil: pausedUntil || '',
     })
   }
@@ -225,28 +226,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Timing</span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setAllDay(!allDay)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-full mb-4 transition-all border ${
-                  allDay ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                    allDay ? 'bg-orange-500' : 'bg-gray-300'
-                  }`}>
-                    {allDay && (
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                  <span className={`font-semibold text-sm ${allDay ? 'text-orange-700' : 'text-gray-700'}`}>All Day</span>
-                </div>
-                <span className="text-xs text-gray-400">No time window</span>
-              </button>
-
               {!allDay && (
                 <>
                   <p className="text-gray-400 text-xs mb-3">
@@ -254,7 +233,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </p>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="min-w-0">
-                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 flex flex-col items-center">
+                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex flex-col items-center">
                         <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">From</span>
                         <input
                           type="time"
@@ -272,7 +251,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-2.5 flex flex-col items-center">
+                      <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex flex-col items-center">
                         <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide">Until</span>
                         <input
                           type="time"
@@ -285,6 +264,28 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </div>
                 </>
               )}
+
+              <button
+                type="button"
+                onClick={() => setAllDay(!allDay)}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-full mt-4 mb-4 transition-all border ${
+                  allDay ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                    allDay ? 'bg-orange-500' : 'bg-gray-300'
+                  }`}>
+                    {allDay && (
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className={`font-semibold text-sm ${allDay ? 'text-orange-700' : 'text-gray-700'}`}>All Day</span>
+                </div>
+                <span className="text-xs text-gray-400">No time window</span>
+              </button>
 
               <div className="mt-5 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2 mb-3">
@@ -344,6 +345,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         onClick={() => {
                           setPausedUntil('')
                           setPauseDays('')
+                          setShowPauseCustom(false)
                         }}
                         className="mt-3 w-full py-3 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
                       >
@@ -352,29 +354,59 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     </>
                   ) : (
                     <>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          value={pauseDays}
-                          onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
-                          placeholder="Days"
-                          className="flex-1 bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        />
+                      <div className="grid grid-cols-4 gap-2">
+                        {[1, 3, 7].map((n) => (
+                          <button
+                            key={n}
+                            type="button"
+                            onClick={() => {
+                              const d = new Date()
+                              d.setDate(d.getDate() + n)
+                              setPausedUntil(formatISODate(d))
+                              setShowPauseCustom(false)
+                              setPauseDays('')
+                            }}
+                            className="py-3 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
+                          >
+                            {n}d
+                          </button>
+                        ))}
                         <button
                           type="button"
-                          onClick={() => {
-                            const n = parseInt(pauseDays, 10)
-                            if (!n || n <= 0) return
-                            const d = new Date()
-                            d.setDate(d.getDate() + n)
-                            setPausedUntil(formatISODate(d))
-                          }}
-                          className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
+                          onClick={() => setShowPauseCustom((v) => !v)}
+                          className={`py-3 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
+                            showPauseCustom ? 'bg-orange-500 border-orange-500 text-white' : 'bg-gray-50 border-gray-200 text-gray-700'
+                          }`}
                         >
-                          Pause
+                          Custom
                         </button>
                       </div>
+
+                      {showPauseCustom && (
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={pauseDays}
+                            onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
+                            placeholder="Days"
+                            className="flex-1 bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl p-3 text-sm font-medium border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const n = parseInt(pauseDays, 10)
+                              if (!n || n <= 0) return
+                              const d = new Date()
+                              d.setDate(d.getDate() + n)
+                              setPausedUntil(formatISODate(d))
+                            }}
+                            className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
+                          >
+                            Set
+                          </button>
+                        </div>
+                      )}
                       <p className="text-gray-400 text-xs mt-2 text-center">
                         Pause hides the habit and skips penalties while paused
                       </p>
@@ -539,6 +571,25 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     Charity
                   </button>
                 </div>
+
+                {stakeDestination === 'charity' && (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {['Girls Who Code', 'charity: water', 'The Trevor Project'].map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setCharityName(c)}
+                        className={`py-3 rounded-xl font-semibold text-[11px] transition-all active:scale-95 ${
+                          charityName === c
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-50 text-gray-700 border border-gray-200'
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
