@@ -597,7 +597,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                             setPauseDays('1')
                             setShowPauseCustom(false)
                           }}
-                          className={`h-12 px-4 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
+                          className={`h-12 flex-1 px-4 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
                             pauseDays === '1' && !showPauseCustom
                               ? 'bg-orange-500 border-orange-500 text-white'
                               : 'bg-gray-50 border-gray-200 text-gray-700'
@@ -651,7 +651,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                             setPausedUntil(formatISODate(d))
                           }}
                           disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
-                          className={`h-12 px-4 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
+                          className={`h-12 w-20 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
                             !pauseDays || parseInt(pauseDays, 10) <= 0
                               ? 'bg-gray-200 text-gray-500'
                               : 'bg-orange-500 text-white'
