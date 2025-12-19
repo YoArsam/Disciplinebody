@@ -123,8 +123,8 @@ function App() {
         if ((latest.completedToday || []).includes(stillActive.id)) return
         if ((latest.paidToday || []).includes(stillActive.id)) return
 
-        const title = 'Habit window ended'
-        const body = `Did you finish "${stillActive.name}"? Open the app to check in.`
+        const title = 'Habit Buddy'
+        const body = 'So.... Did you do it? :)'
 
         try {
           const n = new Notification(title, {
