@@ -16,6 +16,10 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [showPauseCustom, setShowPauseCustom] = useState(false)
   const [showDestinationEditor, setShowDestinationEditor] = useState(!isEditing)
   const [showIdeas, setShowIdeas] = useState(false)
+  const [showDaysEditor, setShowDaysEditor] = useState(() => {
+    const initial = habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
+    return initial.length !== 7
+  })
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
   const [isCustomValue, setIsCustomValue] = useState(false) // Track if current skipCost is a custom value
@@ -240,52 +244,14 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {(isEditing || step === 2) && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
                   <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Days</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Timing</span>
               </div>
-
-              <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide block mb-2">Schedule</span>
-
-              <div className="grid grid-cols-7 gap-2">
-                {dayLabels.map((d) => {
-                  const selected = daysOfWeek.includes(d.key)
-                  return (
-                    <button
-                      key={d.key}
-                      type="button"
-                      onClick={() => toggleDay(d.key)}
-                      className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
-                        selected
-                          ? 'bg-orange-500 border-orange-500 text-white'
-                          : 'bg-gray-50 border-gray-200 text-gray-600'
-                      }`}
-                    >
-                      {d.label}
-                    </button>
-                  )
-                })}
-              </div>
-
-              {daysOfWeek.length === 0 && (
-                <p className="text-orange-500 text-xs mt-3 text-center font-medium">
-                  Select at least one day
-                </p>
-              )}
-
-              <div className="mt-5 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                    <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Timing</span>
-                </div>
 
                 {!allDay && (
                   <>
@@ -347,7 +313,63 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </div>
                   <span className="text-xs text-gray-400">No time window</span>
                 </button>
-              </div>
+
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowDaysEditor((v) => !v)}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div className="text-left">
+                        <div className="text-gray-900 font-bold text-sm">Repeat</div>
+                        <div className="text-gray-500 text-xs">
+                          {daysOfWeek.length === 7 ? 'Every day' : `${daysOfWeek.length} days selected`}
+                        </div>
+                      </div>
+                    </div>
+                    <svg className={`w-5 h-5 text-gray-400 transition-transform ${showDaysEditor ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {showDaysEditor && (
+                    <div className="mt-3">
+                      <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide block mb-2">Schedule</span>
+                      <div className="grid grid-cols-7 gap-2">
+                        {dayLabels.map((d) => {
+                          const selected = daysOfWeek.includes(d.key)
+                          return (
+                            <button
+                              key={d.key}
+                              type="button"
+                              onClick={() => toggleDay(d.key)}
+                              className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                                selected
+                                  ? 'bg-orange-500 border-orange-500 text-white'
+                                  : 'bg-gray-50 border-gray-200 text-gray-600'
+                              }`}
+                            >
+                              {d.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+
+                      {daysOfWeek.length === 0 && (
+                        <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                          Select at least one day
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              
 
             </div>
           )}
