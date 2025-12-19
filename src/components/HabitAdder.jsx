@@ -14,6 +14,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [pausedUntil, setPausedUntil] = useState(habit?.pausedUntil || '')
   const [pauseDays, setPauseDays] = useState('')
   const [showPauseCustom, setShowPauseCustom] = useState(false)
+  const [showDestinationEditor, setShowDestinationEditor] = useState(!isEditing)
   const [showIdeas, setShowIdeas] = useState(false)
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
@@ -62,6 +63,11 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     const diffMs = target.getTime() - today.getTime()
     const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000))
     return diffDays > 0 ? diffDays : 0
+  }
+
+  const getDestinationLabel = () => {
+    if (stakeDestination === 'self') return 'Discipline Fund'
+    return charityName || 'Charity'
   }
 
   const stepTitles = {
@@ -343,114 +349,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </button>
               </div>
 
-              {habit && (
-                <div className="mt-5 pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                      <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Pause</span>
-                  </div>
-
-                  {pausedUntil ? (
-                    <>
-                      <p className="text-gray-500 text-sm text-center">
-                        This habit is paused until {pausedUntil}
-                        {getPauseDaysFromPausedUntil() !== null ? ` (${getPauseDaysFromPausedUntil()} days)` : ''}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPausedUntil('')
-                          setPauseDays('')
-                          setShowPauseCustom(false)
-                        }}
-                        className="mt-3 w-full py-3 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
-                      >
-                        Resume Habit
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex gap-2 items-stretch">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPauseDays('1')
-                            setShowPauseCustom(false)
-                          }}
-                          className={`h-12 px-4 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
-                            pauseDays === '1' && !showPauseCustom
-                              ? 'bg-orange-500 border-orange-500 text-white'
-                              : 'bg-gray-50 border-gray-200 text-gray-700'
-                          }`}
-                        >
-                          1 day
-                        </button>
-
-                        {!showPauseCustom ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowPauseCustom(true)
-                              if (pauseDays === '1') setPauseDays('')
-                            }}
-                            className="h-12 flex-1 px-4 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
-                          >
-                            Custom
-                          </button>
-                        ) : (
-                          <div className="relative flex-1 min-w-0">
-                            <input
-                              type="text"
-                              inputMode="numeric"
-                              value={pauseDays}
-                              onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
-                              placeholder="Days"
-                              autoFocus
-                              className="h-12 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl pl-4 pr-10 text-sm font-semibold border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowPauseCustom(false)
-                                setPauseDays('')
-                              }}
-                              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 text-gray-600 font-semibold active:scale-95 transition-transform"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        )}
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const n = parseInt(pauseDays, 10)
-                            if (!n || n <= 0) return
-                            const d = new Date()
-                            d.setDate(d.getDate() + n)
-                            setPausedUntil(formatISODate(d))
-                          }}
-                          disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
-                          className={`h-12 px-4 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
-                            !pauseDays || parseInt(pauseDays, 10) <= 0
-                              ? 'bg-gray-200 text-gray-500'
-                              : 'bg-orange-500 text-white'
-                          }`}
-                        >
-                          Set
-                        </button>
-                      </div>
-                      <p className="text-gray-400 text-xs mt-2 text-center">
-                        Pause hides the habit and skips penalties while paused
-                      </p>
-                    </>
-                  )}
-                </div>
-              )}
             </div>
           )}
 
@@ -584,50 +482,191 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Where should the money go?</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                {isEditing && !showDestinationEditor ? (
                   <button
                     type="button"
-                    onClick={() => setStakeDestination('self')}
-                    className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                      stakeDestination === 'self'
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-gray-50 text-gray-700 border border-gray-200'
-                    }`}
+                    onClick={() => setShowDestinationEditor(true)}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
                   >
-                    Discipline Fund
+                    <span className="font-semibold text-sm">{getDestinationLabel()}</span>
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setStakeDestination('charity')}
-                    className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                      stakeDestination === 'charity'
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-gray-50 text-gray-700 border border-gray-200'
-                    }`}
-                  >
-                    Charity
-                  </button>
-                </div>
-
-                {stakeDestination === 'charity' && (
-                  <div className="mt-3 grid grid-cols-3 gap-2">
-                    {['Girls Who Code', 'charity: water', 'The Trevor Project'].map((c) => (
+                ) : (
+                  <>
+                    {isEditing && (
                       <button
-                        key={c}
                         type="button"
-                        onClick={() => setCharityName(c)}
-                        className={`py-3 rounded-xl font-semibold text-[11px] transition-all active:scale-95 ${
-                          charityName === c
+                        onClick={() => setShowDestinationEditor(false)}
+                        className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
+                      >
+                        <span className="font-semibold text-sm">{getDestinationLabel()}</span>
+                        <svg className="w-5 h-5 text-gray-400 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    )}
+
+                    <div className={`grid grid-cols-2 gap-2 ${isEditing ? 'mt-2' : ''}`}>
+                      <button
+                        type="button"
+                        onClick={() => setStakeDestination('self')}
+                        className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                          stakeDestination === 'self'
                             ? 'bg-orange-500 text-white'
                             : 'bg-gray-50 text-gray-700 border border-gray-200'
                         }`}
                       >
-                        {c}
+                        Discipline Fund
                       </button>
-                    ))}
-                  </div>
+                      <button
+                        type="button"
+                        onClick={() => setStakeDestination('charity')}
+                        className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                          stakeDestination === 'charity'
+                            ? 'bg-orange-500 text-white'
+                            : 'bg-gray-50 text-gray-700 border border-gray-200'
+                        }`}
+                      >
+                        Charity
+                      </button>
+                    </div>
+
+                    {stakeDestination === 'charity' && (
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        {['Girls Who Code', 'charity: water', 'The Trevor Project'].map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => setCharityName(c)}
+                            className={`py-3 rounded-xl font-semibold text-[11px] transition-all active:scale-95 ${
+                              charityName === c
+                                ? 'bg-orange-500 text-white'
+                                : 'bg-gray-50 text-gray-700 border border-gray-200'
+                            }`}
+                          >
+                            {c}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
+
+              {habit && (
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Pause</span>
+                  </div>
+
+                  {pausedUntil ? (
+                    <>
+                      <p className="text-gray-500 text-sm text-center">
+                        This habit is paused until {pausedUntil}
+                        {getPauseDaysFromPausedUntil() !== null ? ` (${getPauseDaysFromPausedUntil()} days)` : ''}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPausedUntil('')
+                          setPauseDays('')
+                          setShowPauseCustom(false)
+                        }}
+                        className="mt-3 w-full py-3 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
+                      >
+                        Resume Habit
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex gap-2 items-stretch">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (pauseDays === '1' && !showPauseCustom) {
+                              setPauseDays('')
+                              return
+                            }
+                            setPauseDays('1')
+                            setShowPauseCustom(false)
+                          }}
+                          className={`h-12 px-4 rounded-xl font-semibold text-sm border active:scale-95 transition-transform ${
+                            pauseDays === '1' && !showPauseCustom
+                              ? 'bg-orange-500 border-orange-500 text-white'
+                              : 'bg-gray-50 border-gray-200 text-gray-700'
+                          }`}
+                        >
+                          1 day
+                        </button>
+
+                        {!showPauseCustom ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowPauseCustom(true)
+                              if (pauseDays === '1') setPauseDays('')
+                            }}
+                            className="h-12 flex-1 px-4 rounded-xl font-semibold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
+                          >
+                            Custom
+                          </button>
+                        ) : (
+                          <div className="relative flex-1 min-w-0">
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={pauseDays}
+                              onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
+                              placeholder="Days"
+                              autoFocus
+                              className="h-12 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl pl-4 pr-10 text-sm font-semibold border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowPauseCustom(false)
+                                setPauseDays('')
+                              }}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 text-gray-600 font-semibold active:scale-95 transition-transform"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const n = parseInt(pauseDays, 10)
+                            if (!n || n <= 0) return
+                            const d = new Date()
+                            d.setDate(d.getDate() + n)
+                            setPausedUntil(formatISODate(d))
+                          }}
+                          disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
+                          className={`h-12 px-4 rounded-xl font-semibold text-sm active:scale-95 transition-transform ${
+                            !pauseDays || parseInt(pauseDays, 10) <= 0
+                              ? 'bg-gray-200 text-gray-500'
+                              : 'bg-orange-500 text-white'
+                          }`}
+                        >
+                          Set
+                        </button>
+                      </div>
+                      <p className="text-gray-400 text-xs mt-2 text-center">
+                        Pause hides the habit and skips penalties while paused
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </form>
