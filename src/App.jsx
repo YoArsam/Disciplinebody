@@ -14,6 +14,17 @@ const isHabitPausedOnDate = (habit, date) => {
   return habit.pausedUntil >= day
 }
 
+const urlBase64ToUint8Array = (base64String) => {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
+
 // Load from localStorage or use defaults
 const loadState = () => {
   const saved = localStorage.getItem('accountability-app-state')
@@ -52,6 +63,7 @@ function App() {
   })
 
   const notificationTimersRef = useRef({})
+  const swRegistrationRef = useRef(null)
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -64,12 +76,61 @@ function App() {
     setNotificationPermission(Notification.permission)
   }, [])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!('serviceWorker' in navigator)) return
+    navigator.serviceWorker
+      .register('/service-worker.js')
+      .then((reg) => {
+        swRegistrationRef.current = reg
+      })
+      .catch(() => {
+        // ignore
+      })
+  }, [])
+
+  const ensurePushSubscription = async () => {
+    if (typeof window === 'undefined') return null
+    if (!('serviceWorker' in navigator)) return null
+    if (!('PushManager' in window)) return null
+
+    const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY
+    if (!vapidPublicKey) return null
+
+    const reg = swRegistrationRef.current || (await navigator.serviceWorker.ready)
+    if (!reg) return null
+
+    const existing = await reg.pushManager.getSubscription()
+    if (existing) {
+      localStorage.setItem('push-subscription', JSON.stringify(existing))
+      return existing
+    }
+
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+    })
+
+    localStorage.setItem('push-subscription', JSON.stringify(sub))
+    return sub
+  }
+
   const requestNotificationPermission = async () => {
     if (typeof window === 'undefined') return
     if (!('Notification' in window)) return
     try {
       const res = await Notification.requestPermission()
       setNotificationPermission(res)
+      if (res === 'granted') {
+        try {
+          const sub = await ensurePushSubscription()
+          if (sub) {
+            console.log('Push subscription:', JSON.stringify(sub))
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
     } catch (e) {
       setNotificationPermission(Notification.permission)
     }
