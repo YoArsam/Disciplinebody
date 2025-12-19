@@ -167,6 +167,43 @@ body {
   100% { opacity: 0; transform: translateY(-20px); }
 }
 
+@keyframes newHabitRingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes newHabitRingFade {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.new-habit-highlight {
+  position: relative;
+}
+
+.new-habit-highlight::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 1rem;
+  pointer-events: none;
+  background: conic-gradient(
+    from 90deg,
+    rgba(249, 115, 22, 0) 0deg,
+    rgba(249, 115, 22, 1) 35deg,
+    rgba(249, 115, 22, 0) 90deg,
+    rgba(249, 115, 22, 0) 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px;
+  animation: newHabitRingSpin 0.9s linear 1, newHabitRingFade 1.4s ease-out 1;
+}
+
 /* Grid chart slide down animation */
 .grid-chart-enter {
   animation: gridSlideDown 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards;
