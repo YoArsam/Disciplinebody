@@ -275,6 +275,11 @@ function App() {
             setNewlyAddedHabit(null)
             setScreen('home')
           }}
+          onEdit={() => {
+            setEditingHabit(newlyAddedHabit)
+            setPreviousScreen('home')
+            setScreen('habit-adder')
+          }}
         />
       )}
       {screen === 'wallet-editor' && (

@@ -1,4 +1,4 @@
-function HabitEducation({ habit, onDone }) {
+function HabitEducation({ habit, onDone, onEdit }) {
   if (!habit) {
     return null
   }
@@ -10,11 +10,11 @@ function HabitEducation({ habit, onDone }) {
     return `${displayHour}:${min.toString().padStart(2, '0')} ${ampm}`
   }
 
-  const getCueTime = () => {
+  const getNextCheckInText = () => {
     if (habit.allDay) {
-      return "in the morning"
+      return 'tomorrow (all day)'
     }
-    return formatTime(habit.endTime)
+    return `tomorrow at ${formatTime(habit.startTime)}`
   }
 
   return (
@@ -27,7 +27,7 @@ function HabitEducation({ habit, onDone }) {
           </svg>
         </div>
         <h1 className="text-xl font-bold text-gray-900 mb-1">
-          Habit Locked
+          You're set for tomorrow
         </h1>
         <p className="text-gray-500 text-lg font-medium">
           "{habit.name}"
@@ -39,9 +39,7 @@ function HabitEducation({ habit, onDone }) {
         {/* YOUR CUE - The main focus */}
         <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-5">
           <p className="text-gray-900 text-2xl font-bold">
-            {habit.allDay 
-              ? "Come back to this app tomorrow" 
-              : `Come back to this app tomorrow after ${getCueTime()}`}
+            Next check-in: {getNextCheckInText()}
           </p>
         </div>
 
@@ -95,8 +93,18 @@ function HabitEducation({ habit, onDone }) {
         onClick={onDone}
         className="w-full bg-orange-500 text-white font-bold py-4 rounded-2xl active:scale-[0.98] transition-transform"
       >
-        I'm Ready
+        Back to habits
       </button>
+
+      {onEdit && (
+        <button
+          type="button"
+          onClick={onEdit}
+          className="mt-3 w-full text-gray-500 font-semibold py-3 rounded-2xl"
+        >
+          Edit schedule
+        </button>
+      )}
     </div>
   )
 }
