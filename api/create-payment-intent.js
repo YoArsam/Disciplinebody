@@ -51,8 +51,6 @@ export default async function handler(req, res) {
       metadata: {
         habitName,
       },
-    }, {
-      idempotencyKey: `pi_${stripeCustomerId}_${Date.now()}`
     });
 
     res.status(200).json({
