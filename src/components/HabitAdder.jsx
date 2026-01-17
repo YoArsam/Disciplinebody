@@ -375,47 +375,41 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
               {!showCustomInput ? (
                 <>
-                  <div className="flex flex-col gap-2 mb-2">
-                    {/* Free option - Small and secondary */}
-                    <div className="flex justify-end">
+                  <div className="grid grid-cols-3 gap-1.5 mb-1.5">
+                    {[0, 1, 2].map((val) => (
                       <button
+                        key={val}
                         type="button"
                         onClick={() => {
-                          setSkipCost(0)
+                          setSkipCost(val)
                           setIsCustomValue(false)
                         }}
-                        className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 border ${
-                          skipCost === 0 && !isCustomValue
-                            ? 'bg-gray-800 text-white border-gray-800'
-                            : 'bg-transparent text-gray-400 border-gray-200'
+                        className={`py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95 border ${
+                          skipCost === val && !isCustomValue
+                            ? 'bg-orange-500 text-white border-orange-500'
+                            : 'bg-gray-50 text-gray-700 border-gray-200'
                         }`}
                       >
-                        Free
+                        {val === 0 ? 'Free' : `$${val}`}
                       </button>
-                    </div>
-
-                    {/* Presets - Medium size */}
-                    <div className="grid grid-cols-3 gap-2">
-                      {[1, 2, 5].map((val) => (
-                        <button
-                          key={val}
-                          type="button"
-                          onClick={() => {
-                            setSkipCost(val)
-                            setIsCustomValue(false)
-                          }}
-                          className={`py-3 rounded-xl font-bold text-sm transition-all active:scale-95 ${
-                            skipCost === val && !isCustomValue
-                              ? 'bg-orange-500 text-white border-orange-500'
-                              : 'bg-gray-50 text-gray-700 border border-gray-200'
-                          } border`}
-                        >
-                          ${val}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Custom - Big button */}
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      key={5}
+                      type="button"
+                      onClick={() => {
+                        setSkipCost(5)
+                        setIsCustomValue(false)
+                      }}
+                      className={`py-4 rounded-xl font-bold text-base transition-all active:scale-95 border ${
+                        skipCost === 5 && !isCustomValue
+                          ? 'bg-orange-500 text-white border-orange-500'
+                          : 'bg-gray-50 text-gray-700 border-gray-200'
+                      }`}
+                    >
+                      $5
+                    </button>
                     <button
                       type="button"
                       onClick={() => {
@@ -424,13 +418,13 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                           setCustomAmount(skipCost.toString())
                         }
                       }}
-                      className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-95 border ${
+                      className={`py-4 rounded-xl font-bold text-base transition-all active:scale-95 border ${
                         isCustomValue
                           ? 'bg-orange-500 text-white border-orange-500'
-                          : 'bg-white text-gray-900 border-gray-200 shadow-sm'
+                          : 'bg-gray-50 text-gray-700 border-gray-200 shadow-sm'
                       }`}
                     >
-                      {isCustomValue && skipCost !== null ? `Custom: $${skipCost}` : 'Set Custom Amount'}
+                      {isCustomValue && skipCost !== null ? `$${skipCost}` : 'Custom'}
                     </button>
                   </div>
                 </>
@@ -494,14 +488,17 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               )}
 
               <div className="mt-5 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-1">
                   <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                     <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </div>
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Which charity should your money go?</span>
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Pick your charity</span>
                 </div>
+                <p className="text-gray-400 text-[11px] mb-3 ml-10 leading-tight">
+                  Your missed habit contributions directly support these verified causes.
+                </p>
 
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   {['Feeding America', 'Red Cross'].map((c) => (
