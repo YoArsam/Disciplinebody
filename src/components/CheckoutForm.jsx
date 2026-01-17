@@ -39,8 +39,6 @@ export default function CheckoutForm({ amount, onPaymentSuccess, onEmailDetected
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       onPaymentSuccess();
     }
-
-    setIsLoading(false);
   };
 
   const paymentElementOptions = {
