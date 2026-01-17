@@ -55,9 +55,9 @@ export default function CheckoutForm({ clientSecret, amount, onPaymentSuccess })
 
   return (
     <div className="w-full space-y-4">
-      <div className="relative min-h-[52px] flex flex-col justify-center">
-        {/* Apple Pay Button Container */}
-        <div className={`transition-opacity duration-500 ${isReady ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+      <div className="relative h-[48px] w-full">
+        {/* Apple Pay Button Container - Absolute to prevent expansion */}
+        <div className={`absolute inset-0 transition-opacity duration-500 z-10 ${isReady ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
           <ExpressCheckoutElement 
             onConfirm={onConfirm} 
             onReady={onReady}
@@ -72,33 +72,33 @@ export default function CheckoutForm({ clientSecret, amount, onPaymentSuccess })
           />
         </div>
         
-        {/* Loading State Overlay */}
+        {/* Loading State - Exact same size as the button */}
         {!isReady && !errorMessage && !hasTimedOut && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/5 rounded-2xl animate-pulse border border-white/10">
-            <span className="text-gray-400 text-xs font-medium tracking-wide">
+          <div className="absolute inset-0 flex items-center justify-center bg-white/5 rounded-[12px] animate-pulse border border-white/10">
+            <span className="text-gray-400 text-[11px] font-medium tracking-wide">
               Initializing Apple Pay...
             </span>
           </div>
         )}
 
-        {/* Timeout State */}
+        {/* Timeout State - Exact same size as the button */}
         {hasTimedOut && !isReady && (
-          <div className="text-gray-400 text-xs text-center p-4 bg-white/5 rounded-2xl border border-white/10">
-            Apple Pay is taking a moment. 
-            <br/>
-            <span className="text-[10px] opacity-60 mt-1 block">Ensure you are in Safari with an active Wallet.</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-white/5 rounded-[12px] border border-white/10 px-2 text-center">
+            <span className="text-gray-400 text-[10px] leading-tight">
+              Apple Pay unavailable. Check Safari/Wallet.
+            </span>
           </div>
         )}
       </div>
       
       {errorMessage && (
-        <div className="text-red-400 text-xs text-center p-2 bg-red-400/10 rounded-xl border border-red-400/20">
+        <div className="text-red-400 text-[11px] text-center p-2 bg-red-400/10 rounded-xl border border-red-400/20">
           {errorMessage}
         </div>
       )}
 
       {isReady && (
-        <p className="text-gray-500 text-[10px] text-center italic animate-fade-in">
+        <p className="text-gray-500 text-[10px] text-center italic">
           Secure payment via Apple Pay
         </p>
       )}
