@@ -212,7 +212,6 @@ function CheckInModal({ habit, onYes, onNo }) {
                   setIsPaymentSuccess(true)
                   setShowPayment(false)
                   setShowSuccess(true)
-                  setTimeout(() => onNo(), 3000)
                 }} 
               />
             </Elements>
