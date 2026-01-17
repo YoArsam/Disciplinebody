@@ -187,9 +187,10 @@ function CheckInModal({ habit, onYes, onNo }) {
             </button>
           </div>
         ) : clientSecret ? (
-          <div className="w-full bg-white/5 p-4 rounded-2xl">
+          <div className="w-full">
             <Elements stripe={stripePromise} options={stripeOptions}>
               <CheckoutForm 
+                clientSecret={clientSecret}
                 amount={skipCost} 
                 onPaymentSuccess={onNo} 
               />
