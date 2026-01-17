@@ -11,6 +11,7 @@ function CheckInModal({ habit, onYes, onNo }) {
   const [clientSecret, setClientSecret] = useState('')
   const [loadingPayment, setLoadingPayment] = useState(false)
   const [paymentError, setPaymentError] = useState(null)
+  const [stripeCustomerId, setStripeCustomerId] = useState(() => localStorage.getItem('stripe-customer-id') || null)
 
   const { name: habitName, skipCost, allDay, startTime, endTime, stakeDestination, charityName } = habit
 
@@ -31,7 +32,7 @@ function CheckInModal({ habit, onYes, onNo }) {
       fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: skipCost, habitName }),
+        body: JSON.stringify({ amount: skipCost, habitName, stripeCustomerId }),
       })
         .then(async (res) => {
           if (!res.ok) {
@@ -50,6 +51,12 @@ function CheckInModal({ habit, onYes, onNo }) {
           if (!data.clientSecret) {
             throw new Error('No client secret returned from server');
           }
+          
+          if (data.stripeCustomerId) {
+            setStripeCustomerId(data.stripeCustomerId);
+            localStorage.setItem('stripe-customer-id', data.stripeCustomerId);
+          }
+
           setClientSecret(data.clientSecret)
           setLoadingPayment(false)
         })
