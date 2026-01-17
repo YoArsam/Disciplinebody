@@ -468,7 +468,7 @@ function App() {
     <div className="h-full w-full relative">
       {/* Version Tracker */}
       <div className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none">
-        v1.3.6
+        v1.3.7
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
@@ -504,7 +504,7 @@ function App() {
             if (editingHabit) {
               updateHabit(habit)
               setEditingHabit(null)
-              setScreen(previousScreen)
+              setScreen('home')
               setPreviousScreen('home')
             } else {
               // New habit - add it and show confirmation
@@ -521,8 +521,9 @@ function App() {
           onDelete={editingHabit ? () => {
             deleteHabit(editingHabit.id)
             setEditingHabit(null)
-            setScreen(previousScreen)
+            setScreen('home')
             setPreviousScreen('home')
+            setHabitsExpanded(true)
           } : null}
           onBack={() => {
             setEditingHabit(null)
