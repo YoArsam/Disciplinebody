@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import HomeScreen from './screens/HomeScreen'
+import Home from './components/Home'
 import EditHabitScreen from './screens/EditHabitScreen'
 import EditWalletScreen from './screens/EditWalletScreen'
 // EditSkipCostScreen removed - skip cost is now per-habit
@@ -622,8 +623,8 @@ function App() {
         </div>
       )}
 
-      {/* Check-in Modal */}
-      {currentCheckIn && (
+      {/* Check-in Modal - Only show on home screen */}
+      {currentCheckIn && screen === 'home' && (
         <CheckInModal
           key={currentCheckIn.id}
           habit={currentCheckIn}
