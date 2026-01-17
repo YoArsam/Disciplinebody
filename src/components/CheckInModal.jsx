@@ -27,6 +27,7 @@ function CheckInModal({ habit, onYes, onNo }) {
 
   useEffect(() => {
     if (showPayment && skipCost > 0 && !clientSecret && !loadingPayment) {
+      console.log('Initiating payment intent. Current saved customer ID:', stripeCustomerId);
       setLoadingPayment(true)
       setPaymentError(null)
       fetch('/api/create-payment-intent', {
@@ -53,6 +54,7 @@ function CheckInModal({ habit, onYes, onNo }) {
           }
           
           if (data.stripeCustomerId) {
+            console.log('Received customer ID from server:', data.stripeCustomerId);
             setStripeCustomerId(data.stripeCustomerId);
             localStorage.setItem('stripe-customer-id', data.stripeCustomerId);
           }

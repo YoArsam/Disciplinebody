@@ -20,13 +20,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Minimum contribution is $1.00 USD' });
     }
 
-    // Create a new customer if one wasn't provided
+    // If no customer ID was provided, create a new one
     if (!stripeCustomerId) {
+      console.log('Creating new Stripe customer...');
       const customer = await stripe.customers.create({
         description: `Customer for Discipline Body`,
         metadata: { habitName }
       });
       stripeCustomerId = customer.id;
+      console.log('New customer created:', stripeCustomerId);
+    } else {
+      console.log('Reusing existing customer:', stripeCustomerId);
     }
 
     // Create a PaymentIntent with the order amount and currency
@@ -37,7 +41,7 @@ export default async function handler(req, res) {
       automatic_payment_methods: {
         enabled: true,
       },
-      setup_future_usage: 'on_session',
+      setup_future_usage: 'off_session',
       description: `Habit skip penalty for: ${habitName}`,
       metadata: {
         habitName,
