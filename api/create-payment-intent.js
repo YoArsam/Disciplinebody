@@ -22,6 +22,7 @@ export default async function handler(req, res) {
       automatic_payment_methods: {
         enabled: true,
       },
+      setup_future_usage: 'on_session',
       description: `Habit skip penalty for: ${habitName}`,
       metadata: {
         habitName,

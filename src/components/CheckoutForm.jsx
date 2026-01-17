@@ -44,6 +44,8 @@ export default function CheckoutForm({ amount, onPaymentSuccess }) {
 
   const paymentElementOptions = {
     layout: "tabs",
+    business: { name: "Habit Buddy" },
+    paymentMethodOrder: ['apple_pay', 'google_pay', 'card']
   };
 
   return (
