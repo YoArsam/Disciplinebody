@@ -36,8 +36,8 @@ function CheckInModal({ habit, onYes, onNo }) {
   }, [clientSecret, userEmail]);
 
   useEffect(() => {
-    if (showPayment && skipCost > 0 && !clientSecret && !loadingPayment) {
-      console.log('Initiating payment intent. Current saved customer ID:', stripeCustomerId);
+    if (skipCost > 0 && !clientSecret && !loadingPayment) {
+      console.log('Pre-fetching payment intent. Current saved customer ID:', stripeCustomerId);
       setLoadingPayment(true)
       setPaymentError(null)
       fetch('/api/create-payment-intent', {
@@ -78,7 +78,7 @@ function CheckInModal({ habit, onYes, onNo }) {
           setLoadingPayment(false)
         })
     }
-  }, [showPayment, skipCost, habitName, clientSecret, loadingPayment])
+  }, [skipCost, habitName, clientSecret, loadingPayment])
 
   const getContributionDestinationText = () => {
     if (stakeDestination === 'charity') {
