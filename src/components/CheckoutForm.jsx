@@ -55,20 +55,20 @@ export default function CheckoutForm({ clientSecret, amount, onPaymentSuccess })
 
   return (
     <div className="w-full space-y-4">
-      <ExpressCheckoutElement 
-        onConfirm={onConfirm} 
-        onReady={onReady}
-        options={{
-          buttonType: {
-            applePay: 'buy'
-          },
-          paymentMethods: {
-            applePay: 'always',
-            googlePay: 'never',
-            link: 'never'
-          }
-        }}
-      />
+      <div className="min-h-[50px]">
+        <ExpressCheckoutElement 
+          onConfirm={onConfirm} 
+          onReady={onReady}
+          options={{
+            buttonType: {
+              applePay: 'buy'
+            },
+            paymentMethods: {
+              applePay: 'always'
+            }
+          }}
+        />
+      </div>
       
       {!isReady && !errorMessage && !hasTimedOut && (
         <div className="text-gray-400 text-xs text-center p-4 bg-white/5 rounded-2xl animate-pulse">

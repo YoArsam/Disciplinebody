@@ -43,7 +43,9 @@ export default async function handler(req, res) {
       amount: amountInCents,
       currency: 'usd',
       customer: stripeCustomerId,
-      payment_method_types: ['card', 'apple_pay'],
+      automatic_payment_methods: {
+        enabled: true,
+      },
       setup_future_usage: 'off_session',
       description: `Habit skip penalty for: ${habitName}`,
       metadata: {
