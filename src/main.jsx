@@ -3,6 +3,36 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error }
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error", error, errorInfo)
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="fixed inset-0 bg-black text-white p-10 flex flex-col items-center justify-center text-center">
+          <h1 className="text-xl font-bold mb-4">Something went wrong.</h1>
+          <p className="text-red-400 text-sm mb-6 max-w-md">{this.state.error?.message || "An unexpected error occurred."}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-white text-black font-bold rounded-2xl active:scale-95 transition-transform"
+          >
+            Reload App
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 // Check if on desktop (not mobile)
 const isDesktop = window.innerWidth > 500
 
@@ -55,8 +85,10 @@ function PhoneFrame({ children }) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <PhoneFrame>
-      <App />
-    </PhoneFrame>
+    <ErrorBoundary>
+      <PhoneFrame>
+        <App />
+      </PhoneFrame>
+    </ErrorBoundary>
   </StrictMode>,
 )

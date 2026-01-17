@@ -26,12 +26,16 @@ export default function CheckoutForm({ clientSecret, amount, onPaymentSuccess })
       });
 
       pr.canMakePayment().then(result => {
+        console.log('Apple Pay check result:', result);
         if (result && result.applePay) {
           setPaymentRequest(pr);
           setCanMakePayment(true);
         } else {
           setCanMakePayment(false);
         }
+      }).catch(err => {
+        console.error('Error checking payment availability:', err);
+        setCanMakePayment(false);
       });
 
       pr.on('paymentmethod', async (ev) => {

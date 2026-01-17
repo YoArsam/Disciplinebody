@@ -14,22 +14,25 @@ function CheckInModal({ habit, onYes, onNo }) {
   const [stripeCustomerId, setStripeCustomerId] = useState(() => localStorage.getItem('stripe-customer-id') || null)
   const [userEmail, setUserEmail] = useState(() => localStorage.getItem('user-email') || '')
 
-  const { name: habitName, skipCost, allDay, startTime, endTime, stakeDestination, charityName } = habit
+  const { name: habitName = 'Habit', skipCost = 0, allDay, startTime, endTime, stakeDestination, charityName } = habit || {}
 
-  const stripeOptions = useMemo(() => ({
-    clientSecret,
-    appearance: {
-      theme: 'night',
-      variables: {
-        colorPrimary: '#ffffff',
+  const stripeOptions = useMemo(() => {
+    console.log('Calculating stripeOptions with email:', userEmail);
+    return {
+      clientSecret,
+      appearance: {
+        theme: 'night',
+        variables: {
+          colorPrimary: '#ffffff',
+        }
+      },
+      defaultValues: {
+        billingDetails: {
+          email: userEmail || undefined,
+        }
       }
-    },
-    defaultValues: {
-      billingDetails: {
-        email: userEmail,
-      }
-    }
-  }), [clientSecret, userEmail]);
+    };
+  }, [clientSecret, userEmail]);
 
   useEffect(() => {
     if (showPayment && skipCost > 0 && !clientSecret && !loadingPayment) {
@@ -164,7 +167,7 @@ function CheckInModal({ habit, onYes, onNo }) {
 
         <div className="bg-white/10 rounded-2xl p-6 w-full mb-6 text-center">
           <p className="text-gray-400 text-sm mb-1">Contribution</p>
-          <p className="text-4xl font-bold text-white">${skipCost.toFixed(2)}</p>
+          <p className="text-4xl font-bold text-white">${(Number(skipCost) || 0).toFixed(2)}</p>
           <p className="text-gray-400 text-sm mt-2">To {getContributionDestinationText()}</p>
         </div>
 
