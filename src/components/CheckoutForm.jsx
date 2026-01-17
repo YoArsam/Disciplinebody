@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  PaymentRequestButtonElement,
+  ExpressCheckoutElement,
   useStripe,
   useElements
 } from '@stripe/react-stripe-js';
@@ -8,69 +8,67 @@ import {
 export default function CheckoutForm({ clientSecret, amount, onPaymentSuccess }) {
   const stripe = useStripe();
   const elements = useElements();
-  const [paymentRequest, setPaymentRequest] = useState(null);
-  const [canMakePayment, setCanMakePayment] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
-    if (stripe && clientSecret) {
-      const pr = stripe.paymentRequest({
-        country: 'US',
-        currency: 'usd',
-        total: {
-          label: 'Habit Buddy Skip',
-          amount: Math.round(amount * 100),
-        },
-        requestPayerName: true,
-        requestPayerEmail: true,
-      });
+  const onConfirm = async (event) => {
+    const { error: confirmError } = await stripe.confirmPayment({
+      elements,
+      clientSecret,
+      confirmParams: {
+        return_url: window.location.origin,
+      },
+      redirect: 'if_required',
+    });
 
-      pr.canMakePayment().then(result => {
-        console.log('Apple Pay check result:', result);
-        if (result && result.applePay) {
-          setPaymentRequest(pr);
-          setCanMakePayment(true);
-        } else {
-          setCanMakePayment(false);
-        }
-      }).catch(err => {
-        console.error('Error checking payment availability:', err);
-        setCanMakePayment(false);
-      });
-
-      pr.on('paymentmethod', async (ev) => {
-        const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(
-          clientSecret,
-          { payment_method: ev.paymentMethod.id },
-          { handleActions: false }
-        );
-
-        if (confirmError) {
-          ev.complete('fail');
-          setMessage(confirmError.message);
-        } else {
-          ev.complete('success');
-          if (paymentIntent.status === "succeeded") {
-            onPaymentSuccess();
-          }
-        }
-      });
+    if (confirmError) {
+      setErrorMessage(confirmError.message);
+    } else {
+      onPaymentSuccess();
     }
-  }, [stripe, clientSecret, amount]);
+  };
 
-  if (!canMakePayment) {
-    return (
-      <div className="text-gray-400 text-sm text-center p-4 bg-white/5 rounded-2xl">
-        Apple Pay is not available. 
-        Please use Safari on an Apple device with a card in your Wallet.
-      </div>
-    );
-  }
+  const onReady = ({ availablePaymentMethods }) => {
+    console.log('Express Checkout available methods:', availablePaymentMethods);
+    if (availablePaymentMethods) {
+      setIsReady(true);
+    }
+  };
 
   return (
-    <div className="w-full">
-      <PaymentRequestButtonElement options={{ paymentRequest }} />
-      {message && <div className="text-red-400 text-sm text-center mt-4">{message}</div>}
+    <div className="w-full space-y-4">
+      <ExpressCheckoutElement 
+        onConfirm={onConfirm} 
+        onReady={onReady}
+        options={{
+          buttonType: {
+            applePay: 'buy'
+          },
+          paymentMethods: {
+            applePay: 'always',
+            googlePay: 'never',
+            link: 'never'
+          }
+        }}
+      />
+      
+      {!isReady && !errorMessage && (
+        <div className="text-gray-400 text-xs text-center p-4 bg-white/5 rounded-2xl animate-pulse">
+          Checking Apple Pay availability...
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="text-red-400 text-xs text-center p-2">
+          {errorMessage}
+        </div>
+      )}
+
+      {isReady && (
+        <p className="text-gray-500 text-[10px] text-center italic">
+          Apple Pay only available in Safari on compatible devices.
+        </p>
+      )}
     </div>
   );
 }
