@@ -375,8 +375,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
               {!showCustomInput ? (
                 <>
-                  <div className="grid grid-cols-3 gap-1.5 mb-1.5">
-                    {[0, 0.5, 1].map((val) => (
+                  <div className="grid grid-cols-2 gap-1.5 mb-1.5">
+                    {[0, 1].map((val) => (
                       <button
                         key={val}
                         type="button"
@@ -431,45 +431,55 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </div>
                 </>
               ) : (
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      value={customAmount}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/[^0-9.]/g, '')
-                        const parts = val.split('.')
-                        if (parts.length > 2) return
-                        setCustomAmount(val)
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={customAmount}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9.]/g, '')
+                          const parts = val.split('.')
+                          if (parts.length > 2) return
+                          setCustomAmount(val)
+                        }}
+                        placeholder="1.00"
+                        autoFocus
+                        className="w-full pl-7 pr-3 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const val = parseFloat(customAmount)
+                        if (!isNaN(val) && val >= 1.00) {
+                          setSkipCost(val)
+                          setIsCustomValue(true)
+                          setShowCustomInput(false)
+                        }
                       }}
-                      placeholder="0.00"
-                      autoFocus
-                      className="w-full pl-7 pr-3 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
+                      disabled={parseFloat(customAmount) < 1.00 || isNaN(parseFloat(customAmount))}
+                      className={`px-4 py-3 font-semibold rounded-xl active:scale-95 transition-transform ${
+                        parseFloat(customAmount) >= 1.00 
+                          ? 'bg-orange-500 text-white' 
+                          : 'bg-gray-200 text-gray-400'
+                      }`}
+                    >
+                      Set
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomInput(false)}
+                      className="px-3 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl active:scale-95 transition-transform"
+                    >
+                      ✕
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const val = parseFloat(customAmount)
-                      if (!isNaN(val) && val >= 0) {
-                        setSkipCost(val)
-                        setIsCustomValue(true)
-                        setShowCustomInput(false)
-                      }
-                    }}
-                    className="px-4 py-3 bg-orange-500 text-white font-semibold rounded-xl active:scale-95 transition-transform"
-                  >
-                    Set
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowCustomInput(false)}
-                    className="px-3 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl active:scale-95 transition-transform"
-                  >
-                    ✕
-                  </button>
+                  {customAmount && parseFloat(customAmount) > 0 && parseFloat(customAmount) < 1.00 && (
+                    <p className="text-orange-500 text-[10px] font-bold ml-2">Minimum contribution is $1.00</p>
+                  )}
                 </div>
               )}
 

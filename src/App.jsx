@@ -505,7 +505,7 @@ function App() {
               updateHabit(habit)
               setEditingHabit(null)
               setScreen('home')
-              setPreviousScreen('home')
+              // Keep habitsExpanded as is (if they were on habits page, they stay there)
             } else {
               // New habit - add it and show confirmation
               const newHabit = { ...habit, id: Date.now() }
@@ -522,8 +522,7 @@ function App() {
             deleteHabit(editingHabit.id)
             setEditingHabit(null)
             setScreen('home')
-            setPreviousScreen('home')
-            setHabitsExpanded(true)
+            // Keep habitsExpanded as is
           } : null}
           onBack={() => {
             setEditingHabit(null)
