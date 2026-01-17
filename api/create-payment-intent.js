@@ -16,10 +16,10 @@ export default async function handler(req, res) {
     }
 
     // Stripe has a minimum amount for most currencies (e.g., $0.50 USD)
-    // If the amount is below $0.50, we should either round up or throw an error.
+    // To be safe and avoid issues with different regional requirements (like 2.00 AED), we'll set it to $1.00 USD.
     const amountInCents = Math.round(amount * 100);
-    if (amountInCents < 50) {
-      return res.status(400).json({ error: 'Minimum contribution is $0.50 USD' });
+    if (amountInCents < 100) {
+      return res.status(400).json({ error: 'Minimum contribution is $1.00 USD' });
     }
 
     // Check if we have a saved customer ID
