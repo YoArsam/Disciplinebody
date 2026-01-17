@@ -13,8 +13,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   })
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
-  const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'self')
-  const [charityName, setCharityName] = useState(habit?.charityName || '')
+  const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'charity')
+  const [charityName, setCharityName] = useState(habit?.charityName || 'Feeding America')
   const [pausedUntil, setPausedUntil] = useState(habit?.pausedUntil || '')
   const [pauseDays, setPauseDays] = useState('')
   const [showPauseCustom, setShowPauseCustom] = useState(false)
@@ -375,43 +375,47 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
               {!showCustomInput ? (
                 <>
-                  <div className="grid grid-cols-2 gap-1.5 mb-1.5">
-                    {[0, 1].map((val) => (
+                  <div className="flex flex-col gap-2 mb-2">
+                    {/* Free option - Small and secondary */}
+                    <div className="flex justify-end">
                       <button
-                        key={val}
                         type="button"
                         onClick={() => {
-                          setSkipCost(val)
+                          setSkipCost(0)
                           setIsCustomValue(false)
                         }}
-                        className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                          skipCost === val && !isCustomValue
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-gray-50 text-gray-700 border border-gray-200'
+                        className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 border ${
+                          skipCost === 0 && !isCustomValue
+                            ? 'bg-gray-800 text-white border-gray-800'
+                            : 'bg-transparent text-gray-400 border-gray-200'
                         }`}
                       >
-                        {val === 0 ? 'Free' : `$${val}`}
+                        Free
                       </button>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {[2, 5].map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => {
-                          setSkipCost(val)
-                          setIsCustomValue(false)
-                        }}
-                        className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                          skipCost === val && !isCustomValue
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-gray-50 text-gray-700 border border-gray-200'
-                        }`}
-                      >
-                        ${val}
-                      </button>
-                    ))}
+                    </div>
+
+                    {/* Presets - Medium size */}
+                    <div className="grid grid-cols-3 gap-2">
+                      {[1, 2, 5].map((val) => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => {
+                            setSkipCost(val)
+                            setIsCustomValue(false)
+                          }}
+                          className={`py-3 rounded-xl font-bold text-sm transition-all active:scale-95 ${
+                            skipCost === val && !isCustomValue
+                              ? 'bg-orange-500 text-white border-orange-500'
+                              : 'bg-gray-50 text-gray-700 border border-gray-200'
+                          } border`}
+                        >
+                          ${val}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Custom - Big button */}
                     <button
                       type="button"
                       onClick={() => {
@@ -420,13 +424,13 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                           setCustomAmount(skipCost.toString())
                         }
                       }}
-                      className={`py-2.5 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
+                      className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-95 border ${
                         isCustomValue
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-50 text-gray-700 border border-gray-200'
+                          ? 'bg-orange-500 text-white border-orange-500'
+                          : 'bg-white text-gray-900 border-gray-200 shadow-sm'
                       }`}
                     >
-                      {isCustomValue && skipCost !== null ? `$${skipCost}` : 'Custom'}
+                      {isCustomValue && skipCost !== null ? `Custom: $${skipCost}` : 'Set Custom Amount'}
                     </button>
                   </div>
                 </>
@@ -491,85 +495,33 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
               <div className="mt-5 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                    <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </div>
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Where should the money go?</span>
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Which charity should your money go?</span>
                 </div>
 
-                {isEditing && !showDestinationEditor ? (
-                  <button
-                    type="button"
-                    onClick={() => setShowDestinationEditor(true)}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
-                  >
-                    <span className="font-semibold text-sm">{getDestinationLabel()}</span>
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                ) : (
-                  <>
-                    {isEditing && (
-                      <button
-                        type="button"
-                        onClick={() => setShowDestinationEditor(false)}
-                        className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
-                      >
-                        <span className="font-semibold text-sm">{getDestinationLabel()}</span>
-                        <svg className="w-5 h-5 text-gray-400 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                    )}
-
-                    <div className={`grid grid-cols-2 gap-2 ${isEditing ? 'mt-2' : ''}`}>
-                      <button
-                        type="button"
-                        onClick={() => setStakeDestination('self')}
-                        className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                          stakeDestination === 'self'
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-gray-50 text-gray-700 border border-gray-200'
-                        }`}
-                      >
-                        Discipline Fund
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setStakeDestination('charity')}
-                        className={`py-3 rounded-xl font-semibold text-sm transition-all active:scale-95 ${
-                          stakeDestination === 'charity'
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-gray-50 text-gray-700 border border-gray-200'
-                        }`}
-                      >
-                        Charity
-                      </button>
-                    </div>
-
-                    {stakeDestination === 'charity' && (
-                      <div className="mt-3 grid grid-cols-3 gap-2">
-                        {['Girls Who Code', 'charity: water', 'The Trevor Project'].map((c) => (
-                          <button
-                            key={c}
-                            type="button"
-                            onClick={() => setCharityName(c)}
-                            className={`py-3 rounded-xl font-semibold text-[11px] transition-all active:scale-95 ${
-                              charityName === c
-                                ? 'bg-orange-500 text-white'
-                                : 'bg-gray-50 text-gray-700 border border-gray-200'
-                            }`}
-                          >
-                            {c}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {['Feeding America', 'Red Cross'].map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => {
+                        setStakeDestination('charity')
+                        setCharityName(c)
+                      }}
+                      className={`py-3 rounded-xl font-bold text-sm transition-all active:scale-95 border ${
+                        charityName === c
+                          ? 'bg-blue-500 text-white border-blue-500'
+                          : 'bg-gray-50 text-gray-700 border-gray-200'
+                      }`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {habit && (
