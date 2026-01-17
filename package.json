@@ -17,10 +17,13 @@
   },
   "dependencies": {
     "@capacitor/core": "^6.0.0",
+    "@stripe/react-stripe-js": "^5.4.1",
+    "@stripe/stripe-js": "^8.6.1",
     "@vercel/kv": "^2.0.0",
     "framer-motion": "^12.23.25",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "stripe": "^20.2.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {

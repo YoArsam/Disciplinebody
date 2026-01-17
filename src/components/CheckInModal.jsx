@@ -1,10 +1,65 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements } from '@stripe/react-stripe-js'
+import CheckoutForm from './CheckoutForm'
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 function CheckInModal({ habit, onYes, onNo }) {
   const [showPayment, setShowPayment] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [clientSecret, setClientSecret] = useState('')
+  const [loadingPayment, setLoadingPayment] = useState(false)
+  const [paymentError, setPaymentError] = useState(null)
 
   const { name: habitName, skipCost, allDay, startTime, endTime, stakeDestination, charityName } = habit
+
+  const stripeOptions = useMemo(() => ({
+    clientSecret,
+    appearance: {
+      theme: 'night',
+      variables: {
+        colorPrimary: '#ffffff',
+      }
+    }
+  }), [clientSecret]);
+
+  useEffect(() => {
+    if (showPayment && skipCost > 0 && !clientSecret && !loadingPayment) {
+      setLoadingPayment(true)
+      setPaymentError(null)
+      fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: skipCost, habitName }),
+      })
+        .then(async (res) => {
+          if (!res.ok) {
+            let errorMsg = 'Failed to create payment intent';
+            try {
+              const errorData = await res.json();
+              errorMsg = errorData.error || errorMsg;
+            } catch (e) {
+              // fallback
+            }
+            throw new Error(errorMsg);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          if (!data.clientSecret) {
+            throw new Error('No client secret returned from server');
+          }
+          setClientSecret(data.clientSecret)
+          setLoadingPayment(false)
+        })
+        .catch((err) => {
+          console.error('Error fetching payment intent:', err)
+          setPaymentError(err.message)
+          setLoadingPayment(false)
+        })
+    }
+  }, [showPayment, skipCost, habitName, clientSecret, loadingPayment])
 
   const getContributionDestinationText = () => {
     if (stakeDestination === 'charity') {
@@ -79,8 +134,8 @@ function CheckInModal({ habit, onYes, onNo }) {
 
     // Paid habit - show payment
     return (
-      <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-[3px] flex flex-col items-center justify-center z-50 px-6">
-        <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mb-6">
+      <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-[3px] flex flex-col items-center justify-center z-50 px-6 overflow-y-auto pb-10">
+        <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mb-6 shrink-0 mt-8">
           <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -98,11 +153,47 @@ function CheckInModal({ habit, onYes, onNo }) {
           <p className="text-gray-400 text-sm mt-2">To {getContributionDestinationText()}</p>
         </div>
 
-        <button
-          onClick={onNo}
-          className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
+        {loadingPayment ? (
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+            <p className="text-white text-sm">Loading payment options...</p>
+          </div>
+        ) : paymentError ? (
+          <div className="w-full bg-red-500/10 border border-red-500/20 p-4 rounded-2xl text-center">
+            <p className="text-red-400 text-sm mb-3">Error: {paymentError}</p>
+            <button 
+              onClick={() => {
+                setPaymentError(null);
+                setClientSecret('');
+              }}
+              className="text-white text-xs font-bold underline"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : clientSecret ? (
+          <div className="w-full bg-white/5 p-4 rounded-2xl">
+            <Elements stripe={stripePromise} options={stripeOptions}>
+              <CheckoutForm 
+                amount={skipCost} 
+                onPaymentSuccess={onNo} 
+              />
+            </Elements>
+          </div>
+        ) : (
+          <button
+            onClick={onNo}
+            className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
+          >
+            Skip for now
+          </button>
+        )}
+        
+        <button 
+          onClick={() => setShowPayment(false)}
+          className="mt-4 text-gray-500 text-sm font-medium"
         >
-          Contribute with Apple Pay
+          Go Back
         </button>
       </div>
     )
