@@ -12,7 +12,8 @@
     "ios:add": "npx cap add ios",
     "cap:sync": "npx cap sync",
     "build:ios": "vite build && npx cap copy ios",
-    "ios:open": "npx cap open ios"
+    "ios:open": "npx cap open ios",
+    "vercel-build": "vite build"
   },
   "dependencies": {
     "@capacitor/core": "^6.0.0",
