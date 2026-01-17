@@ -6,7 +6,11 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [name, setName] = useState(habit?.name || '')
   const [allDay, setAllDay] = useState(habit?.allDay ?? false)
   const [startTime, setStartTime] = useState(habit?.startTime || '06:00')
-  const [endTime, setEndTime] = useState(habit?.endTime || '07:00')
+  const [endTime, setEndTime] = useState(() => {
+    if (habit?.endTime) return habit.endTime
+    const now = new Date()
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+  })
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
   const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'self')
@@ -254,22 +258,22 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               </div>
 
               {!allDay && (
-                <div className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between tap-bounce">
-                  <div className="flex flex-col">
+                <div className="relative w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between tap-bounce cursor-pointer overflow-hidden">
+                  <div className="flex flex-col pointer-events-none">
                     <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-0.5">Deadline</span>
                     <span className="text-gray-900 font-bold text-lg">{formatTime(endTime)}</span>
                   </div>
-                  <div className="relative">
-                    <input
-                      type="time"
-                      value={endTime}
-                      onChange={(e) => setEndTime(e.target.value)}
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                    />
-                    <div className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-orange-600 font-bold text-sm shadow-sm pointer-events-none">
-                      Change
-                    </div>
+                  
+                  <div className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-orange-600 font-bold text-sm pointer-events-none">
+                    Change
                   </div>
+
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="absolute inset-0 opacity-0 cursor-pointer scale-[5]"
+                  />
                 </div>
               )}
 
