@@ -15,6 +15,13 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
+    // Stripe has a minimum amount for most currencies (e.g., $0.50 USD)
+    // If the amount is below $0.50, we should either round up or throw an error.
+    const amountInCents = Math.round(amount * 100);
+    if (amountInCents < 50) {
+      return res.status(400).json({ error: 'Minimum contribution is $0.50 USD' });
+    }
+
     // Check if we have a saved customer ID
     let customerId;
     // For now, we'll use a simple approach: if a customer exists with this description, reuse it.
@@ -22,7 +29,7 @@ export default async function handler(req, res) {
     
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Stripe expects amount in cents
+      amount: amountInCents,
       currency: 'usd',
       automatic_payment_methods: {
         enabled: true,
