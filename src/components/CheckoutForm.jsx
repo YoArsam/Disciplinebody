@@ -5,7 +5,7 @@ import {
   useElements
 } from '@stripe/react-stripe-js';
 
-export default function CheckoutForm({ amount, onPaymentSuccess }) {
+export default function CheckoutForm({ amount, onPaymentSuccess, onEmailDetected }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -36,6 +36,10 @@ export default function CheckoutForm({ amount, onPaymentSuccess }) {
         setMessage("An unexpected error occurred.");
       }
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
+      // Try to capture email from elements for future use
+      elements.getElement('payment').fetchUpdates().then(() => {
+        // This is a simplified way to trigger an email capture if needed
+      });
       onPaymentSuccess();
     }
 

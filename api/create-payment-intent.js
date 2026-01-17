@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    let { amount, habitName, stripeCustomerId } = req.body;
+    let { amount, habitName, stripeCustomerId, email } = req.body;
 
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('STRIPE_SECRET_KEY is missing');
@@ -20,10 +20,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Minimum contribution is $1.00 USD' });
     }
 
-    // If no customer ID was provided, create a new one
+    // Create a new customer if one wasn't provided
     if (!stripeCustomerId) {
       console.log('Creating new Stripe customer...');
       const customer = await stripe.customers.create({
+        email: email,
         description: `Customer for Discipline Body`,
         metadata: { habitName }
       });
@@ -31,6 +32,10 @@ export default async function handler(req, res) {
       console.log('New customer created:', stripeCustomerId);
     } else {
       console.log('Reusing existing customer:', stripeCustomerId);
+      // Update email if provided to keep it in sync
+      if (email) {
+        await stripe.customers.update(stripeCustomerId, { email });
+      }
     }
 
     // Create a PaymentIntent with the order amount and currency

@@ -12,6 +12,7 @@ function CheckInModal({ habit, onYes, onNo }) {
   const [loadingPayment, setLoadingPayment] = useState(false)
   const [paymentError, setPaymentError] = useState(null)
   const [stripeCustomerId, setStripeCustomerId] = useState(() => localStorage.getItem('stripe-customer-id') || null)
+  const [userEmail, setUserEmail] = useState(() => localStorage.getItem('user-email') || '')
 
   const { name: habitName, skipCost, allDay, startTime, endTime, stakeDestination, charityName } = habit
 
@@ -22,8 +23,13 @@ function CheckInModal({ habit, onYes, onNo }) {
       variables: {
         colorPrimary: '#ffffff',
       }
+    },
+    defaultValues: {
+      billingDetails: {
+        email: userEmail,
+      }
     }
-  }), [clientSecret]);
+  }), [clientSecret, userEmail]);
 
   useEffect(() => {
     if (showPayment && skipCost > 0 && !clientSecret && !loadingPayment) {
@@ -33,7 +39,7 @@ function CheckInModal({ habit, onYes, onNo }) {
       fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: skipCost, habitName, stripeCustomerId }),
+        body: JSON.stringify({ amount: skipCost, habitName, stripeCustomerId, email: userEmail }),
       })
         .then(async (res) => {
           if (!res.ok) {
