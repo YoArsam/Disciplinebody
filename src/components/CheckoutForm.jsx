@@ -30,20 +30,15 @@ export default function CheckoutForm({ amount, onPaymentSuccess, onEmailDetected
     });
 
     if (error) {
+      setIsLoading(false);
       if (error.type === "card_error" || error.type === "validation_error") {
         setMessage(error.message);
       } else {
         setMessage("An unexpected error occurred.");
       }
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      // Try to capture email from elements for future use
-      elements.getElement('payment').fetchUpdates().then(() => {
-        // This is a simplified way to trigger an email capture if needed
-      });
       onPaymentSuccess();
     }
-
-    setIsLoading(false);
   };
 
   const paymentElementOptions = {
