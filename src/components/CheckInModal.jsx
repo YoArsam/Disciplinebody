@@ -8,6 +8,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 function CheckInModal({ habit, onYes, onNo }) {
   const [showPayment, setShowPayment] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false)
   const [clientSecret, setClientSecret] = useState('')
   const [loadingPayment, setLoadingPayment] = useState(false)
   const [paymentError, setPaymentError] = useState(null)
@@ -103,20 +104,32 @@ function CheckInModal({ habit, onYes, onNo }) {
   if (showSuccess) {
     return (
       <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-[3px] flex flex-col items-center justify-center z-50 px-6">
-        <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center mb-6">
-          <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-          </svg>
+        <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${isPaymentSuccess ? 'bg-blue-500' : 'bg-green-500'}`}>
+          {isPaymentSuccess ? (
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          ) : (
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
         </div>
         
-        <h1 className="text-2xl font-bold text-white mb-2">Nice work!</h1>
-        <p className="text-green-400 font-medium text-lg mb-8">+1 Streak</p>
+        <h1 className="text-2xl font-bold text-white mb-2">
+          {isPaymentSuccess ? 'Contribution Made' : 'Nice work!'}
+        </h1>
+        <p className={`${isPaymentSuccess ? 'text-blue-400' : 'text-green-400'} font-medium text-lg mb-8 text-center`}>
+          {isPaymentSuccess 
+            ? `Helping ${getContributionDestinationText()}` 
+            : '+1 Streak'}
+        </p>
 
         <button
-          onClick={onYes}
+          onClick={isPaymentSuccess ? onNo : onYes}
           className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
         >
-          Continue
+          {isPaymentSuccess ? 'Move Forward' : 'Continue'}
         </button>
       </div>
     )
@@ -196,9 +209,10 @@ function CheckInModal({ habit, onYes, onNo }) {
                 clientSecret={clientSecret}
                 amount={skipCost} 
                 onPaymentSuccess={() => {
+                  setIsPaymentSuccess(true)
                   setShowPayment(false)
                   setShowSuccess(true)
-                  setTimeout(() => onNo(), 2000)
+                  setTimeout(() => onNo(), 3000)
                 }} 
               />
             </Elements>
