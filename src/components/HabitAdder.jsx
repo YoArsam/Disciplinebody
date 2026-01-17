@@ -186,17 +186,19 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {(isEditing || step === 1) && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
                   <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                 </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Habit Name</span>
+                <div className="flex-1">
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider block mb-0.5">Habit Name</span>
+                  <p className="text-gray-400 text-[11px] leading-tight mb-3">
+                    What habit are you committing to today?
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-400 text-[11px] mb-3 ml-10 leading-tight">
-                What habit are you committing to today?
-              </p>
 
               <input
                 type="text"
@@ -251,17 +253,19 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {(isEditing || step === 2) && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
                   <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Goal Deadline</span>
+                <div className="flex-1">
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider block mb-0.5">Goal Deadline</span>
+                  <p className="text-gray-400 text-[11px] leading-tight mb-3">
+                    When is the last moment you can complete this?
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-400 text-[11px] mb-3 ml-10 leading-tight">
-                When is the last moment you can complete this?
-              </p>
 
               {!allDay && (
                 <div className="relative w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between tap-bounce cursor-pointer overflow-hidden">
@@ -367,17 +371,19 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {(isEditing || step === 3) && (
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
                   <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">What's at stake?</span>
+                <div className="flex-1">
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider block mb-0.5">What's at stake?</span>
+                  <p className="text-gray-400 text-[11px] leading-tight mb-3">
+                    What should be the cost of skipping this habit?
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-400 text-[11px] mb-3 ml-10 leading-tight">
-                What should be the cost of skipping this habit?
-              </p>
 
               {!showCustomInput ? (
                 <>
@@ -494,17 +500,19 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               )}
 
               <div className="mt-5 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
                     <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </div>
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Pick your charity</span>
+                  <div className="flex-1">
+                    <span className="text-gray-500 text-xs font-bold uppercase tracking-wider block mb-0.5">Pick your charity</span>
+                    <p className="text-gray-400 text-[11px] leading-tight mb-3">
+                      Your missed habit contributions directly support these verified causes.
+                    </p>
+                  </div>
                 </div>
-                <p className="text-gray-400 text-[11px] mb-3 ml-10 leading-tight">
-                  Your missed habit contributions directly support these verified causes.
-                </p>
 
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   {['Feeding America', 'Red Cross'].map((c) => (
