@@ -18,7 +18,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const [pausedUntil, setPausedUntil] = useState(habit?.pausedUntil || '')
   const [pauseDays, setPauseDays] = useState('')
   const [showPauseCustom, setShowPauseCustom] = useState(false)
-  const [showDestinationEditor, setShowDestinationEditor] = useState(!isEditing)
   const [showIdeas, setShowIdeas] = useState(false)
   const [showDaysEditor, setShowDaysEditor] = useState(() => {
     const initial = habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
@@ -26,7 +25,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   })
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
-  const [isCustomValue, setIsCustomValue] = useState(false) // Track if current skipCost is a custom value
+  const [isCustomValue, setIsCustomValue] = useState(false)
   const customInputRef = useRef(null)
 
   const habitIdeas = [
@@ -64,18 +63,11 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     if (!pausedUntil) return null
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-
     const target = new Date(`${pausedUntil}T00:00:00`)
     if (Number.isNaN(target.getTime())) return null
-
     const diffMs = target.getTime() - today.getTime()
     const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000))
     return diffDays > 0 ? diffDays : 0
-  }
-
-  const getDestinationLabel = () => {
-    if (stakeDestination === 'self') return 'Discipline Fund'
-    return charityName || 'Charity'
   }
 
   const stepTitles = {
@@ -111,7 +103,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     setStep(prev => Math.max(1, prev - 1))
   }
 
-  // Scroll custom input into view when it appears
   useEffect(() => {
     if (showCustomInput && customInputRef.current) {
       setTimeout(() => {
@@ -123,10 +114,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!name.trim()) return
-
     const computedSkipCost = skipCost !== null ? skipCost : getCustomSkipCost()
     if (computedSkipCost === null) return
-
     onSave({
       ...(habit || {}),
       name: name.trim(),
@@ -135,8 +124,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       endTime: allDay ? '23:59' : endTime,
       skipCost: computedSkipCost,
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
-      stakeDestination,
-      charityName: stakeDestination === 'charity' ? charityName : '',
+      stakeDestination: 'charity',
+      charityName: charityName,
       pausedUntil: pausedUntil || '',
     })
   }
@@ -364,8 +353,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     </div>
                   )}
                 </div>
-              
-
             </div>
           )}
 
@@ -387,8 +374,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
               {!showCustomInput ? (
                 <>
-                  <div className="grid grid-cols-3 gap-2 mb-2">
-                    {[0, 1, 2].map((val) => (
+                  <div className="grid grid-cols-4 gap-1.5 mb-1.5">
+                    {[0, 1, 2, 3].map((val) => (
                       <button
                         key={val}
                         type="button"
@@ -406,22 +393,24 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       </button>
                     ))}
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      key={5}
-                      type="button"
-                      onClick={() => {
-                        setSkipCost(5)
-                        setIsCustomValue(false)
-                      }}
-                      className={`h-12 rounded-xl font-bold text-sm transition-all active:scale-95 border ${
-                        skipCost === 5 && !isCustomValue
-                          ? 'bg-orange-500 text-white border-orange-500'
-                          : 'bg-gray-50 text-gray-700 border-gray-200'
-                      }`}
-                    >
-                      $5
-                    </button>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {[5, 10].map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => {
+                          setSkipCost(val)
+                          setIsCustomValue(false)
+                        }}
+                        className={`h-12 rounded-xl font-bold text-sm transition-all active:scale-95 border ${
+                          skipCost === val && !isCustomValue
+                            ? 'bg-orange-500 text-white border-orange-500'
+                            : 'bg-gray-50 text-gray-700 border-gray-200'
+                        }`}
+                      >
+                        ${val}
+                      </button>
+                    ))}
                     <button
                       type="button"
                       onClick={() => {
