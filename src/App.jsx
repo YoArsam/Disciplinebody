@@ -465,8 +465,13 @@ function App() {
   const showMainNav = screen === 'home'
 
   return (
-    <div className="h-full w-full">
-        <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
+    <div className="h-full w-full relative">
+      {/* Version Tracker */}
+      <div className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none">
+        v1.0.1
+      </div>
+
+      <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
           <HomeScreen
             wallet={state.wallet}
             habits={state.habits}
