@@ -97,7 +97,7 @@ function CheckInModal({ habit, onYes, onNo }) {
 
   const getTimeDisplay = () => {
     if (allDay) return 'All Day'
-    return `${formatTime(startTime)} - ${formatTime(endTime)}`
+    return `By ${formatTime(endTime)}`
   }
 
   // Success view - simple, no animations

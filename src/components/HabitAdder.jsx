@@ -250,69 +250,50 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Timing</span>
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-wider">Goal Deadline</span>
               </div>
 
-                {!allDay && (
-                  <>
-                    <p className="text-gray-400 text-xs mb-3">
-                      Complete this habit between these times
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="min-w-0">
-                        <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex items-center justify-between">
-                          <span className="text-gray-400 text-xs font-bold uppercase tracking-wide">From</span>
-                          <input
-                            type="time"
-                            value={startTime}
-                            onChange={(e) => {
-                              const newStart = e.target.value
-                              setStartTime(newStart)
-                              const [hours, mins] = newStart.split(':').map(Number)
-                              const endHours = (hours + 1) % 24
-                              const newEnd = `${endHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
-                              setEndTime(newEnd)
-                            }}
-                            className="w-20 bg-transparent text-gray-800 text-sm font-bold text-right focus:outline-none"
-                          />
-                        </div>
-                      </div>
-                      <div className="min-w-0">
-                        <div className="w-full max-w-full bg-gray-50 border border-gray-200 rounded-full px-4 py-3 flex items-center justify-between">
-                          <span className="text-gray-400 text-xs font-bold uppercase tracking-wide">Until</span>
-                          <input
-                            type="time"
-                            value={endTime}
-                            onChange={(e) => setEndTime(e.target.value)}
-                            className="w-20 bg-transparent text-gray-800 text-sm font-bold text-right focus:outline-none"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => setAllDay(!allDay)}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-full mt-4 transition-all border ${
-                    allDay ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                      allDay ? 'bg-orange-500' : 'bg-gray-300'
-                    }`}>
-                      {allDay && (
-                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    <span className={`font-semibold text-sm ${allDay ? 'text-orange-700' : 'text-gray-700'}`}>All Day</span>
+              {!allDay && (
+                <div className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between tap-bounce">
+                  <div className="flex flex-col">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-0.5">Deadline</span>
+                    <span className="text-gray-900 font-bold text-lg">{formatTime(endTime)}</span>
                   </div>
-                  <span className="text-xs text-gray-400">No time window</span>
-                </button>
+                  <div className="relative">
+                    <input
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                    <div className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-orange-600 font-bold text-sm shadow-sm pointer-events-none">
+                      Change
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setAllDay(!allDay)}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-full mt-3 transition-all border ${
+                  allDay ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                    allDay ? 'bg-orange-500' : 'bg-gray-300'
+                  }`}>
+                    {allDay && (
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                  <span className={`font-semibold text-sm ${allDay ? 'text-orange-700' : 'text-gray-700'}`}>No deadline</span>
+                </div>
+                <span className="text-xs text-gray-400">All Day</span>
+              </button>
 
                 <div className="mt-3">
                   <button
