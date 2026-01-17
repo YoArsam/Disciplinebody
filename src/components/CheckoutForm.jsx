@@ -13,17 +13,19 @@ export default function CheckoutForm({ clientSecret, amount, onPaymentSuccess })
   const [hasTimedOut, setHasTimedOut] = useState(false);
 
   useEffect(() => {
-    // If Stripe doesn't report readiness within 3 seconds, show fallback message
+    // If Stripe doesn't report readiness within 5 seconds, show fallback message
     const timer = setTimeout(() => {
       if (!isReady) {
+        console.log('Apple Pay availability check timed out after 5s');
         setHasTimedOut(true);
       }
-    }, 3000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [isReady]);
 
   const onConfirm = async (event) => {
+    console.log('Confirming payment...');
     const { error: confirmError } = await stripe.confirmPayment({
       elements,
       clientSecret,
@@ -34,14 +36,18 @@ export default function CheckoutForm({ clientSecret, amount, onPaymentSuccess })
     });
 
     if (confirmError) {
+      console.error('Payment confirmation error:', confirmError);
       setErrorMessage(confirmError.message);
     } else {
+      console.log('Payment successful!');
       onPaymentSuccess();
     }
   };
 
-  const onReady = ({ availablePaymentMethods }) => {
-    console.log('Express Checkout available methods:', availablePaymentMethods);
+  const onReady = (event) => {
+    console.log('Express Checkout onReady event:', event);
+    const { availablePaymentMethods } = event;
+    console.log('Available methods:', availablePaymentMethods);
     if (availablePaymentMethods) {
       setIsReady(true);
     }
