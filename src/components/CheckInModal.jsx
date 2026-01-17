@@ -192,7 +192,11 @@ function CheckInModal({ habit, onYes, onNo }) {
               <CheckoutForm 
                 clientSecret={clientSecret}
                 amount={skipCost} 
-                onPaymentSuccess={onNo} 
+                onPaymentSuccess={() => {
+                  setShowPayment(false)
+                  setShowSuccess(true)
+                  setTimeout(() => onNo(), 2000)
+                }} 
               />
             </Elements>
           </div>
