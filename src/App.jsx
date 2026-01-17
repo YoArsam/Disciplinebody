@@ -468,10 +468,11 @@ function App() {
     <div className="h-full w-full relative">
       {/* Version Tracker */}
       <div className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none">
-        v1.4.7
+        v1.4.8
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
+        <div className={habitsExpanded ? 'hidden' : 'contents'}>
           <HomeScreen
             wallet={state.wallet}
             habits={state.habits}
@@ -480,23 +481,46 @@ function App() {
             currentStreak={state.currentStreak || 0}
             longestStreak={state.longestStreak || 0}
             habitHistory={state.habitHistory || {}}
+            onManageHabits={() => {
+              setPreviousHabitsExpanded(habitsExpanded)
+              setHabitsExpanded(true)
+            }}
+            onHabitClick={(habit) => {
+              setEditingHabit(habit)
+              setPreviousScreen('home')
+              setPreviousHabitsExpanded(habitsExpanded)
+              setScreen('habit-adder')
+            }}
+          />
+        </div>
+        
+        <div className={habitsExpanded ? 'contents' : 'hidden'}>
+          <Home
+            wallet={state.wallet}
+            habits={state.habits}
+            completedToday={state.completedToday}
+            paidToday={state.paidToday || []}
+            habitHistory={state.habitHistory || {}}
             habitsExpanded={habitsExpanded}
             notificationPermission={notificationPermission}
             onEnableNotifications={requestNotificationPermission}
-                        onAddHabit={() => {
-              setPreviousHabitsExpanded(habitsExpanded)
+            onAddHabit={() => {
               setEditingHabit(null)
+              setPreviousScreen('home')
+              setPreviousHabitsExpanded(habitsExpanded)
               setScreen('habit-adder')
             }}
             onEditHabit={(habit) => {
-              setPreviousHabitsExpanded(habitsExpanded)
               setEditingHabit(habit)
+              setPreviousScreen('home')
+              setPreviousHabitsExpanded(habitsExpanded)
               setScreen('habit-adder')
             }}
             onMarkDone={markHabitDone}
             onToggleHabits={() => setHabitsExpanded(!habitsExpanded)}
           />
         </div>
+      </div>
       {screen === 'habit-adder' && (
         <EditHabitScreen
           habit={editingHabit}
