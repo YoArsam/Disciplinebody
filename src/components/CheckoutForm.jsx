@@ -92,7 +92,7 @@ export default function CheckoutForm({ clientSecret, amount, onPaymentSuccess })
       </div>
       
       {errorMessage && (
-        <div className="text-red-400 text-[11px] text-center p-2 bg-red-400/10 rounded-xl border border-red-400/20">
+        <div className="text-blue-400 text-[11px] text-center p-2 bg-blue-400/10 rounded-xl border border-blue-400/20">
           {errorMessage}
         </div>
       )}
