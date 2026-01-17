@@ -127,9 +127,9 @@ function CheckInModal({ habit, onYes, onNo }) {
 
         <button
           onClick={isPaymentSuccess ? onNo : onYes}
-          className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
+          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl active:scale-[0.98] transition-all hover:bg-gray-100 shadow-lg shadow-white/5"
         >
-          {isPaymentSuccess ? 'Move Forward' : 'Continue'}
+          {isPaymentSuccess ? 'Continue' : 'Continue'}
         </button>
       </div>
     )
