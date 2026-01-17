@@ -15,6 +15,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
+    // Check if we have a saved customer ID
+    let customerId;
+    // For now, we'll use a simple approach: if a customer exists with this description, reuse it.
+    // In a full app, you'd store the customerId in your database/localStorage.
+    
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Stripe expects amount in cents
