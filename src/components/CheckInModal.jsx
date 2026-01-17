@@ -116,12 +116,12 @@ function CheckInModal({ habit, onYes, onNo }) {
           )}
         </div>
         
-        <h1 className="text-2xl font-bold text-white mb-2">
-          {isPaymentSuccess ? 'Contribution Made' : 'Nice work!'}
+        <h1 className="text-2xl font-bold text-white mb-2 text-center">
+          {isPaymentSuccess ? 'Thank you for your contribution' : 'Nice work!'}
         </h1>
-        <p className={`${isPaymentSuccess ? 'text-blue-400' : 'text-green-400'} font-medium text-lg mb-8 text-center`}>
+        <p className={`${isPaymentSuccess ? 'text-blue-400' : 'text-green-400'} font-medium text-lg mb-8 text-center px-4`}>
           {isPaymentSuccess 
-            ? `Helping ${getContributionDestinationText()}` 
+            ? `Your support makes a difference for ${getContributionDestinationText()}` 
             : '+1 Streak'}
         </p>
 
