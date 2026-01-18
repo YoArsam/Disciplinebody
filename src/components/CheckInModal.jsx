@@ -113,7 +113,9 @@ function CheckInModal({ habit, onYes, onNo }) {
         </p>
 
         <button
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             console.log('Continue button clicked, isPaymentSuccess:', isPaymentSuccess);
             if (isPaymentSuccess) {
               onNo();
@@ -121,7 +123,7 @@ function CheckInModal({ habit, onYes, onNo }) {
               onYes();
             }
           }}
-          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl active:scale-[0.98] transition-all hover:bg-gray-100 shadow-lg shadow-white/5 cursor-pointer relative z-[60]"
+          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl active:scale-[0.98] transition-all hover:bg-gray-100 shadow-lg shadow-white/5 cursor-pointer relative z-[100]"
         >
           Continue
         </button>
