@@ -407,8 +407,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       <p className="text-gray-500 text-xl font-bold leading-tight px-2 text-center">
                         You will give <span className="text-gray-900 font-black">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
                       </p>
-                      <p className="mt-4 text-blue-500 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                        We'll send you an email of<br/>the impact you've made
+                      <p className="mt-4 text-gray-400 text-[10px] font-bold text-center">
+                        We'll send you an email of the impact you've made
                       </p>
                     </div>
                   </div>
