@@ -420,14 +420,14 @@ function Home({
                   } border border-gray-200 cursor-pointer ${isPaused ? 'opacity-70' : ''}`}
                 >
                   {/* Top row: Habit info + status */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-stretch -m-4">
                     {/* Habit Info - Clickable to edit */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
                         onEditHabit(habit)
                       }}
-                      className="flex-1 min-w-0 text-left"
+                      className="flex-1 min-w-0 text-left p-4"
                     >
                       <span className={`font-semibold text-lg block truncate ${
                         isResolved || isPaused ? 'text-gray-300' : 'text-gray-900'
@@ -441,27 +441,28 @@ function Home({
                       </span>
                     </button>
                     
-                    {/* Status */}
+                    {/* Status Section */}
                     {isPaused ? (
-                      <span className="text-gray-300 text-lg font-medium ml-4">Paused</span>
+                      <div className="flex items-center px-4">
+                        <span className="text-gray-300 text-lg font-medium">Paused</span>
+                      </div>
                     ) : isResolved ? (
-                      <span className="text-gray-300 text-lg font-medium ml-4">
-                        {isPaid ? (habit.stakeDestination === 'charity' ? 'Donated' : 'Supported') : 'Done'}
-                      </span>
+                      <div className="flex items-center px-4">
+                        <span className="text-gray-300 text-lg font-medium">
+                          {isPaid ? (habit.stakeDestination === 'charity' ? 'Donated' : 'Supported') : 'Done'}
+                        </span>
+                      </div>
                     ) : (
-                      <div className="flex items-center ml-4">
-                        <div className="h-8 w-[1px] bg-gray-100 mx-4" />
+                      <div className="flex items-stretch">
+                        <div className="w-[1px] bg-gray-100" />
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
                             if (onMarkDone) onMarkDone(habit)
                           }}
-                          className="px-6 py-2 rounded-full bg-[#FF6B00] text-white text-sm font-black active:scale-95 transition-all flex items-center gap-2"
+                          className="px-6 py-2 text-[#FF6B00] text-sm font-black transition-all uppercase tracking-widest hover:bg-orange-50 active:bg-orange-100 flex items-center justify-center min-h-full rounded-r-2xl"
                         >
-                          <span>Check</span>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
+                          Check
                         </button>
                       </div>
                     )}
