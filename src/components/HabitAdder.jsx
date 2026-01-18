@@ -389,10 +389,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </div>
                 )}
 
-                <p className="mt-6 text-orange-600 text-[11px] font-bold uppercase tracking-wider text-center">
-                  This is the amount you will pay if you skip a Habit
-                </p>
-
                 {skipCost === null && !showCustomInput && (
                   <p className="text-orange-500 text-xs mt-3 text-center font-medium">
                     This is the amount you will give to charity if you miss a habit
