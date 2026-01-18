@@ -546,7 +546,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         Set
                       </button>
                     </div>
-                    <p className="text-gray-400 text-[10px] font-bold text-center italic">
+                    <p className="text-gray-400 text-[10px] text-center">
                       Pause hides the habit and skips penalties while paused
                     </p>
                   </div>
