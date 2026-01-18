@@ -416,7 +416,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 )}
 
                 {/* Charity Emphasis Box */}
-                {(skipCost !== null || showCustomInput) && (
+                {!isEditing && (skipCost !== null || showCustomInput) && (
                   <div className="mt-5 pt-4 border-t border-gray-100">
                     <div className="bg-white rounded-2xl p-6 border border-gray-200 text-center animate-fadeIn">
                       <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4">
