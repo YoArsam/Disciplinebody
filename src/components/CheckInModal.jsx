@@ -15,6 +15,35 @@ function CheckInModal({ habit, onComplete, onSkip, onClose }) {
   const [stripeCustomerId, setStripeCustomerId] = useState(() => localStorage.getItem('stripe-customer-id') || null)
   const [userEmail, setUserEmail] = useState(() => localStorage.getItem('user-email') || '')
 
+  useEffect(() => {
+    // Dark background for the modal
+    const DARK_BG = '#111827' // gray-900 equivalent
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]')
+    const metaStatusBar = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+
+    const previousTheme = metaTheme?.getAttribute('content')
+    const previousStatusBar = metaStatusBar?.getAttribute('content')
+
+    // Set dark theme for status bar
+    if (metaTheme) metaTheme.setAttribute('content', DARK_BG)
+    if (metaStatusBar) metaStatusBar.setAttribute('content', 'black-translucent')
+
+    const prevHtmlBg = document.documentElement.style.backgroundColor
+    const prevBodyBg = document.body.style.backgroundColor
+    
+    document.documentElement.style.backgroundColor = DARK_BG
+    document.body.style.backgroundColor = DARK_BG
+
+    return () => {
+      // Restore previous state when modal closes
+      if (metaTheme && previousTheme) metaTheme.setAttribute('content', previousTheme)
+      if (metaStatusBar && previousStatusBar) metaStatusBar.setAttribute('content', previousStatusBar)
+      document.documentElement.style.backgroundColor = prevHtmlBg
+      document.body.style.backgroundColor = prevBodyBg
+    }
+  }, [])
+
   const { name: habitName = 'Habit', skipCost = 0, stakeDestination, charityName } = habit || {}
 
   const stripeOptions = useMemo(() => {
@@ -104,11 +133,11 @@ function CheckInModal({ habit, onComplete, onSkip, onClose }) {
         </div>
         
         <h1 className="text-2xl font-bold text-white mb-2 text-center">
-          {isPaymentSuccess ? 'Thank you for your contribution' : 'Nice work!'}
+          {isPaymentSuccess ? 'Thank you for your contributions' : 'Nice work!'}
         </h1>
         <p className={`${isPaymentSuccess ? 'text-blue-400' : 'text-green-400'} font-medium text-lg mb-8 text-center px-4`}>
           {isPaymentSuccess 
-            ? `Your support makes a difference for ${getContributionDestinationText()}` 
+            ? "We'll email you soon about the difference you're making for others" 
             : '+1 Streak'}
         </p>
 
