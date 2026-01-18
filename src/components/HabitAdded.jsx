@@ -54,15 +54,7 @@ function HabitAdded({ habit, onDone }) {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-white/15 rounded-3xl p-6">
-            <p className="text-white/80 text-sm font-bold uppercase tracking-wider mb-2">Next check-in</p>
-            <p className="text-white text-2xl font-extrabold">{getTomorrowTimeText()}</p>
-            <p className="text-white/80 text-sm mt-3">
-              We'll check in with you tomorrow.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-3xl p-6">
+          <div className="bg-white rounded-3xl p-6 shadow-sm">
             <p className="text-orange-600 text-sm font-bold uppercase tracking-wider mb-4">How it works</p>
 
             <div className="space-y-4">
@@ -103,6 +95,14 @@ function HabitAdded({ habit, onDone }) {
                 </span>
               </div>
             </div>
+          </div>
+
+          <div className="bg-white/15 rounded-3xl p-6 border border-white/10">
+            <p className="text-white/80 text-sm font-bold uppercase tracking-wider mb-2">Next check-in</p>
+            <p className="text-white text-2xl font-extrabold">{getTomorrowTimeText()}</p>
+            <p className="text-white/80 text-sm mt-3">
+              We'll check in with you tomorrow.
+            </p>
           </div>
         </div>
       </div>
