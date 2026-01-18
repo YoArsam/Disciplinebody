@@ -194,7 +194,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <button
                     type="button"
                     onClick={() => setShowIdeas((v) => !v)}
-                    className="w-full flex items-center justify-between px-2 py-3 rounded-xl text-gray-400 text-sm tracking-wider"
+                    className="w-full flex items-center justify-between px-2 py-3 rounded-xl text-gray-400 text-sm font-bold tracking-wider"
                   >
                     <span>Need ideas?</span>
                     <svg
@@ -418,17 +418,17 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 {/* Charity Emphasis Box - Small hierarchy */}
                 {!isEditing && (skipCost !== null || showCustomInput) && (
                   <div className="mt-4 pt-4 border-t border-gray-100 animate-fadeIn">
-                    <div className="bg-[#F8FAFF] rounded-2xl p-6 border border-blue-100 text-center">
+                    <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-200 text-center">
                       <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4">
                         <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>
                       </div>
-                      <p className="text-gray-500 text-base font-bold leading-tight px-2">
-                        You will give <span className="text-gray-900 font-black">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
+                      <p className="text-gray-500 text-lg font-bold leading-tight px-2">
+                        You will give <span className="text-gray-900 font-black text-xl">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
                       </p>
-                      <p className="mt-3 text-blue-400 text-[10px] font-black tracking-[0.1em]">
-                        We'll send you an email of the impact you've made
+                      <p className="mt-2 text-slate-400 text-xs font-medium">
+                        We'll email you the impact you've had
                       </p>
                     </div>
                   </div>
