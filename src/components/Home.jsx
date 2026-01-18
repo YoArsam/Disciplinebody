@@ -192,13 +192,15 @@ function Home({
   useEffect(() => {
     if (habitsExpanded && widgetRef.current) {
       const rect = widgetRef.current.getBoundingClientRect()
-      const targetTop = 60 
+      const targetTop = 50 
       const moveUp = rect.top - targetTop
       
       setWidgetStyle({
         transform: `translateY(-${moveUp}px)`,
-        height: `calc(100vh - ${targetTop}px - 80px)`, // 80px for bottom nav
-        borderRadius: '2rem 2rem 0 0',
+        height: '5000px', // Ultra-aggressively large fixed height
+        borderRadius: '2.5rem 2.5rem 0 0',
+        paddingBottom: '600px', 
+        marginBottom: '-4800px' // Offset the massive height to prevent layout break
       })
     } else {
       setWidgetStyle({})
@@ -220,7 +222,7 @@ function Home({
   const isHabitDone = (habit) => completedToday.includes(habit.id)
 
   return (
-    <div className={`h-full flex flex-col bg-[#fcfcfc] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-hidden' : ''}`}>
+    <div className={`h-full flex flex-col bg-[#fcfcfc] px-4 ${habitsExpanded ? 'pb-0' : 'pb-20'} pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-hidden' : ''}`}>
       <div className={`home-top-elements ${habitsExpanded ? 'faded' : ''}`}>
         <div className="flex-shrink-0 mb-4">
           {/* Top Row: Profile Icon + Total Completions */}

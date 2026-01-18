@@ -398,10 +398,15 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 {!isEditing && (skipCost !== null || showCustomInput) && (
                   <div className="mt-4 pt-4 border-t border-gray-100 animate-fadeIn">
                     <div className="bg-blue-50/30 rounded-2xl p-6 border border-blue-100 text-center">
+                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      </div>
                       <p className="text-gray-500 text-lg font-bold leading-tight px-2">
                         You will give <span className="text-gray-900 font-black text-xl">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
                       </p>
-                      <p className="mt-2 text-blue-300 text-xs font-medium">
+                      <p className="mt-2 text-blue-300 text-[10px] font-medium">
                         We'll email you the impact you've had
                       </p>
                     </div>

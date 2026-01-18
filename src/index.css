@@ -98,7 +98,8 @@ body {
 
 .home-top-elements.faded {
   opacity: 0;
-  transform: translateY(-100px);
+  transition: opacity 0s !important; /* Instant fade */
+  transform: translateY(-120px);
   pointer-events: none;
 }
 
