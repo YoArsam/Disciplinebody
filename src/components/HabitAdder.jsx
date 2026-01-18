@@ -194,7 +194,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <button
                     type="button"
                     onClick={() => setShowIdeas((v) => !v)}
-                    className="w-full flex items-center justify-between px-2 py-3 rounded-xl text-gray-400 text-sm font-bold tracking-wider"
+                    className="w-full flex items-center justify-between px-2 py-3 rounded-xl text-gray-400 text-sm tracking-wider"
                   >
                     <span>Need ideas?</span>
                     <svg
