@@ -408,41 +408,30 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </p>
               )}
 
-              <div className="mt-5 pt-4 border-t border-gray-100">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1 pt-[2px]">
-                    <span className="text-gray-500 text-xs font-bold uppercase tracking-wider block mb-0.5">Pick your charity</span>
-                    <p className="text-gray-400 text-[11px] leading-tight mb-3">
-                      Your missed habit contributions directly support these verified causes.
+              {/* Charity Emphasis Box */}
+              {(skipCost !== null || showCustomInput) && (
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  <div className="bg-blue-50 rounded-2xl p-6 border border-blue-100 text-center animate-fadeIn">
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </div>
+                    <p className="text-blue-600 text-sm font-bold uppercase tracking-wider mb-1">Impact</p>
+                    <div className="flex items-baseline justify-center gap-1">
+                      <span className="text-4xl font-black text-blue-900">
+                        ${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-blue-800 text-base font-semibold leading-tight">
+                      will be given to charity<br/>if you skip this habit
+                    </p>
+                    <p className="mt-2 text-blue-500 text-[11px] font-medium italic">
+                      Supporting verified causes like Feeding America
                     </p>
                   </div>
                 </div>
-
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {['Feeding America', 'Red Cross'].map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => {
-                        setStakeDestination('charity')
-                        setCharityName(c)
-                      }}
-                      className={`h-12 rounded-xl font-bold text-sm transition-all active:scale-95 border ${
-                        charityName === c
-                          ? 'bg-blue-500 text-white border-blue-500'
-                          : 'bg-gray-50 text-gray-700 border-gray-200'
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              )}
 
               {habit && (
                 <div className="mt-5 pt-4 border-t border-gray-100">
