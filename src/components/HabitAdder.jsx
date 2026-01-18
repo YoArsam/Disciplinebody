@@ -223,45 +223,45 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           )}
 
           {(isEditing || step === 2) && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-gray-900 text-xl font-bold leading-tight">When will you do this?</h2>
-                  <p className="text-gray-500 text-sm font-medium">Select the days for your habit</p>
+                <div className="flex-1 pt-[2px]">
+                  <span className="text-gray-900 text-xl font-bold">Choose your days</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-7 gap-2">
-                {dayLabels.map((d) => {
-                  const selected = daysOfWeek.includes(d.key)
-                  return (
-                    <button
-                      key={d.key}
-                      type="button"
-                      onClick={() => toggleDay(d.key)}
-                      className={`h-12 rounded-xl font-bold text-sm transition-all duration-200 active:scale-90 flex items-center justify-center border-2 ${
-                        selected
-                          ? 'bg-orange-500 border-orange-500 text-white shadow-md shadow-orange-100'
-                          : 'bg-gray-50 border-transparent text-gray-400 hover:bg-gray-100'
-                      }`}
-                    >
-                      {d.label}
-                    </button>
-                  )
-                })}
-              </div>
-
-              {daysOfWeek.length === 0 && (
-                <div className="mt-4 flex items-center justify-center gap-2 text-orange-500">
-                  <span className="w-1 h-1 rounded-full bg-orange-500 animate-pulse" />
-                  <p className="text-xs font-bold uppercase tracking-wider">Select at least one day</p>
+              <div className="mt-4">
+                <div className="grid grid-cols-7 gap-2">
+                  {dayLabels.map((d) => {
+                    const selected = daysOfWeek.includes(d.key)
+                    return (
+                      <button
+                        key={d.key}
+                        type="button"
+                        onClick={() => toggleDay(d.key)}
+                        className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                          selected
+                            ? 'bg-orange-500 border-orange-500 text-white'
+                            : 'bg-gray-50 border-gray-200 text-gray-600'
+                        }`}
+                      >
+                        {d.label}
+                      </button>
+                    )
+                  })}
                 </div>
-              )}
+
+                {daysOfWeek.length === 0 && (
+                  <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                    Select at least one day
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
