@@ -306,7 +306,7 @@ function Home({
               </svg>
             </div>
             <span className="text-gray-500 text-sm font-medium">
-              {habitsExpanded ? 'All Habits' : "Today's Habits"}
+              Today's Habits
             </span>
           </div>
           <button 
@@ -500,6 +500,8 @@ function Home({
               )
             })
           )}
+          {/* Extra scrolling space at the bottom */}
+          <div className="h-20 w-full flex-shrink-0" />
         </div>
       </div>
     </div>

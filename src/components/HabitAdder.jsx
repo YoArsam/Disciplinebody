@@ -404,7 +404,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         </svg>
                       </div>
                       <p className="text-gray-500 text-lg font-bold leading-tight px-2">
-                        You will give <span className="text-gray-900 font-black text-xl">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
+                        You will give <span className="text-gray-900 font-black">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
                       </p>
                       <p className="mt-2 text-blue-300 text-[10px] font-medium">
                         We'll email you the impact you've had
