@@ -101,7 +101,7 @@ function HabitAdded({ habit, onDone }) {
             <p className="text-white/80 text-sm font-bold uppercase tracking-wider mb-2">Next check-in</p>
             <p className="text-white text-2xl font-extrabold">{getTomorrowTimeText()}</p>
             <p className="text-white/80 text-sm mt-3">
-              We'll check in with you tomorrow.
+              We'll send you a notification
             </p>
           </div>
         </div>
