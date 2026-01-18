@@ -433,117 +433,122 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
 
-                {habit && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                        <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-500 text-xs font-black uppercase tracking-widest">Pause</span>
-                    </div>
+          {/* Pause Section - Separate Box */}
+          {habit && (
+            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5 shadow-sm">
+              <div className="flex items-start gap-3 mb-4">
+                <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="flex-1 pt-1">
+                  <span className="text-lg font-bold text-gray-900">Pause habit</span>
+                </div>
+              </div>
 
-                    {pausedUntil ? (
-                      <div className="space-y-3">
-                        <p className="text-gray-500 text-sm font-bold text-center bg-gray-50 py-3 rounded-xl border border-gray-100">
-                          Paused until {pausedUntil}
-                          {getPauseDaysFromPausedUntil() !== null ? ` (${getPauseDaysFromPausedUntil()} days)` : ''}
-                        </p>
+              <div className="space-y-4">
+                {pausedUntil ? (
+                  <div className="space-y-3">
+                    <p className="text-gray-500 text-sm font-bold text-center bg-gray-50 py-3 rounded-xl border border-gray-100">
+                      Paused until {pausedUntil}
+                      {getPauseDaysFromPausedUntil() !== null ? ` (${getPauseDaysFromPausedUntil()} days)` : ''}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPausedUntil('')
+                        setPauseDays('')
+                        setShowPauseCustom(false)
+                      }}
+                      className="w-full py-3.5 rounded-xl font-bold text-sm bg-white text-gray-700 border border-gray-200 active:scale-95 transition-all shadow-sm"
+                    >
+                      Resume Habit
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex gap-2 items-stretch">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (pauseDays === '1' && !showPauseCustom) {
+                            setPauseDays('')
+                            return
+                          }
+                          setPauseDays('1')
+                          setShowPauseCustom(false)
+                        }}
+                        className={`h-12 flex-1 px-4 rounded-xl font-bold text-sm border active:scale-95 transition-all ${
+                          pauseDays === '1' && !showPauseCustom
+                            ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
+                            : 'bg-gray-50 border-gray-100 text-gray-700'
+                        }`}
+                      >
+                        1 day
+                      </button>
+
+                      {!showPauseCustom ? (
                         <button
                           type="button"
                           onClick={() => {
-                            setPausedUntil('')
-                            setPauseDays('')
-                            setShowPauseCustom(false)
+                            setShowPauseCustom(true)
+                            if (pauseDays === '1') setPauseDays('')
                           }}
-                          className="w-full py-3.5 rounded-xl font-bold text-sm bg-white text-gray-700 border border-gray-200 active:scale-95 transition-all shadow-sm"
+                          className="h-12 flex-1 px-4 rounded-xl font-bold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-all"
                         >
-                          Resume Habit
+                          Custom
                         </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <div className="flex gap-2 items-stretch">
+                      ) : (
+                        <div className="relative flex-1 min-w-0">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={pauseDays}
+                            onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
+                            placeholder="Days"
+                            autoFocus
+                            className="h-12 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl pl-4 pr-10 text-sm font-bold border border-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
                           <button
                             type="button"
                             onClick={() => {
-                              if (pauseDays === '1' && !showPauseCustom) {
-                                setPauseDays('')
-                                return
-                              }
-                              setPauseDays('1')
                               setShowPauseCustom(false)
+                              setPauseDays('')
                             }}
-                            className={`h-12 flex-1 px-4 rounded-xl font-bold text-sm border active:scale-95 transition-all ${
-                              pauseDays === '1' && !showPauseCustom
-                                ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
-                                : 'bg-gray-50 border-gray-100 text-gray-700'
-                            }`}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 text-gray-600 font-bold active:scale-95 transition-all flex items-center justify-center"
                           >
-                            1 day
-                          </button>
-
-                          {!showPauseCustom ? (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowPauseCustom(true)
-                                if (pauseDays === '1') setPauseDays('')
-                              }}
-                              className="h-12 flex-1 px-4 rounded-xl font-bold text-sm bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-all"
-                            >
-                              Custom
-                            </button>
-                          ) : (
-                            <div className="relative flex-1 min-w-0">
-                              <input
-                                type="text"
-                                inputMode="numeric"
-                                value={pauseDays}
-                                onChange={(e) => setPauseDays(e.target.value.replace(/[^0-9]/g, ''))}
-                                placeholder="Days"
-                                autoFocus
-                                className="h-12 w-full bg-gray-50 text-gray-800 placeholder-gray-400 rounded-xl pl-4 pr-10 text-sm font-bold border border-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setShowPauseCustom(false)
-                                  setPauseDays('')
-                                }}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 text-gray-600 font-bold active:scale-95 transition-all flex items-center justify-center"
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const n = parseInt(pauseDays, 10)
-                              if (!n || n <= 0) return
-                              const d = new Date()
-                              d.setDate(d.getDate() + n)
-                              setPausedUntil(formatISODate(d))
-                            }}
-                            disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
-                            className={`h-12 w-20 rounded-xl font-bold text-sm active:scale-95 transition-all ${
-                              !pauseDays || parseInt(pauseDays, 10) <= 0
-                                ? 'bg-gray-100 text-gray-400'
-                                : 'bg-orange-500 text-white shadow-sm'
-                            }`}
-                          >
-                            Set
+                            ✕
                           </button>
                         </div>
-                        <p className="text-gray-400 text-[10px] font-bold text-center italic">
-                          Pause hides the habit and skips penalties while paused
-                        </p>
-                      </div>
-                    )}
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const n = parseInt(pauseDays, 10)
+                          if (!n || n <= 0) return
+                          const d = new Date()
+                          d.setDate(d.getDate() + n)
+                          setPausedUntil(formatISODate(d))
+                        }}
+                        disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
+                        className={`h-12 w-20 rounded-xl font-bold text-sm active:scale-95 transition-all ${
+                          !pauseDays || parseInt(pauseDays, 10) <= 0
+                            ? 'bg-gray-100 text-gray-400'
+                            : 'bg-orange-500 text-white shadow-sm'
+                        }`}
+                      >
+                        Set
+                      </button>
+                    </div>
+                    <p className="text-gray-400 text-[10px] font-bold text-center italic">
+                      Pause hides the habit and skips penalties while paused
+                    </p>
                   </div>
                 )}
               </div>
