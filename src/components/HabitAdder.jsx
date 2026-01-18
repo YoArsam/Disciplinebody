@@ -40,6 +40,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     { key: 0, label: 'S' },
   ]
 
+  const summaryLabels = {
+    1: 'Mon',
+    2: 'Tue',
+    3: 'Wed',
+    4: 'Thu',
+    5: 'Fri',
+    6: 'Sat',
+    0: 'Sun'
+  }
+
   const toggleDay = (dayKey) => {
     setDaysOfWeek(prev => {
       const has = prev.includes(dayKey)
@@ -257,12 +267,12 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </div>
 
                 <div className="mt-3 flex justify-center">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
                     {daysOfWeek.length === 7 
                       ? 'Every day' 
                       : daysOfWeek.length === 0 
                         ? 'No days selected' 
-                        : daysOfWeek.map(key => dayLabels.find(d => d.key === key)?.label).join(' • ')}
+                        : daysOfWeek.map(key => summaryLabels[key]).join(' • ')}
                   </p>
                 </div>
 
