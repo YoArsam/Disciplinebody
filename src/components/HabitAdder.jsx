@@ -274,7 +274,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </svg>
                 </div>
                 <div className="flex-1 pt-[2px]">
-                  <span className="text-gray-900 text-xl font-bold">What's the cost of Skipping</span>
+                  <span className="text-gray-900 text-xl font-bold">What's the cost of skipping?</span>
                 </div>
               </div>
 
