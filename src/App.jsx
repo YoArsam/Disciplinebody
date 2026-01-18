@@ -41,6 +41,7 @@ function App() {
   const [previousHabitsExpanded, setPreviousHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null)
   const [showSuccessToast, setShowSuccessToast] = useState(false)
+  const [checkInHabit, setCheckInHabit] = useState(null)
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -174,7 +175,7 @@ function App() {
               setEditingHabit(habit)
               setScreen('habit-adder')
             }}
-            onMarkDone={markHabitDone}
+            onMarkDone={(habit) => setCheckInHabit(habit)}
             onToggleHabits={() => setHabitsExpanded(!habitsExpanded)}
           />
         </div>
@@ -277,6 +278,23 @@ function App() {
           </svg>
           <span className="font-semibold text-lg">Great job!</span>
         </div>
+      )}
+
+      {/* Check In Modal */}
+      {checkInHabit && (
+        <CheckInModal
+          habit={checkInHabit}
+          onComplete={() => {
+            markHabitDone(checkInHabit.id)
+            setCheckInHabit(null)
+            setShowSuccessToast(true)
+          }}
+          onSkip={() => {
+            markHabitPaid(checkInHabit.id)
+            setCheckInHabit(null)
+          }}
+          onClose={() => setCheckInHabit(null)}
+        />
       )}
     </div>
   )
