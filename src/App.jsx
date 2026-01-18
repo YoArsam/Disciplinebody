@@ -14,17 +14,6 @@ const isHabitPausedOnDate = (habit, date) => {
   return habit.pausedUntil >= day
 }
 
-const urlBase64ToUint8Array = (base64String) => {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
-  const rawData = atob(base64)
-  const outputArray = new Uint8Array(rawData.length)
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i)
-  }
-  return outputArray
-}
-
 // Load from localStorage or use defaults
 const loadState = () => {
   const saved = localStorage.getItem('accountability-app-state')
@@ -45,295 +34,57 @@ const loadState = () => {
 
 function App() {
   const [state, setState] = useState(loadState)
-  const [screen, setScreen] = useState('home') // 'home' | 'habit-adder' | 'wallet-editor' | 'skip-cost-editor'
+  const [screen, setScreen] = useState('home')
   const [editingHabit, setEditingHabit] = useState(null)
   const [previousScreen, setPreviousScreen] = useState('home')
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [previousHabitsExpanded, setPreviousHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null)
-  const [checkInQueue, setCheckInQueue] = useState([]) // Queue of habits needing check-in
-  const [showSuccessToast, setShowSuccessToast] = useState(false) // For good vibes toast
+  const [checkInQueue, setCheckInQueue] = useState([])
+  const [showSuccessToast, setShowSuccessToast] = useState(false)
 
   const shownCheckInsRef = useRef(new Set())
-
-  const [notificationPermission, setNotificationPermission] = useState(() => {
-    if (typeof window === 'undefined') return 'unsupported'
-    if (!('Notification' in window)) return 'unsupported'
-    return Notification.permission
-  })
-
-  const notificationTimersRef = useRef({})
-  const swRegistrationRef = useRef(null)
 
   // Save to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem('accountability-app-state', JSON.stringify(state))
   }, [state])
 
+  // Reset daily completions and check for missed habits once a day
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (!('Notification' in window)) return
-    setNotificationPermission(Notification.permission)
-  }, [])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (!('serviceWorker' in navigator)) return
-    navigator.serviceWorker
-      .register('/service-worker.js')
-      .then((reg) => {
-        swRegistrationRef.current = reg
-      })
-      .catch(() => {
-        // ignore
-      })
-  }, [])
-
-  const ensurePushSubscription = async () => {
-    if (typeof window === 'undefined') return null
-    if (!('serviceWorker' in navigator)) return null
-    if (!('PushManager' in window)) return null
-
-    const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY
-    if (!vapidPublicKey) return null
-
-    const reg = swRegistrationRef.current || (await navigator.serviceWorker.ready)
-    if (!reg) return null
-
-    const existing = await reg.pushManager.getSubscription()
-    if (existing) {
-      localStorage.setItem('push-subscription', JSON.stringify(existing))
-      return existing
-    }
-
-    const sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-    })
-
-    localStorage.setItem('push-subscription', JSON.stringify(sub))
-    return sub
-  }
-
-  const syncPushSubscriptionToServer = async () => {
-    if (typeof window === 'undefined') return
-    if (!('serviceWorker' in navigator)) return
-    if (!('PushManager' in window)) return
-
-    const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY
-    if (!vapidPublicKey) return
-    if (Notification.permission !== 'granted') return
-
-    let subscription = null
-    try {
-      subscription = await ensurePushSubscription()
-    } catch (e) {
-      subscription = null
-    }
-
-    if (!subscription) return
-
-    const tzOffsetMinutes = new Date().getTimezoneOffset()
-
-    try {
-      await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          subscription,
-          habits: state.habits,
-          tzOffsetMinutes,
-        }),
-      })
-    } catch (e) {
-      // ignore
-    }
-  }
-
-  const requestNotificationPermission = async () => {
-    if (typeof window === 'undefined') return
-    if (!('Notification' in window)) return
-    try {
-      const res = await Notification.requestPermission()
-      setNotificationPermission(res)
-      if (res === 'granted') {
-        try {
-          const sub = await ensurePushSubscription()
-          if (sub) {
-            console.log('Push subscription:', JSON.stringify(sub))
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
-    } catch (e) {
-      setNotificationPermission(Notification.permission)
-    }
-  }
-
-  const clearNotificationTimers = () => {
-    Object.values(notificationTimersRef.current).forEach((t) => clearTimeout(t))
-    notificationTimersRef.current = {}
-  }
-
-  const scheduleEndTimeNotifications = () => {
-    if (typeof window === 'undefined') return
-    if (!('Notification' in window)) return
-    if (Notification.permission !== 'granted') return
-
-    const now = new Date()
-    const todayKey = now.getDay()
-
-    const getHabitEndDate = (habit, baseDate) => {
-      const end = new Date(baseDate)
-      if (habit.allDay) {
-        end.setHours(23, 59, 0, 0)
-        return end
-      }
-      const [endHour, endMin] = habit.endTime.split(':').map(Number)
-      end.setHours(endHour, endMin, 0, 0)
-      return end
-    }
-
-    const shouldNotifyForHabitOnDate = (habit, date, dayKey, isToday) => {
-      if (!isHabitScheduledOnDay(habit, dayKey)) return false
-      if (isHabitPausedOnDate(habit, date)) return false
-      if (isToday && state.completedToday.includes(habit.id)) return false
-      if (isToday && state.paidToday?.includes(habit.id)) return false
-      return true
-    }
-
-    state.habits.forEach((habit) => {
-      // If today's endTime already passed, schedule the first one for tomorrow.
-      const todayEndAt = getHabitEndDate(habit, now)
-      const scheduleForToday = todayEndAt.getTime() > now.getTime()
-      const targetBase = scheduleForToday ? now : new Date(now.getTime() + 24 * 60 * 60 * 1000)
-      const targetDayKey = scheduleForToday ? todayKey : targetBase.getDay()
-      const targetEndAt = getHabitEndDate(habit, targetBase)
-
-      if (!shouldNotifyForHabitOnDate(habit, targetBase, targetDayKey, scheduleForToday)) return
-
-      const msUntil = targetEndAt.getTime() - now.getTime()
-      if (msUntil <= 0) return
-
-      const timer = setTimeout(() => {
-        const latest = loadState()
-        const latestNow = new Date()
-
-        const stillActive = latest.habits.find((h) => h.id === habit.id)
-        if (!stillActive) return
-        if (!isHabitScheduledOnDay(stillActive, latestNow.getDay())) return
-        if (isHabitPausedOnDate(stillActive, latestNow)) return
-        if ((latest.completedToday || []).includes(stillActive.id)) return
-        if ((latest.paidToday || []).includes(stillActive.id)) return
-
-        const title = 'Habit Buddy'
-        const body = 'So.... Did you do it? :)'
-
-        try {
-          const n = new Notification(title, {
-            body,
-            tag: `habit-end-${stillActive.id}`,
-            renotify: false,
+    const checkDayTransition = () => {
+      const today = new Date().toDateString()
+      if (state.lastCheckedDate !== today) {
+        setState(prev => {
+          // Identify habits that were scheduled yesterday but not completed
+          const yesterday = new Date(prev.lastCheckedDate)
+          const yesterdayDayKey = yesterday.getDay()
+          
+          const missedHabits = prev.habits.filter(h => {
+            const isScheduled = h.daysOfWeek.includes(yesterdayDayKey)
+            const isPaused = h.pausedUntil && h.pausedUntil >= yesterday.toISOString().split('T')[0]
+            const isDone = prev.completedToday.includes(h.id)
+            const isPaid = prev.paidToday?.includes(h.id)
+            return isScheduled && !isPaused && !isDone && !isPaid
           })
 
-          n.onclick = () => {
-            try {
-              window.focus()
-            } catch (e) {
-              // ignore
-            }
-          }
-        } catch (e) {
-          // ignore
-        }
-      }, msUntil)
+          const totalPenalty = missedHabits.reduce((sum, h) => sum + (h.skipCost || 0), 0)
 
-      notificationTimersRef.current[habit.id] = timer
-    })
-  }
-
-  useEffect(() => {
-    clearNotificationTimers()
-    scheduleEndTimeNotifications()
-    return () => {
-      clearNotificationTimers()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.habits, state.completedToday, state.paidToday, state.lastCheckedDate, notificationPermission])
-
-  useEffect(() => {
-    if (notificationPermission !== 'granted') return
-    syncPushSubscriptionToServer()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [notificationPermission, state.habits])
-
-  // Safety: redirect to home if on habit added screen but habit is null
-  useEffect(() => {
-    if (screen === 'habit-added' && !newlyAddedHabit) {
-      setScreen('home')
-    }
-  }, [screen, newlyAddedHabit])
-
-  // Check for missed habits and reset daily completions
-  useEffect(() => {
-    const today = new Date().toDateString()
-    
-    if (state.lastCheckedDate !== today) {
-      // New day - check if all habits were done yesterday, update streak
-      const yesterday = new Date(state.lastCheckedDate)
-      const yesterdayDayKey = yesterday.getDay()
-      const scheduledYesterday = state.habits.filter(h => isHabitScheduledOnDay(h, yesterdayDayKey) && !isHabitPausedOnDate(h, yesterday))
-
-      const allDoneYesterday = scheduledYesterday.length > 0 && 
-        scheduledYesterday.every(h => state.completedToday.includes(h.id))
-      
-      setState(prev => {
-        const newStreak = allDoneYesterday ? prev.currentStreak + 1 : 0
-        return {
-          ...prev,
-          completedToday: [],
-          paidToday: [],
-          lastCheckedDate: today,
-          currentStreak: newStreak,
-          longestStreak: Math.max(prev.longestStreak, newStreak),
-        }
-      })
-    }
-
-    // Check for missed habits (past end time and not completed)
-    const now = new Date()
-    const currentMinutes = now.getHours() * 60 + now.getMinutes()
-    const todayDayKey = now.getDay()
-
-    state.habits.forEach(habit => {
-      if (!isHabitScheduledOnDay(habit, todayDayKey)) return
-      if (isHabitPausedOnDate(habit, now)) return
-      const [endHour, endMin] = habit.endTime.split(':').map(Number)
-      const endMinutes = endHour * 60 + endMin
-
-      // Skip if created today after the deadline
-      const createdAt = new Date(habit.id)
-      const isCreatedToday = createdAt.toDateString() === today
-      const createdMinutes = createdAt.getHours() * 60 + createdAt.getMinutes()
-      
-      if (isCreatedToday && createdMinutes > endMinutes) {
-        return
-      }
-
-      if (currentMinutes > endMinutes && !state.completedToday.includes(habit.id)) {
-        // Check if we already penalized this habit today
-        const penaltyKey = `penalty-${habit.id}-${today}`
-        if (!localStorage.getItem(penaltyKey)) {
-          localStorage.setItem(penaltyKey, 'true')
-          setState(prev => ({
+          return {
             ...prev,
-            wallet: Math.max(0, prev.wallet - (habit.skipCost || 0)),
-          }))
-        }
+            wallet: Math.max(0, prev.wallet - totalPenalty),
+            completedToday: [],
+            paidToday: [],
+            lastCheckedDate: today,
+          }
+        })
       }
-    })
-  }, [state.habits, state.completedToday, state.lastCheckedDate])
+    }
+
+    checkDayTransition()
+    const interval = setInterval(checkDayTransition, 60000) // Check every minute
+    return () => clearInterval(interval)
+  }, [state.lastCheckedDate, state.habits, state.completedToday, state.paidToday])
 
   const updateWallet = (amount) => {
     setState(prev => ({ ...prev, wallet: amount }))
@@ -396,44 +147,20 @@ function App() {
     setScreen('habit-adder')
   }
 
-  // Find ALL habits that need check-in (past end time, not completed, not paid)
-  const getHabitsNeedingCheckIn = () => {
-    const now = new Date()
-    const currentMinutes = now.getHours() * 60 + now.getMinutes()
-    const todayDayKey = now.getDay()
-    const todayStr = now.toDateString()
-    
-    return state.habits.filter(habit => {
-      if (!isHabitScheduledOnDay(habit, todayDayKey)) return false
-      if (isHabitPausedOnDate(habit, now)) return false
-      if (state.completedToday.includes(habit.id)) return false
-      if (state.paidToday?.includes(habit.id)) return false
-      const [endHour, endMin] = habit.endTime.split(':').map(Number)
-      const endMinutes = endHour * 60 + endMin
-
-      // If the habit was created today after the deadline, don't prompt today.
-      // First prompt should be tomorrow.
-      const createdAt = new Date(habit.id)
-      const isCreatedToday = createdAt.toDateString() === todayStr
-      const createdMinutes = createdAt.getHours() * 60 + createdAt.getMinutes()
-      if (isCreatedToday && createdMinutes > endMinutes) {
-        return false
-      }
-
-      return currentMinutes > endMinutes
-    })
-  }
-
-  // Populate / refresh check-in queue while app stays open
-  useEffect(() => {
-    // Reset shown set when the day rolls over
-    shownCheckInsRef.current = new Set()
-    setCheckInQueue([])
-  }, [state.lastCheckedDate])
-
+  // Populate / refresh check-in queue (only for today's scheduled habits)
   useEffect(() => {
     const enqueue = () => {
-      const habitsNeedingCheckIn = getHabitsNeedingCheckIn()
+      const now = new Date()
+      const todayDayKey = now.getDay()
+      
+      const habitsNeedingCheckIn = state.habits.filter(h => {
+        const isScheduled = h.daysOfWeek.includes(todayDayKey)
+        const isPaused = h.pausedUntil && h.pausedUntil >= now.toISOString().split('T')[0]
+        const isDone = state.completedToday.includes(h.id)
+        const isPaid = state.paidToday?.includes(h.id)
+        return isScheduled && !isPaused && !isDone && !isPaid
+      })
+
       if (habitsNeedingCheckIn.length === 0) return
 
       setCheckInQueue((prev) => {
@@ -443,20 +170,16 @@ function App() {
         habitsNeedingCheckIn.forEach((h) => {
           if (queuedIds.has(h.id)) return
           if (shownCheckInsRef.current.has(h.id)) return
-          shownCheckInsRef.current.add(h.id)
-          next.push(h)
+          // shownCheckInsRef.current.add(h.id) // We'll keep them in queue for end of day check-in if needed, but for now we won't auto-pop modals without time
+          // next.push(h) 
         })
 
         return next
       })
     }
-
-    // Run immediately + on an interval so you don't have to reload
-    enqueue()
-    const interval = setInterval(enqueue, 30 * 1000)
-    return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.habits, state.completedToday, state.paidToday, state.lastCheckedDate])
+    // We'll rethink the check-in modal trigger since there's no "deadline" now.
+    // Maybe a manual check-in or end-of-day reminder.
+  }, [state.habits, state.completedToday, state.paidToday])
 
   // Current habit to show = first in queue
   const currentCheckIn = checkInQueue[0] || null
@@ -468,7 +191,7 @@ function App() {
     <div className="h-full w-full relative">
       {/* Version Tracker */}
       <div className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none">
-        v1.4.7
+        v1.6.0
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>

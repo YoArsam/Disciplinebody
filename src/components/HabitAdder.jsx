@@ -4,13 +4,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const isEditing = !!habit
   const [step, setStep] = useState(1)
   const [name, setName] = useState(habit?.name || '')
-  const [allDay, setAllDay] = useState(habit?.allDay ?? false)
-  const [startTime, setStartTime] = useState(habit?.startTime || '06:00')
-  const [endTime, setEndTime] = useState(() => {
-    if (habit?.endTime) return habit.endTime
-    const now = new Date()
-    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
-  })
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
   const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'charity')
@@ -72,7 +65,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
   const stepTitles = {
     1: 'Name your habit',
-    2: 'Timing + days',
+    2: 'Select days',
     3: 'Stakes + destination',
   }
 
@@ -119,9 +112,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     onSave({
       ...(habit || {}),
       name: name.trim(),
-      allDay,
-      startTime: allDay ? '00:00' : startTime,
-      endTime: allDay ? '23:59' : endTime,
       skipCost: computedSkipCost,
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
       stakeDestination: 'charity',
@@ -245,114 +235,44 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
                   <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div className="flex-1 pt-[2px]">
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider block mb-0.5">Goal Deadline</span>
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-wider block mb-0.5">Repeat Days</span>
                   <p className="text-gray-400 text-[11px] leading-tight mb-3">
-                    When is the last moment you can complete this?
+                    Which days do you want to commit to this?
                   </p>
                 </div>
               </div>
 
-              {!allDay && (
-                <div className="relative w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between tap-bounce cursor-pointer overflow-hidden">
-                  <div className="flex flex-col pointer-events-none">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-0.5">Deadline</span>
-                    <span className="text-gray-900 font-bold text-lg">{formatTime(endTime)}</span>
-                  </div>
-                  
-                  <div className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-orange-600 font-bold text-sm pointer-events-none">
-                    Change
-                  </div>
-
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className="absolute inset-0 opacity-0 cursor-pointer scale-[5]"
-                  />
+              <div className="mt-3">
+                <div className="grid grid-cols-7 gap-2">
+                  {dayLabels.map((d) => {
+                    const selected = daysOfWeek.includes(d.key)
+                    return (
+                      <button
+                        key={d.key}
+                        type="button"
+                        onClick={() => toggleDay(d.key)}
+                        className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                          selected
+                            ? 'bg-orange-500 border-orange-500 text-white'
+                            : 'bg-gray-50 border-gray-200 text-gray-600'
+                        }`}
+                      >
+                        {d.label}
+                      </button>
+                    )
+                  })}
                 </div>
-              )}
 
-              <button
-                type="button"
-                onClick={() => setAllDay(!allDay)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-full mt-3 transition-all border ${
-                  allDay ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                    allDay ? 'bg-orange-500' : 'bg-gray-300'
-                  }`}>
-                    {allDay && (
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                  <span className={`font-semibold text-sm ${allDay ? 'text-orange-700' : 'text-gray-700'}`}>No deadline</span>
-                </div>
-                <span className="text-xs text-gray-400">All Day</span>
-              </button>
-
-                <div className="mt-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowDaysEditor((v) => !v)}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 text-gray-700 border border-gray-200 active:scale-95 transition-transform"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
-                        <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <div className="text-left">
-                        <div className="text-gray-900 font-bold text-sm">Repeat</div>
-                        <div className="text-gray-500 text-xs">
-                          {daysOfWeek.length === 7 ? 'Every day' : `${daysOfWeek.length} days selected`}
-                        </div>
-                      </div>
-                    </div>
-                    <svg className={`w-5 h-5 text-gray-400 transition-transform ${showDaysEditor ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-
-                  {showDaysEditor && (
-                    <div className="mt-3">
-                      <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wide block mb-2">Schedule</span>
-                      <div className="grid grid-cols-7 gap-2">
-                        {dayLabels.map((d) => {
-                          const selected = daysOfWeek.includes(d.key)
-                          return (
-                            <button
-                              key={d.key}
-                              type="button"
-                              onClick={() => toggleDay(d.key)}
-                              className={`h-10 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
-                                selected
-                                  ? 'bg-orange-500 border-orange-500 text-white'
-                                  : 'bg-gray-50 border-gray-200 text-gray-600'
-                              }`}
-                            >
-                              {d.label}
-                            </button>
-                          )
-                        })}
-                      </div>
-
-                      {daysOfWeek.length === 0 && (
-                        <p className="text-orange-500 text-xs mt-3 text-center font-medium">
-                          Select at least one day
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
+                {daysOfWeek.length === 0 && (
+                  <p className="text-orange-500 text-xs mt-3 text-center font-medium">
+                    Select at least one day
+                  </p>
+                )}
+              </div>
             </div>
           )}
 

@@ -240,51 +240,7 @@ function Home({
   const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(currentTime.getDay())
   const todaysHabits = habits.filter(isHabitScheduledToday)
 
-  const formatTimeRange = (habit) => {
-    if (habit.allDay) return 'All Day'
-    const format = (t) => {
-      const [h, m] = t.split(':').map(Number)
-      const ampm = h >= 12 ? 'PM' : 'AM'
-      const displayHour = h % 12 || 12
-      return `${displayHour} ${ampm}`
-    }
-    return `${format(habit.startTime)} - ${format(habit.endTime)}`
-  }
-
   const isHabitDone = (habit) => completedToday.includes(habit.id)
-
-  // Calculate time remaining for a habit
-  const getTimeRemaining = (habit) => {
-    const now = currentTime
-    let endTime
-    
-    if (habit.allDay) {
-      // End of day (midnight)
-      endTime = new Date(now)
-      endTime.setHours(23, 59, 59, 999)
-    } else {
-      // Parse habit end time
-      const [endHour, endMin] = habit.endTime.split(':').map(Number)
-      endTime = new Date(now)
-      endTime.setHours(endHour, endMin, 0, 0)
-    }
-    
-    const diffMs = endTime - now
-    
-    if (diffMs <= 0) {
-      return { text: 'Check in', expired: true }
-    }
-    
-    const diffMins = Math.floor(diffMs / 60000)
-    const hours = Math.floor(diffMins / 60)
-    const mins = diffMins % 60
-    
-    if (hours > 0) {
-      return { text: `${hours}h ${mins}m`, expired: false }
-    } else {
-      return { text: `${mins}m`, expired: false }
-    }
-  }
 
   return (
     <div className={`h-full flex flex-col bg-[#fcfcfc] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
@@ -452,7 +408,7 @@ function Home({
               </div>
             </button>
           ) : (
-            // Sort habits: by time, then done habits go to bottom
+            // Sort habits: done habits go to bottom
             [...todaysHabits]
               .sort((a, b) => {
                 const aDone = completedToday.includes(a.id)
@@ -469,10 +425,7 @@ function Home({
                 // Done habits go to bottom
                 if (aResolved && !bResolved) return 1
                 if (!aResolved && bResolved) return -1
-                // Sort by start time
-                const aTime = a.allDay ? 0 : a.startTime
-                const bTime = b.allDay ? 0 : b.startTime
-                return aTime - bTime
+                return 0
               })
               .map((habit, index) => {
               const isDone = isHabitDone(habit)
@@ -514,11 +467,11 @@ function Home({
                       <span className={`text-sm ${
                         isResolved || isPaused ? 'text-gray-300' : 'text-gray-500'
                       }`}>
-                        {isPaused ? `Paused until ${habit.pausedUntil}` : formatTimeRange(habit)}
+                        {isPaused ? `Paused until ${habit.pausedUntil}` : 'Daily habit'}
                       </span>
                     </button>
                     
-                    {/* Time Remaining / Done / Paid Status */}
+                    {/* Status */}
                     {isPaused ? (
                       <span className="text-gray-300 text-lg font-medium ml-4">Paused</span>
                     ) : isResolved ? (
@@ -526,16 +479,9 @@ function Home({
                         {isPaid ? (habit.stakeDestination === 'charity' ? 'Donated' : 'Supported') : 'Done'}
                       </span>
                     ) : (
-                      (() => {
-                        const timeLeft = getTimeRemaining(habit)
-                        return (
-                          <span className={`ml-4 text-lg font-medium ${
-                            timeLeft.expired ? 'text-gray-400' : 'text-gray-500'
-                          }`}>
-                            {timeLeft.text}
-                          </span>
-                        )
-                      })()
+                      <span className="text-gray-500 text-lg font-medium ml-4">
+                        Active
+                      </span>
                     )}
                   </div>
                   

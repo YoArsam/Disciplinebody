@@ -15,7 +15,7 @@ function CheckInModal({ habit, onYes, onNo }) {
   const [stripeCustomerId, setStripeCustomerId] = useState(() => localStorage.getItem('stripe-customer-id') || null)
   const [userEmail, setUserEmail] = useState(() => localStorage.getItem('user-email') || '')
 
-  const { name: habitName = 'Habit', skipCost = 0, allDay, startTime, endTime, stakeDestination, charityName } = habit || {}
+  const { name: habitName = 'Habit', skipCost = 0, stakeDestination, charityName } = habit || {}
 
   const stripeOptions = useMemo(() => {
     console.log('Calculating stripeOptions with email:', userEmail);
@@ -85,19 +85,6 @@ function CheckInModal({ habit, onYes, onNo }) {
       return charityName ? charityName : 'charity'
     }
     return 'support Habit Buddy'
-  }
-
-  // Format time for display
-  const formatTime = (timeStr) => {
-    const [hour, min] = timeStr.split(':').map(Number)
-    const ampm = hour >= 12 ? 'PM' : 'AM'
-    const displayHour = hour % 12 || 12
-    return `${displayHour}:${min.toString().padStart(2, '0')} ${ampm}`
-  }
-
-  const getTimeDisplay = () => {
-    if (allDay) return 'All Day'
-    return `By ${formatTime(endTime)}`
   }
 
   // Success view - simple, no animations
@@ -242,13 +229,7 @@ function CheckInModal({ habit, onYes, onNo }) {
       
       {/* Habit Card */}
       <div className="w-full bg-white/10 rounded-2xl p-5 mb-8">
-        <h2 className="text-xl font-bold text-white mb-2">{habitName}</h2>
-        <div className="flex items-center gap-2 text-gray-400">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="text-sm">{getTimeDisplay()}</span>
-        </div>
+        <h2 className="text-xl font-bold text-white text-center">{habitName}</h2>
       </div>
 
       <div className="w-full space-y-3">
