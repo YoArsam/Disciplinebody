@@ -192,7 +192,7 @@ function Home({
   useEffect(() => {
     if (habitsExpanded && widgetRef.current) {
       const rect = widgetRef.current.getBoundingClientRect()
-      const targetTop = 23 
+      const targetTop = 14 
       const moveUp = rect.top - targetTop
       
       setWidgetStyle({
@@ -202,8 +202,7 @@ function Home({
         paddingBottom: '600px',
         backgroundColor: 'white',
         zIndex: 50,
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch',
+        overflowY: 'hidden', // Widget itself shouldn't scroll, inner list should
         marginBottom: '-4800px'
       })
     } else {
@@ -294,8 +293,8 @@ function Home({
         style={widgetStyle}
         onClick={onToggleHabits}
       >
-        {/* Header - Sticky when expanded */}
-        <div className={`flex items-center justify-between mb-3 flex-shrink-0 w-full bg-white z-50 ${habitsExpanded ? 'sticky top-0 pt-2 pb-4 -mt-2 border-b border-gray-50 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.05)]' : ''}`}>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3 flex-shrink-0 w-full">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -326,7 +325,7 @@ function Home({
         </div>
 
         {/* Habits List */}
-        <div className={`flex-1 flex flex-col gap-2 w-full ${habitsExpanded ? 'overflow-visible' : 'overflow-y-auto'}`}>
+        <div className={`flex-1 flex flex-col gap-2 w-full ${habitsExpanded ? 'overflow-y-auto max-h-[calc(100vh-120px)]' : 'overflow-y-auto'}`} style={{ WebkitOverflowScrolling: 'touch' }}>
           {habits.length === 0 ? (
             <button 
               type="button"

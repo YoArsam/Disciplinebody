@@ -89,10 +89,8 @@ body {
 .habits-widget.expanded {
   z-index: 50;
   border-radius: 0;
-  overflow-y: scroll !important;
-  -webkit-overflow-scrolling: touch !important;
+  overflow-y: hidden !important;
   touch-action: pan-y;
-  max-height: 100vh;
 }
 
 .home-top-elements {
