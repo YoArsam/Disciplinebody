@@ -267,7 +267,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </div>
 
                 <div className="mt-3 flex justify-center">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
+                  <p className="text-[10px] font-bold text-gray-400 tracking-widest text-center">
                     {daysOfWeek.length === 7 
                       ? 'Every day' 
                       : daysOfWeek.length === 0 
