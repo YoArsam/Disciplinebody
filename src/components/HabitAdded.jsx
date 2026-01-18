@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 function HabitAdded({ habit, onDone }) {
-  const [currentSlide, setCurrentSlide] = useState(0)
   if (!habit) return null
 
   const ORANGE = '#f97316'
@@ -29,63 +28,50 @@ function HabitAdded({ habit, onDone }) {
     }
   }, [])
 
-  const getPenaltyDestinationText = () => {
-    if (habit.stakeDestination === 'charity') {
-      return habit.charityName ? habit.charityName : 'charity'
-    }
-    return 'yourself'
-  }
-
-  const slides = [
+  const steps = [
     {
-      title: "Nice work!",
-      description: "You've officially started your journey.",
+      title: "Goal set",
+      description: `Committed to "${habit.name}"`,
       icon: (
-        <div className="w-20 h-20 rounded-[2rem] bg-orange-100 flex items-center justify-center mb-6 rotate-3">
-          <svg className="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-        </div>
-      )
+        <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+        </svg>
+      ),
+      color: 'bg-orange-100'
     },
     {
-      title: "Stay Consistent",
-      description: "Complete it daily to earn points and grow your streak.",
+      title: "Daily action",
+      description: "Build your streak",
       icon: (
-        <div className="w-20 h-20 rounded-[2rem] bg-green-100 flex items-center justify-center mb-6 -rotate-3">
-          <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
+        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
       ),
-      badge: "+1 Point"
+      color: 'bg-green-100',
+      badge: "+1 point"
     },
     {
-      title: "Don't Skip!",
-      description: `Missing a day costs ${habit.skipCost === 0 ? 'nothing' : `$${habit.skipCost.toFixed(2)}`}. No excuses.`,
+      title: "No excuses",
+      description: `Stay accountable`,
       icon: (
-        <div className="w-20 h-20 rounded-[2rem] bg-red-100 flex items-center justify-center mb-6 rotate-2">
-          <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </div>
+        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
       ),
+      color: 'bg-red-100',
       badge: habit.skipCost === 0 ? 'Free' : `-$${habit.skipCost.toFixed(2)}`
     },
     {
-      title: "Ready?",
-      description: "We'll check in tomorrow. See you then!",
+      title: "Next check-in",
+      description: "We'll check in tomorrow",
       icon: (
-        <div className="w-20 h-20 rounded-[2rem] bg-blue-100 flex items-center justify-center mb-6 -rotate-2">
-          <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 2" />
-          </svg>
-        </div>
-      )
+        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 2" />
+        </svg>
+      ),
+      color: 'bg-blue-100'
     }
   ]
-
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
 
   return (
     <div className="h-full flex flex-col px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-8" style={{ backgroundColor: ORANGE }}>
@@ -93,61 +79,54 @@ function HabitAdded({ habit, onDone }) {
       
       <div className="flex-1 flex flex-col">
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 animate-bounce-subtle">
             <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-extrabold text-white mb-2">Habit Added!</h1>
-          <p className="text-white/80 text-lg font-semibold">"{habit.name}"</p>
+          <h1 className="text-2xl font-extrabold text-white mb-1">You're all set!</h1>
+          <p className="text-white/70 font-bold uppercase tracking-widest text-[10px]">Your journey begins now</p>
         </div>
 
-        {/* Carousel Container */}
-        <div className="relative flex-1 min-h-[340px] flex flex-col">
-          <div 
-            className="flex-1 bg-white rounded-[2.5rem] p-8 flex flex-col items-center text-center justify-center shadow-xl animate-fadeIn relative overflow-hidden"
-            onClick={nextSlide}
-          >
-            {/* Progress Indicators */}
-            <div className="absolute top-6 flex gap-1.5">
-              {slides.map((_, i) => (
-                <div 
-                  key={i}
-                  className={`h-1 rounded-full transition-all duration-300 ${
-                    i === currentSlide ? 'w-6 bg-orange-500' : 'w-2 bg-gray-200'
-                  }`}
-                />
-              ))}
-            </div>
+        <div className="bg-white rounded-[2.5rem] p-8 shadow-2xl flex-1 flex flex-col justify-center">
+          <div className="space-y-0 relative">
+            {steps.map((step, index) => (
+              <div key={index} className="relative flex gap-4 pb-8 last:pb-0">
+                {/* Connecting Line */}
+                {index !== steps.length - 1 && (
+                  <div className="absolute left-[1.375rem] top-10 bottom-0 w-0.5 bg-gray-100" />
+                )}
+                
+                {/* Icon Container */}
+                <div className={`w-11 h-11 rounded-2xl ${step.color} flex items-center justify-center flex-shrink-0 z-10 shadow-sm`}>
+                  {step.icon}
+                </div>
 
-            <div key={currentSlide} className="animate-fadeIn flex flex-col items-center">
-              {slides[currentSlide].icon}
-              <h2 className="text-gray-900 text-xl font-black mb-3">{slides[currentSlide].title}</h2>
-              <p className="text-gray-500 font-medium leading-relaxed">
-                {slides[currentSlide].description}
-              </p>
-              {slides[currentSlide].badge && (
-                <span className={`mt-6 px-4 py-1.5 rounded-full font-black text-sm ${
-                  currentSlide === 1 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                }`}>
-                  {slides[currentSlide].badge}
-                </span>
-              )}
-            </div>
-
-            {/* Tap hint */}
-            <p className="absolute bottom-6 text-[10px] font-bold text-gray-300 uppercase tracking-widest">
-              Tap to continue
-            </p>
+                {/* Content */}
+                <div className="flex-1 pt-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="text-gray-900 font-black text-base uppercase tracking-tight">{step.title}</h2>
+                    {step.badge && (
+                      <span className={`px-2 py-0.5 rounded-lg font-black text-[10px] uppercase ${
+                        index === 1 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                      }`}>
+                        {step.badge}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-gray-400 text-sm font-bold">{step.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       <button
         onClick={onDone}
-        className="w-full bg-white text-orange-600 font-extrabold py-4 rounded-2xl active:scale-[0.98] transition-transform mt-8"
+        className="w-full bg-white text-orange-600 font-extrabold py-4 rounded-2xl active:scale-[0.98] transition-transform mt-8 shadow-lg shadow-black/5"
       >
-        Back to habits
+        Let's go
       </button>
     </div>
   )
