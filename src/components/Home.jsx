@@ -197,9 +197,11 @@ function Home({
         const rect = widgetRef.current.getBoundingClientRect()
         const navHeight = 80
         
-        // Slide up to cover profile/cost buttons (start from top of screen)
-        const moveUp = rect.top
-        const newHeight = window.innerHeight - navHeight
+        // Slide up to just below the profile/completions row
+        // rect.top is current distance from top. We want it to end further down (e.g., 110px)
+        const targetTop = 110 
+        const moveUp = Math.max(0, rect.top - targetTop)
+        const newHeight = window.innerHeight - navHeight - targetTop
         
         // First extend height, then move up
         setWidgetStyle({
@@ -230,12 +232,15 @@ function Home({
   }
   const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(new Date().getDay())
   const todaysHabits = habits.filter(isHabitScheduledToday)
+  
+  // Use all habits when expanded, only today's habits when collapsed
+  const displayedHabits = habitsExpanded ? habits : todaysHabits
 
   const isHabitDone = (habit) => completedToday.includes(habit.id)
 
   return (
     <div className={`h-full flex flex-col bg-[#fcfcfc] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-hidden' : ''}`}>
-      <div className={`flex-shrink-0 transition-all duration-300 ${habitsExpanded ? 'opacity-0 h-0 overflow-hidden mb-0 scale-95' : 'opacity-100 mb-4'}`}>
+      <div className={`flex-shrink-0 transition-all duration-600 cubic-bezier(0.16, 1, 0.3, 1) ${habitsExpanded ? 'opacity-0 h-0 overflow-hidden mb-0 scale-95' : 'opacity-100 mb-4'}`}>
         {/* Top Row: Profile Icon + Total Completions */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
@@ -267,7 +272,7 @@ function Home({
       </div>
 
       {/* Your Progress Card */}
-      <div className={`flex-shrink-0 transition-all duration-300 ${habitsExpanded ? 'opacity-0 h-0 overflow-hidden mb-0 scale-95' : 'opacity-100 mb-4'}`}>
+      <div className={`flex-shrink-0 transition-all duration-600 cubic-bezier(0.16, 1, 0.3, 1) ${habitsExpanded ? 'opacity-0 h-0 overflow-hidden mb-0 scale-95' : 'opacity-100 mb-4'}`}>
         {(() => {
           const progress = todaysHabits.length === 0 && habits.length > 0
             ? {
@@ -308,7 +313,9 @@ function Home({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <span className="text-gray-500 text-sm font-medium">Today's Habits</span>
+            <span className="text-gray-500 text-sm font-medium">
+              {habitsExpanded ? 'All Habits' : "Today's Habits"}
+            </span>
           </div>
           <button 
             type="button"
@@ -356,7 +363,7 @@ function Home({
                 <span className="text-orange-700 font-medium">Add Your First Habits</span>
               </div>
             </button>
-          ) : todaysHabits.length === 0 ? (
+          ) : displayedHabits.length === 0 ? (
             <button 
               type="button"
               onPointerDown={(e) => {
@@ -383,7 +390,7 @@ function Home({
             </button>
           ) : (
             // Sort habits: done habits go to bottom
-            [...todaysHabits]
+            [...displayedHabits]
               .sort((a, b) => {
                 const aDone = completedToday.includes(a.id)
                 const bDone = completedToday.includes(b.id)
