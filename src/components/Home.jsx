@@ -197,13 +197,13 @@ function Home({
       
       setWidgetStyle({
         transform: `translateY(-${moveUp}px)`,
-        height: '10000px', // Ultra-aggressive height
+        height: '5000px', 
         borderRadius: '2.5rem 2.5rem 0 0',
-        paddingBottom: '1000px', // Extra padding for habits to be reachable
+        paddingBottom: '600px',
         backgroundColor: 'white',
         zIndex: 50,
-        overflowY: 'hidden', 
-        marginBottom: '-9800px' // Offset the massive height
+        overflowY: 'hidden', // Widget itself shouldn't scroll, inner list should
+        marginBottom: '-4800px'
       })
     } else {
       setWidgetStyle({})
@@ -292,8 +292,8 @@ function Home({
         className={`flex-1 bg-white border border-gray-200 rounded-3xl px-6 py-5 flex flex-col min-h-0 cursor-pointer habits-widget ${habitsExpanded ? 'expanded' : ''}`}
         style={{
           ...widgetStyle,
-          minHeight: habitsExpanded ? '200vh' : 'auto',
-          marginBottom: habitsExpanded ? '-100vh' : '0'
+          minHeight: habitsExpanded ? '5000px' : '450px',
+          marginBottom: habitsExpanded ? '-4800px' : '0'
         }}
         onClick={onToggleHabits}
       >
