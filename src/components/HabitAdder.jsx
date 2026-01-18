@@ -256,6 +256,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   })}
                 </div>
 
+                <div className="mt-3 flex justify-center">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    {daysOfWeek.length === 7 
+                      ? 'Every day' 
+                      : daysOfWeek.length === 0 
+                        ? 'No days selected' 
+                        : daysOfWeek.map(key => dayLabels.find(d => d.key === key)?.label).join(' • ')}
+                  </p>
+                </div>
+
                 {daysOfWeek.length === 0 && (
                   <p className="text-orange-500 text-xs mt-3 text-center font-medium">
                     Select at least one day
