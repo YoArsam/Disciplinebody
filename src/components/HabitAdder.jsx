@@ -65,7 +65,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
   const stepTitles = {
     1: 'Name your habit',
-    2: 'When will you do this habit',
+    2: 'Choose your days',
     3: 'Habit Cost',
   }
 
@@ -231,7 +231,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </svg>
                 </div>
                 <div className="flex-1 pt-[2px]">
-                  <span className="text-gray-900 text-xl font-bold">When will you do this habit</span>
+                  <span className="text-gray-900 text-xl font-bold">Choose your days</span>
                 </div>
               </div>
 
