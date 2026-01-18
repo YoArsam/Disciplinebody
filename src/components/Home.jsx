@@ -501,7 +501,7 @@ function Home({
             })
           )}
           {/* Extra scrolling space at the bottom */}
-          <div className="h-24 w-full flex-shrink-0" />
+          <div className={`${habitsExpanded ? 'h-32' : 'h-24'} w-full flex-shrink-0`} />
         </div>
       </div>
     </div>
