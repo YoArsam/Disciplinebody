@@ -38,22 +38,22 @@ function HabitAdded({ habit, onDone }) {
 
   const slides = [
     {
-      title: "Commitment Made",
-      description: `You've officially committed to "${habit.name}". The hardest part is starting!`,
+      title: "Nice work!",
+      description: "You've officially started your journey.",
       icon: (
-        <div className="w-16 h-16 rounded-3xl bg-orange-100 flex items-center justify-center mb-4">
-          <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-20 h-20 rounded-[2rem] bg-orange-100 flex items-center justify-center mb-6 rotate-3">
+          <svg className="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
         </div>
       )
     },
     {
-      title: "Building Streaks",
-      description: "Complete your habit each day to build your streak and earn Discipline Points.",
+      title: "Stay Consistent",
+      description: "Complete it daily to earn points and grow your streak.",
       icon: (
-        <div className="w-16 h-16 rounded-3xl bg-green-100 flex items-center justify-center mb-4">
-          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-20 h-20 rounded-[2rem] bg-green-100 flex items-center justify-center mb-6 -rotate-3">
+          <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
           </svg>
         </div>
@@ -61,11 +61,11 @@ function HabitAdded({ habit, onDone }) {
       badge: "+1 Point"
     },
     {
-      title: "Stay Accountable",
-      description: `If you miss a day, you'll contribute ${habit.skipCost === 0 ? 'nothing' : `$${habit.skipCost.toFixed(2)}`} to ${getPenaltyDestinationText()}.`,
+      title: "Don't Skip!",
+      description: `Missing a day costs ${habit.skipCost === 0 ? 'nothing' : `$${habit.skipCost.toFixed(2)}`}. No excuses.`,
       icon: (
-        <div className="w-16 h-16 rounded-3xl bg-red-100 flex items-center justify-center mb-4">
-          <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-20 h-20 rounded-[2rem] bg-red-100 flex items-center justify-center mb-6 rotate-2">
+          <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </div>
@@ -73,11 +73,11 @@ function HabitAdded({ habit, onDone }) {
       badge: habit.skipCost === 0 ? 'Free' : `-$${habit.skipCost.toFixed(2)}`
     },
     {
-      title: "Daily Check-ins",
-      description: "We'll check in with you tomorrow to verify your progress. Stay disciplined!",
+      title: "Ready?",
+      description: "We'll check in tomorrow. See you then!",
       icon: (
-        <div className="w-16 h-16 rounded-3xl bg-blue-100 flex items-center justify-center mb-4">
-          <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-20 h-20 rounded-[2rem] bg-blue-100 flex items-center justify-center mb-6 -rotate-2">
+          <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 2" />
           </svg>
         </div>
