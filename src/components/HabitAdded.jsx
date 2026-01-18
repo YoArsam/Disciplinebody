@@ -77,8 +77,8 @@ function HabitAdded({ habit, onDone }) {
 
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </div>
@@ -90,7 +90,7 @@ function HabitAdded({ habit, onDone }) {
                     <p className="text-gray-500 text-sm">to {getPenaltyDestinationText()}</p>
                   </div>
                 </div>
-                <span className="text-red-500 font-extrabold text-lg whitespace-nowrap">
+                <span className="text-blue-600 font-extrabold text-lg whitespace-nowrap">
                   {habit.skipCost === 0 ? 'Free' : `-$${habit.skipCost.toFixed(2)}`}
                 </span>
               </div>
