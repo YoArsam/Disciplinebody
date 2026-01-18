@@ -28,16 +28,8 @@ function HabitAdded({ habit, onDone }) {
     }
   }, [])
 
-  const formatTime = (timeStr) => {
-    const [hour, min] = timeStr.split(':').map(Number)
-    const ampm = hour >= 12 ? 'PM' : 'AM'
-    const displayHour = hour % 12 || 12
-    return `${displayHour}:${min.toString().padStart(2, '0')} ${ampm}`
-  }
-
   const getTomorrowTimeText = () => {
-    if (habit.allDay) return 'tomorrow'
-    return `tomorrow after ${formatTime(habit.endTime)}`
+    return 'tomorrow'
   }
 
   const getPenaltyDestinationText = () => {
@@ -66,7 +58,7 @@ function HabitAdded({ habit, onDone }) {
             <p className="text-white/80 text-sm font-bold uppercase tracking-wider mb-2">Next check-in</p>
             <p className="text-white text-2xl font-extrabold">{getTomorrowTimeText()}</p>
             <p className="text-white/80 text-sm mt-3">
-              We'll send you a notification {getTomorrowTimeText()}.
+              We'll check in with you tomorrow.
             </p>
           </div>
 
