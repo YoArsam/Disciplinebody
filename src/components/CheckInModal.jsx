@@ -112,23 +112,20 @@ function CheckInModal({ habit, onYes, onNo }) {
             : '+1 Streak'}
         </p>
 
-        <div
+        <button
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('Continue div-button clicked, isPaymentSuccess:', isPaymentSuccess);
             if (isPaymentSuccess) {
               onNo();
             } else {
               onYes();
             }
           }}
-          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl active:scale-[0.98] transition-all hover:bg-gray-100 shadow-lg shadow-white/5 cursor-pointer flex items-center justify-center relative z-[999]"
-          role="button"
-          tabIndex={0}
+          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors relative z-[9999]"
         >
           Continue
-        </div>
+        </button>
       </div>
     )
   }
