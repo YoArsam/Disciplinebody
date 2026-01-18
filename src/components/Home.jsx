@@ -460,7 +460,7 @@ function Home({
                             e.stopPropagation()
                             if (onMarkDone) onMarkDone(habit)
                           }}
-                          className="px-6 py-2 text-[#FF6B00] text-sm font-medium transition-all hover:bg-orange-50 active:bg-orange-100 flex items-center justify-center min-h-full rounded-r-2xl"
+                          className="px-6 py-2 text-[#FF6B00] text-base font-semibold transition-all hover:bg-orange-50 active:bg-orange-100 flex items-center justify-center min-h-full rounded-r-2xl"
                         >
                           Check
                         </button>
