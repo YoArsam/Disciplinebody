@@ -404,8 +404,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>
                       </div>
-                      <p className="text-gray-600 text-xl font-semibold leading-tight px-2">
-                        You will give <span className="text-gray-900 font-black text-3xl">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
+                      <p className="text-gray-900 text-xl font-bold leading-tight px-2">
+                        You will give ${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)} to charity if you skip this habit
                       </p>
                       <p className="mt-4 text-blue-500 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
                         We'll send you an email of<br/>the impact you've made
