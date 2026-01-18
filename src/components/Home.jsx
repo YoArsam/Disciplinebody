@@ -449,18 +449,21 @@ function Home({
                         {isPaid ? (habit.stakeDestination === 'charity' ? 'Donated' : 'Supported') : 'Done'}
                       </span>
                     ) : (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (onMarkDone) onMarkDone(habit)
-                        }}
-                        className="ml-4 px-6 py-2 rounded-full bg-[#FF6B00] text-white text-sm font-black active:scale-95 transition-all shadow-[0_4px_12px_rgba(255,107,0,0.25)] hover:shadow-[0_6px_16px_rgba(255,107,0,0.3)] flex items-center gap-2"
-                      >
-                        <span>Check</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </button>
+                      <div className="flex items-center ml-4">
+                        <div className="h-8 w-[1px] bg-gray-100 mx-4" />
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (onMarkDone) onMarkDone(habit)
+                          }}
+                          className="px-6 py-2 rounded-full bg-[#FF6B00] text-white text-sm font-black active:scale-95 transition-all flex items-center gap-2"
+                        >
+                          <span>Check</span>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </button>
+                      </div>
                     )}
                   </div>
                   
