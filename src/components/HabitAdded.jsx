@@ -87,7 +87,7 @@ function HabitAdded({ habit, onDone }) {
                     <p className="text-gray-500 text-sm">
                       You'll pay {habit.skipCost === 0 ? 'nothing' : `$${habit.skipCost.toFixed(2)}`}
                     </p>
-                    <p className="text-gray-500 text-sm">to {getPenaltyDestinationText()}</p>
+                    <p className="text-gray-500 text-sm">to charity</p>
                   </div>
                 </div>
                 <span className="text-blue-400 font-extrabold text-lg whitespace-nowrap">
