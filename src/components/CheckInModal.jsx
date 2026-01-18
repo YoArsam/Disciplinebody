@@ -256,6 +256,13 @@ function CheckInModal({ habit, onComplete, onSkip, onClose }) {
         >
           No, I missed it
         </button>
+
+        <button 
+          onClick={onClose}
+          className="w-full text-gray-500 text-sm font-medium pt-2"
+        >
+          Go Back
+        </button>
       </div>
     </div>
   )

@@ -168,15 +168,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {(isEditing || step === 1) && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </div>
-                <div className="flex-1 pt-1">
-                  <span className="text-lg font-bold text-gray-900">Habit Name</span>
-                </div>
+              <div className="mb-4">
+                <span className="text-lg font-bold text-gray-900">Habit Name</span>
               </div>
 
               <div className="mb-2">
@@ -234,15 +227,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {(isEditing || step === 2) && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div className="flex-1 pt-1">
-                  <span className="text-lg font-bold text-gray-900">When will you do it?</span>
-                </div>
+              <div className="mb-4">
+                <span className="text-lg font-bold text-gray-900">When will you do it?</span>
               </div>
 
               <div className="space-y-4">
@@ -287,15 +273,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {(isEditing || step === 3) && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div className="flex-1 pt-1">
-                  <span className="text-lg font-bold text-gray-900">What's the cost of skipping?</span>
-                </div>
+              <div className="mb-4">
+                <span className="text-lg font-bold text-gray-900">What's the cost of skipping?</span>
               </div>
 
               <div className="space-y-4">
@@ -410,7 +389,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 )}
 
                 {skipCost === null && !showCustomInput && (
-                  <p className="text-orange-500 text-xs text-center font-bold tracking-wide px-4">
+                  <p className="text-orange-400 text-xs text-center font-bold tracking-wide px-4">
                     This is the amount you will give to charity if you miss a habit
                   </p>
                 )}
@@ -419,15 +398,10 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 {!isEditing && (skipCost !== null || showCustomInput) && (
                   <div className="mt-4 pt-4 border-t border-gray-100 animate-fadeIn">
                     <div className="bg-blue-50/30 rounded-2xl p-6 border border-blue-100 text-center">
-                      <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                      </div>
                       <p className="text-gray-500 text-lg font-bold leading-tight px-2">
                         You will give <span className="text-gray-900 font-black text-xl">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
                       </p>
-                      <p className="mt-2 text-slate-400 text-xs font-medium">
+                      <p className="mt-2 text-blue-300 text-xs font-medium">
                         We'll email you the impact you've had
                       </p>
                     </div>
@@ -440,15 +414,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           {/* Pause Section - Separate Box */}
           {habit && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div className="flex-1 pt-1">
-                  <span className="text-lg font-bold text-gray-900">Pause habit</span>
-                </div>
+              <div className="mb-4">
+                <span className="text-lg font-bold text-gray-900">Pause habit</span>
               </div>
 
               <div className="space-y-4">
