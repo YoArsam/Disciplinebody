@@ -395,7 +395,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
                 {skipCost === null && !showCustomInput && (
                   <p className="text-orange-500 text-xs mt-3 text-center font-medium">
-                    Please select your stakes to continue
+                    This is the amount you will give to charity if you miss a habit
                   </p>
                 )}
 
