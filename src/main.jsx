@@ -46,23 +46,26 @@ function PhoneFrame({ children }) {
       alignItems: 'center',
       minHeight: '100vh',
       background: '#1a1a1a',
-      padding: '20px'
+      padding: '40px 20px'
     }}>
       <div style={{
         width: '390px',
         height: '844px',
-        borderRadius: '50px',
+        borderRadius: '55px',
         background: '#000',
         padding: '12px',
-        boxShadow: '0 25px 50px rgba(0,0,0,0.5)'
+        boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+        position: 'relative',
+        display: 'flex'
       }}>
         <div style={{
-          width: '100%',
-          height: '100%',
+          flex: 1,
           borderRadius: '40px',
           overflow: 'hidden',
           position: 'relative',
-          background: '#ffffff'
+          background: '#ffffff',
+          display: 'flex',
+          flexDirection: 'column'
         }}>
           {/* Notch */}
           <div style={{
@@ -76,7 +79,9 @@ function PhoneFrame({ children }) {
             borderRadius: '0 0 20px 20px',
             zIndex: 100
           }} />
-          {children}
+          <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+            {children}
+          </div>
         </div>
       </div>
     </div>

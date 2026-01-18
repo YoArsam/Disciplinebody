@@ -83,23 +83,24 @@ body {
               box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, height, border-radius;
   z-index: 40;
+  pointer-events: auto !important;
 }
 
 .habits-widget.expanded {
   z-index: 50;
   border-radius: 0;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y;
 }
 
 .home-top-elements {
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
 }
 
 .home-top-elements.faded {
   opacity: 0;
-  transition: opacity 0s !important; /* Instant fade */
-  transform: translateY(-120px);
   pointer-events: none;
 }
 
