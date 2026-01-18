@@ -175,7 +175,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </svg>
                 </div>
                 <div className="flex-1 pt-[2px]">
-                  <span className="text-gray-900 text-xl font-bold">Habit Name</span>
+                  <span className="text-gray-900 text-lg font-bold">Habit Name</span>
                 </div>
               </div>
 
@@ -241,7 +241,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </svg>
                 </div>
                 <div className="flex-1 pt-[2px]">
-                  <span className="text-gray-900 text-xl font-bold">When will you do it?</span>
+                  <span className="text-gray-900 text-lg font-bold">When will you do it?</span>
                 </div>
               </div>
 
@@ -294,7 +294,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </svg>
                 </div>
                 <div className="flex-1 pt-[2px]">
-                  <span className="text-gray-900 text-xl font-bold">What's the cost of skipping?</span>
+                  <span className="text-gray-900 text-lg font-bold">What's the cost of skipping?</span>
                 </div>
               </div>
 
