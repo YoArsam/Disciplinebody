@@ -103,10 +103,20 @@ function App() {
   }
 
   const deleteHabit = (habitId) => {
-    setState(prev => ({
-      ...prev,
-      habits: prev.habits.filter(h => h.id !== habitId),
-    }))
+    setState(prev => {
+      const updatedHabits = prev.habits.filter(h => h.id !== habitId);
+      
+      // If we deleted the last habit or no habits left for today,
+      // and we are currently expanded, consider staying on home or resetting expansion.
+      // But primary fix is in Home.jsx transition.
+      
+      return {
+        ...prev,
+        habits: updatedHabits,
+        completedToday: prev.completedToday.filter(id => id !== habitId),
+        paidToday: (prev.paidToday || []).filter(id => id !== habitId),
+      };
+    })
   }
 
   const markHabitDone = (habitId) => {

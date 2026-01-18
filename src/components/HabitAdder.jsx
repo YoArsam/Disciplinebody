@@ -136,7 +136,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       <div className="flex items-center justify-between py-4 mb-4 flex-shrink-0">
         <button 
           onClick={step === 1 ? onBack : goBackStep}
-          className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm tap-bounce"
+          className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center tap-bounce"
         >
           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -167,7 +167,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
         <form id="habit-form" onSubmit={handleSubmit} className="space-y-4">
 
           {(isEditing || step === 1) && (
-            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5 shadow-sm">
+            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
                   <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,7 +194,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <button
                     type="button"
                     onClick={() => setShowIdeas((v) => !v)}
-                    className="w-full flex items-center justify-between px-2 py-3 rounded-xl text-gray-500 text-sm font-bold uppercase tracking-wider"
+                    className="w-full flex items-center justify-between px-2 py-3 rounded-xl text-gray-500 text-sm font-bold tracking-wider"
                   >
                     <span>Need ideas?</span>
                     <svg
@@ -225,7 +225,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               )}
 
               {!name.trim() && (
-                <p className="text-orange-500 text-xs mt-3 text-center font-bold uppercase tracking-wide">
+                <p className="text-orange-500 text-xs mt-3 text-center font-bold tracking-wide">
                   Enter a habit name to continue
                 </p>
               )}
@@ -233,7 +233,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           )}
 
           {(isEditing || step === 2) && (
-            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5 shadow-sm">
+            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
                   <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,7 +256,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         onClick={() => toggleDay(d.key)}
                         className={`h-11 rounded-xl font-bold text-sm border transition-all active:scale-90 ${
                           selected
-                            ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
+                            ? 'bg-orange-500 border-orange-500 text-white'
                             : 'bg-gray-50 border-gray-100 text-gray-400'
                         }`}
                       >
@@ -267,7 +267,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </div>
 
                 <div className="flex justify-center">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] text-center">
+                  <p className="text-[10px] font-black text-gray-400 tracking-[0.15em] text-center">
                     {daysOfWeek.length === 7 
                       ? 'Every day' 
                       : daysOfWeek.length === 0 
@@ -277,7 +277,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </div>
 
                 {daysOfWeek.length === 0 && (
-                  <p className="text-orange-500 text-xs text-center font-bold uppercase tracking-wide">
+                  <p className="text-orange-500 text-xs text-center font-bold tracking-wide">
                     Select at least one day
                   </p>
                 )}
@@ -286,7 +286,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           )}
 
           {(isEditing || step === 3) && (
-            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5 shadow-sm">
+            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
                   <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -312,7 +312,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                           }}
                           className={`h-12 rounded-xl font-bold text-sm transition-all active:scale-95 border ${
                             skipCost === val && !isCustomValue
-                              ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
+                              ? 'bg-orange-500 text-white border-orange-500'
                               : 'bg-gray-50 text-gray-700 border-gray-100'
                           }`}
                         >
@@ -331,7 +331,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                           }}
                           className={`h-12 rounded-xl font-bold text-sm transition-all active:scale-95 border ${
                             skipCost === val && !isCustomValue
-                              ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
+                              ? 'bg-orange-500 text-white border-orange-500'
                               : 'bg-gray-50 text-gray-700 border-gray-100'
                           }`}
                         >
@@ -348,7 +348,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         }}
                         className={`h-12 rounded-xl font-bold text-sm transition-all active:scale-95 border ${
                           isCustomValue
-                            ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
+                            ? 'bg-orange-500 text-white border-orange-500'
                             : 'bg-gray-50 text-gray-700 border-gray-100'
                         }`}
                       >
@@ -389,7 +389,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         disabled={parseFloat(customAmount) < 1.00 || isNaN(parseFloat(customAmount))}
                         className={`px-6 h-12 font-bold rounded-xl active:scale-95 transition-all ${
                           parseFloat(customAmount) >= 1.00 
-                            ? 'bg-orange-500 text-white shadow-sm' 
+                            ? 'bg-orange-500 text-white' 
                             : 'bg-gray-200 text-gray-400'
                         }`}
                       >
@@ -404,13 +404,13 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       </button>
                     </div>
                     {customAmount && parseFloat(customAmount) > 0 && parseFloat(customAmount) < 1.00 && (
-                      <p className="text-orange-500 text-[10px] font-black text-center uppercase tracking-wide">Minimum contribution is $1.00</p>
+                      <p className="text-orange-500 text-[10px] font-black text-center tracking-wide">Minimum contribution is $1.00</p>
                     )}
                   </div>
                 )}
 
                 {skipCost === null && !showCustomInput && (
-                  <p className="text-orange-500 text-xs text-center font-bold uppercase tracking-wide px-4">
+                  <p className="text-orange-500 text-xs text-center font-bold tracking-wide px-4">
                     This is the amount you will give to charity if you miss a habit
                   </p>
                 )}
@@ -427,7 +427,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       <p className="text-gray-500 text-base font-bold leading-tight px-2">
                         You will give <span className="text-gray-900 font-black">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity if you skip this habit
                       </p>
-                      <p className="mt-3 text-blue-400 text-[10px] font-black uppercase tracking-[0.1em]">
+                      <p className="mt-3 text-blue-400 text-[10px] font-black tracking-[0.1em]">
                         We'll send you an email of the impact you've made
                       </p>
                     </div>
@@ -439,7 +439,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
           {/* Pause Section - Separate Box */}
           {habit && (
-            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5 shadow-sm">
+            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
                   <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -465,7 +465,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         setPauseDays('')
                         setShowPauseCustom(false)
                       }}
-                      className="w-full py-3.5 rounded-xl font-bold text-sm bg-white text-gray-700 border border-gray-200 active:scale-95 transition-all shadow-sm"
+                      className="w-full py-3.5 rounded-xl font-bold text-sm bg-white text-gray-700 border border-gray-200 active:scale-95 transition-all"
                     >
                       Resume Habit
                     </button>
@@ -485,7 +485,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         }}
                         className={`h-12 flex-1 px-4 rounded-xl font-bold text-sm border active:scale-95 transition-all ${
                           pauseDays === '1' && !showPauseCustom
-                            ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
+                            ? 'bg-orange-500 border-orange-500 text-white'
                             : 'bg-gray-50 border-gray-100 text-gray-700'
                         }`}
                       >
@@ -540,7 +540,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         className={`h-12 w-20 rounded-xl font-bold text-sm active:scale-95 transition-all ${
                           !pauseDays || parseInt(pauseDays, 10) <= 0
                             ? 'bg-gray-100 text-gray-400'
-                            : 'bg-orange-500 text-white shadow-sm'
+                            : 'bg-orange-500 text-white'
                         }`}
                       >
                         Set
@@ -573,8 +573,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 type="button"
                 onClick={goNext}
                 disabled={!canGoNext()}
-                className={`py-4 rounded-2xl font-black text-white shadow-lg active:scale-[0.98] transition-all ${
-                  canGoNext() ? 'bg-orange-500 shadow-orange-100' : 'bg-gray-200 text-gray-400 shadow-none'
+                className={`py-4 rounded-2xl font-black text-white active:scale-[0.98] transition-all ${
+                  canGoNext() ? 'bg-orange-500' : 'bg-gray-200 text-gray-400'
                 }`}
               >
                 Continue
@@ -585,8 +585,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               type="submit"
               form="habit-form"
               disabled={!canGoNext()}
-              className={`w-full py-4 rounded-2xl font-black text-white shadow-lg active:scale-[0.98] transition-all ${
-                canGoNext() ? 'bg-orange-500 shadow-orange-100' : 'bg-gray-200 text-gray-400 shadow-none'
+              className={`w-full py-4 rounded-2xl font-black text-white active:scale-[0.98] transition-all ${
+                canGoNext() ? 'bg-orange-500' : 'bg-gray-200 text-gray-400'
               }`}
             >
               {habit ? 'Save Changes' : 'Start My Journey'}
@@ -597,7 +597,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             <button
               type="button"
               onClick={onDelete}
-              className="w-full bg-white text-rose-500 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest border border-rose-50 active:bg-rose-50 transition-all"
+              className="w-full bg-white text-rose-500 py-4 rounded-2xl font-bold text-sm tracking-widest border border-rose-50 active:bg-rose-50 transition-all"
             >
               Delete Habit
             </button>

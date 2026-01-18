@@ -234,60 +234,64 @@ function Home({
   const isHabitDone = (habit) => completedToday.includes(habit.id)
 
   return (
-    <div className={`h-full flex flex-col bg-[#fcfcfc] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-visible' : ''}`}>
-      {/* Top Row: Profile Icon + Total Completions */}
-      <div className="flex-shrink-0 mb-4 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-          <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        </div>
-        
-        {/* Total Completions Pill */}
-        {(() => {
-          const totalCompletions = Object.values(habitHistory).reduce((sum, dates) => sum + (dates?.length || 0), 0)
-          const hasCompletions = totalCompletions > 0
+    <div className={`h-full flex flex-col bg-[#fcfcfc] px-4 pb-20 pt-[max(1rem,env(safe-area-inset-top))] ${habitsExpanded ? 'overflow-hidden' : ''}`}>
+      <div className={`flex-shrink-0 transition-all duration-300 ${habitsExpanded ? 'opacity-0 h-0 overflow-hidden mb-0 scale-95' : 'opacity-100 mb-4'}`}>
+        {/* Top Row: Profile Icon + Total Completions */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+            <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
           
-          return (
-            <div className={`flex items-center gap-2 ${hasCompletions ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} border rounded-full px-4 h-10`}>
-              <div className={`w-5 h-5 rounded-full ${hasCompletions ? 'bg-green-500' : 'bg-yellow-500'} flex items-center justify-center`}>
-                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
+          {/* Total Completions Pill */}
+          {(() => {
+            const totalCompletions = Object.values(habitHistory).reduce((sum, dates) => sum + (dates?.length || 0), 0)
+            const hasCompletions = totalCompletions > 0
+            
+            return (
+              <div className={`flex items-center gap-2 ${hasCompletions ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} border rounded-full px-4 h-10`}>
+                <div className={`w-5 h-5 rounded-full ${hasCompletions ? 'bg-green-500' : 'bg-yellow-500'} flex items-center justify-center`}>
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className={`${hasCompletions ? 'text-green-700' : 'text-yellow-700'} font-bold text-sm`}>
+                  {totalCompletions}
+                </span>
+                <span className={`${hasCompletions ? 'text-green-600' : 'text-yellow-600'} text-sm font-medium`}>completed</span>
               </div>
-              <span className={`${hasCompletions ? 'text-green-700' : 'text-yellow-700'} font-bold text-sm`}>
-                {totalCompletions}
-              </span>
-              <span className={`${hasCompletions ? 'text-green-600' : 'text-yellow-600'} text-sm font-medium`}>completed</span>
+            )
+          })()}
+        </div>
+      </div>
+
+      {/* Your Progress Card */}
+      <div className={`flex-shrink-0 transition-all duration-300 ${habitsExpanded ? 'opacity-0 h-0 overflow-hidden mb-0 scale-95' : 'opacity-100 mb-4'}`}>
+        {(() => {
+          const progress = todaysHabits.length === 0 && habits.length > 0
+            ? {
+                icon: ProgressIcons.moon,
+                headline: 'Rest day',
+                subtext: 'No habits scheduled today',
+              }
+            : getProgressMessage(todaysHabits, completedToday, paidToday, habitHistory)
+          return (
+            <div className="bg-white border border-gray-200 rounded-3xl px-6 py-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+                  {progress.icon}
+                </div>
+                <span className="text-gray-500 text-sm font-medium">Your Progress</span>
+              </div>
+              <div className="text-center py-2">
+                <span className="text-3xl font-bold text-gray-900 block">{progress.headline}</span>
+                <span className="text-gray-500 text-sm">{progress.subtext}</span>
+              </div>
             </div>
           )
         })()}
       </div>
-
-      {/* Your Progress Card */}
-      {(() => {
-        const progress = todaysHabits.length === 0 && habits.length > 0
-          ? {
-              icon: ProgressIcons.moon,
-              headline: 'Rest day',
-              subtext: 'No habits scheduled today',
-            }
-          : getProgressMessage(todaysHabits, completedToday, paidToday, habitHistory)
-        return (
-          <div className="flex-shrink-0 bg-white border border-gray-200 rounded-3xl px-6 py-6 mb-4">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-                {progress.icon}
-              </div>
-              <span className="text-gray-500 text-sm font-medium">Your Progress</span>
-            </div>
-            <div className="text-center py-2">
-              <span className="text-3xl font-bold text-gray-900 block">{progress.headline}</span>
-              <span className="text-gray-500 text-sm">{progress.subtext}</span>
-            </div>
-          </div>
-        )
-      })()}
 
       {/* Today's Habits Card */}
       <div 
