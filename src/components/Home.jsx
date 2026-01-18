@@ -449,9 +449,15 @@ function Home({
                         {isPaid ? (habit.stakeDestination === 'charity' ? 'Donated' : 'Supported') : 'Done'}
                       </span>
                     ) : (
-                      <span className="text-gray-500 text-lg font-medium ml-4">
-                        Active
-                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (onMarkDone) onMarkDone(habit)
+                        }}
+                        className="ml-4 px-4 py-1.5 rounded-full bg-orange-500 text-white text-sm font-bold active:scale-95 transition-all shadow-sm shadow-orange-100"
+                      >
+                        Mark Done
+                      </button>
                     )}
                   </div>
                   
