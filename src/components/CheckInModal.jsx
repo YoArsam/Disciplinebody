@@ -5,7 +5,7 @@ import CheckoutForm from './CheckoutForm'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
-function CheckInModal({ habit, onYes, onNo }) {
+function CheckInModal({ habit, onComplete, onSkip, onClose }) {
   const [showPayment, setShowPayment] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false)
@@ -117,9 +117,9 @@ function CheckInModal({ habit, onYes, onNo }) {
             e.preventDefault();
             e.stopPropagation();
             if (isPaymentSuccess) {
-              onNo();
+              if (onSkip) onSkip();
             } else {
-              onYes();
+              if (onComplete) onComplete();
             }
           }}
           className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors relative z-[9999]"
@@ -149,7 +149,7 @@ function CheckInModal({ habit, onYes, onNo }) {
           </p>
 
           <button
-            onClick={onNo}
+            onClick={onComplete}
             className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
           >
             Got it
@@ -213,7 +213,7 @@ function CheckInModal({ habit, onYes, onNo }) {
           </div>
         ) : (
           <button
-            onClick={onNo}
+            onClick={onSkip}
             className="w-full bg-white text-gray-900 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
           >
             Skip for now
@@ -242,7 +242,9 @@ function CheckInModal({ habit, onYes, onNo }) {
 
       <div className="w-full space-y-3">
         <button
-          onClick={() => setShowSuccess(true)}
+          onClick={() => {
+            if (onComplete) onComplete();
+          }}
           className="w-full bg-green-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
         >
           Yes, I did it! ✓
