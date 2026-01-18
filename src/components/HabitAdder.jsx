@@ -56,7 +56,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     if (!pausedUntil) return null
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const target = new Date(\`${pausedUntil}T00:00:00\`)
+    const target = new Date(pausedUntil + 'T00:00:00')
     if (Number.isNaN(target.getTime())) return null
     const diffMs = target.getTime() - today.getTime()
     const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000))
@@ -122,7 +122,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
   return (
     <div className="h-full flex flex-col bg-[#fcfcfc] px-4 pb-0 animate-slideUp pt-[max(1rem,env(safe-area-inset-top))] relative">
-      {/* Header */}
       <div className="flex items-center justify-between py-4 mb-2 flex-shrink-0">
         <button 
           onClick={step === 1 ? onBack : goBackStep}
@@ -141,9 +140,9 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               {[1, 2, 3].map((s) => (
                 <div
                   key={s}
-                  className={\`h-1.5 rounded-full transition-all duration-300 \${
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
                     s === step ? 'w-10 bg-orange-500' : s < step ? 'w-4 bg-orange-200' : 'w-4 bg-gray-100'
-                  }\`}
+                  }`}
                 />
               ))}
             </div>
@@ -152,10 +151,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
         <div className="w-11"></div>
       </div>
 
-      {/* Scrollable Form Content */}
-      <div className={\`flex-1 overflow-y-auto min-h-0 \${onDelete ? 'pb-48' : 'pb-36'} no-scrollbar\`}>
+      <div className={`flex-1 overflow-y-auto min-h-0 ${onDelete ? 'pb-48' : 'pb-36'} no-scrollbar`}>
         <form id="habit-form" onSubmit={handleSubmit} className="space-y-4 py-2">
-
           {(isEditing || step === 1) && (
             <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm shadow-gray-100/50">
               <div className="flex items-center gap-4 mb-6">
@@ -169,7 +166,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <p className="text-gray-400 text-sm font-medium">What will you improve?</p>
                 </div>
               </div>
-
               <div className="relative group">
                 <input
                   type="text"
@@ -179,7 +175,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   className="w-full bg-gray-50/50 text-gray-900 placeholder-gray-400 rounded-2xl p-5 text-lg font-bold border-2 border-transparent focus:border-orange-500/20 focus:bg-white focus:outline-none transition-all duration-200"
                 />
               </div>
-
               {!isEditing && (
                 <div className="mt-4">
                   <button
@@ -189,7 +184,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   >
                     <span>Need some inspiration?</span>
                     <svg
-                      className={\`w-4 h-4 transition-transform duration-300 \${showIdeas ? 'rotate-180' : ''}\`}
+                      className={`w-4 h-4 transition-transform duration-300 ${showIdeas ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -197,7 +192,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-
                   {showIdeas && (
                     <div className="mt-4 flex flex-wrap gap-2 animate-fadeIn">
                       {habitIdeas.map((idea) => (
@@ -230,7 +224,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <p className="text-gray-400 text-sm font-medium">When will you do this?</p>
                 </div>
               </div>
-
               <div className="grid grid-cols-7 gap-2">
                 {dayLabels.map((d) => {
                   const selected = daysOfWeek.includes(d.key)
@@ -239,18 +232,17 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                       key={d.key}
                       type="button"
                       onClick={() => toggleDay(d.key)}
-                      className={\`h-12 rounded-2xl font-black text-sm transition-all duration-200 active:scale-90 \${
+                      className={`h-12 rounded-2xl font-black text-sm transition-all duration-200 active:scale-90 ${
                         selected
                           ? 'bg-orange-500 text-white shadow-lg shadow-orange-200'
                           : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
-                      }\`}
+                      }`}
                     >
                       {d.label}
                     </button>
                   )
                 })}
               </div>
-
               {daysOfWeek.length === 0 && (
                 <div className="mt-4 py-2 px-4 rounded-xl bg-orange-50 border border-orange-100 flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
@@ -273,7 +265,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <p className="text-gray-400 text-sm font-medium text-left">Cost of missing a day</p>
                 </div>
               </div>
-
               <div className="space-y-3">
                 {!showCustomInput ? (
                   <div className="grid grid-cols-2 gap-3">
@@ -286,26 +277,26 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                             setSkipCost(val)
                             setIsCustomValue(false)
                           }}
-                          className={\`h-16 rounded-[1.5rem] font-black text-lg transition-all duration-200 active:scale-95 border-2 \${
+                          className={`h-16 rounded-[1.5rem] font-black text-lg transition-all duration-200 active:scale-95 border-2 ${
                             skipCost === val && !isCustomValue
                               ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-200'
                               : 'bg-gray-50/50 border-transparent text-gray-700 hover:bg-gray-100'
-                          }\`}
+                          }`}
                         >
-                          {val === 0 ? 'Free' : \`$\${val}\`}
+                          {val === 0 ? 'Free' : `$${val}`}
                         </button>
                       ))}
                     </div>
                     <button
                       type="button"
                       onClick={() => setShowCustomInput(true)}
-                      className={\`h-16 col-span-2 rounded-[1.5rem] font-black text-lg transition-all duration-200 active:scale-95 border-2 \${
+                      className={`h-16 col-span-2 rounded-[1.5rem] font-black text-lg transition-all duration-200 active:scale-95 border-2 ${
                         isCustomValue
                           ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-200'
                           : 'bg-gray-50/50 border-transparent text-gray-700 hover:bg-gray-100'
-                      }\`}
+                      }`}
                     >
-                      {isCustomValue && skipCost !== null ? \`$\${skipCost}\` : 'Custom Amount'}
+                      {isCustomValue && skipCost !== null ? `$${skipCost}` : 'Custom Amount'}
                     </button>
                   </div>
                 ) : (
@@ -339,18 +330,17 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                           }
                         }}
                         disabled={parseFloat(customAmount) < 1.00 || isNaN(parseFloat(customAmount))}
-                        className={\`px-8 h-16 font-black rounded-[1.5rem] active:scale-95 transition-all \${
+                        className={`px-8 h-16 font-black rounded-[1.5rem] active:scale-95 transition-all ${
                           parseFloat(customAmount) >= 1.00 
                             ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' 
                             : 'bg-gray-100 text-gray-300'
-                        }\`}
+                        }`}
                       >
                         Set
                       </button>
                     </div>
                   </div>
                 )}
-
                 {skipCost === null && !showCustomInput && (
                   <div className="py-4 px-6 rounded-2xl bg-blue-50 border border-blue-100 text-center">
                     <p className="text-blue-700 text-sm font-bold">
@@ -358,7 +348,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     </p>
                   </div>
                 )}
-
                 {(skipCost !== null || showCustomInput) && (
                   <div className="mt-8 pt-6 border-t border-gray-100">
                     <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-[2rem] p-8 text-center shadow-xl shadow-blue-100 animate-fadeIn">
@@ -368,8 +357,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         </svg>
                       </div>
                       <h3 className="text-white/80 text-sm font-black uppercase tracking-[0.2em] mb-2">Charity Impact</h3>
-                      <p className="text-gray-500 text-2xl font-black leading-tight text-center">
-                        You'll give <span className="text-gray-900 text-3xl font-black">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity for every missed day
+                      <p className="text-white/60 text-2xl font-black leading-tight text-center">
+                        You'll give <span className="text-white text-3xl font-black">${(skipCost !== null ? skipCost : (parseFloat(customAmount) || 0)).toFixed(2)}</span> to charity for every missed day
                       </p>
                       <p className="mt-4 text-white/50 text-sm font-bold text-center">
                         We'll send you an email of the impact you've made
@@ -394,13 +383,12 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <p className="text-gray-400 text-sm font-medium text-left">Take a break without penalties</p>
                 </div>
               </div>
-
               {pausedUntil ? (
                 <div className="space-y-4">
                   <div className="py-4 px-6 rounded-2xl bg-orange-50 border border-orange-100 text-center">
                     <p className="text-orange-700 text-sm font-bold">
                       Paused until {pausedUntil}
-                      {getPauseDaysFromPausedUntil() !== null ? \` (\${getPauseDaysFromPausedUntil()} days left)\` : ''}
+                      {getPauseDaysFromPausedUntil() !== null ? ` (${getPauseDaysFromPausedUntil()} days left)` : ''}
                     </p>
                   </div>
                   <button
@@ -428,15 +416,14 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         setPauseDays('1')
                         setShowPauseCustom(false)
                       }}
-                      className={\`h-14 flex-1 rounded-2xl font-bold text-sm border-2 transition-all active:scale-95 \${
+                      className={`h-14 flex-1 rounded-2xl font-bold text-sm border-2 transition-all active:scale-95 ${
                         pauseDays === '1' && !showPauseCustom
                           ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-100'
                           : 'bg-gray-50/50 border-transparent text-gray-700'
-                      }\`}
+                      }`}
                     >
                       1 Day
                     </button>
-
                     {!showPauseCustom ? (
                       <button
                         type="button"
@@ -468,7 +455,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         </button>
                       </div>
                     )}
-
                     <button
                       type="button"
                       onClick={() => {
@@ -479,11 +465,11 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         setPausedUntil(formatISODate(d))
                       }}
                       disabled={!pauseDays || parseInt(pauseDays, 10) <= 0}
-                      className={\`h-14 px-6 rounded-2xl font-bold text-sm active:scale-95 transition-all \${
+                      className={`h-14 px-6 rounded-2xl font-bold text-sm active:scale-95 transition-all ${
                         !pauseDays || parseInt(pauseDays, 10) <= 0
                           ? 'bg-gray-100 text-gray-300'
                           : 'bg-orange-500 text-white shadow-lg shadow-orange-100'
-                      }\`}
+                      }`}
                     >
                       Pause
                     </button>
@@ -498,7 +484,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
         </form>
       </div>
 
-      {/* Fixed Bottom Actions */}
       <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-gray-100 p-6 pb-[max(2rem,env(safe-area-inset-bottom))] z-50">
         <div className="max-w-md mx-auto">
           {!isEditing && step < 3 ? (
@@ -506,11 +491,11 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
               type="button"
               onClick={goNext}
               disabled={!canGoNext()}
-              className={\`w-full py-5 rounded-[2rem] font-black text-xl shadow-2xl transition-all duration-300 active:scale-[0.98] \${
+              className={`w-full py-5 rounded-[2rem] font-black text-xl shadow-2xl transition-all duration-300 active:scale-[0.98] ${
                 canGoNext() 
                   ? 'bg-orange-500 text-white shadow-orange-200' 
                   : 'bg-gray-100 text-gray-300 shadow-none'
-              }\`}
+              }`}
             >
               Continue
             </button>
@@ -520,15 +505,14 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 type="submit"
                 form="habit-form"
                 disabled={!canGoNext()}
-                className={\`w-full py-5 rounded-[2rem] font-black text-xl shadow-2xl transition-all duration-300 active:scale-[0.98] \${
+                className={`w-full py-5 rounded-[2rem] font-black text-xl shadow-2xl transition-all duration-300 active:scale-[0.98] ${
                   canGoNext() 
                     ? 'bg-orange-500 text-white shadow-orange-200' 
                     : 'bg-gray-100 text-gray-300 shadow-none'
-                }\`}
+                }`}
               >
                 {habit ? 'Save Changes' : 'Start My Journey'}
               </button>
-              
               {onDelete && (
                 <button
                   type="button"
