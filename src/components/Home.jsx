@@ -164,14 +164,11 @@ function Home({
   paidToday,
   habitHistory,
   habitsExpanded,
-  notificationPermission,
-  onEnableNotifications,
   onAddHabit, 
   onEditHabit, 
   onMarkDone,
   onToggleHabits 
 }) {
-  const [currentTime, setCurrentTime] = useState(new Date())
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
 
@@ -225,19 +222,13 @@ function Home({
     }
   }, [habitsExpanded])
 
-  // Update time every minute for countdown timers
-  useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(new Date()), 30000) // every 30 seconds
-    return () => clearInterval(interval)
-  }, [])
-
   const getHabitDays = (habit) => habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]
   const isHabitPausedToday = (habit) => {
     if (!habit?.pausedUntil) return false
-    const todayIso = currentTime.toISOString().split('T')[0]
+    const todayIso = new Date().toISOString().split('T')[0]
     return habit.pausedUntil >= todayIso
   }
-  const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(currentTime.getDay())
+  const isHabitScheduledToday = (habit) => getHabitDays(habit).includes(new Date().getDay())
   const todaysHabits = habits.filter(isHabitScheduledToday)
 
   const isHabitDone = (habit) => completedToday.includes(habit.id)
@@ -297,27 +288,6 @@ function Home({
           </div>
         )
       })()}
-
-      {notificationPermission === 'default' && onEnableNotifications && (
-        <button
-          type="button"
-          onClick={onEnableNotifications}
-          className="flex-shrink-0 bg-white border border-gray-200 rounded-3xl px-6 py-4 mb-4 active:scale-[0.99] transition-transform"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-              <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V4a1 1 0 10-2 0v1.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0 text-left">
-              <div className="text-gray-900 font-bold text-base">Enable reminders</div>
-              <div className="text-gray-500 text-sm">We’ll notify you when a habit window ends</div>
-            </div>
-            <div className="text-orange-600 font-bold text-sm">Enable</div>
-          </div>
-        </button>
-      )}
 
       {/* Today's Habits Card */}
       <div 

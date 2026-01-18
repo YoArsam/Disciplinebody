@@ -40,10 +40,7 @@ function App() {
   const [habitsExpanded, setHabitsExpanded] = useState(false)
   const [previousHabitsExpanded, setPreviousHabitsExpanded] = useState(false)
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null)
-  const [checkInQueue, setCheckInQueue] = useState([])
   const [showSuccessToast, setShowSuccessToast] = useState(false)
-
-  const shownCheckInsRef = useRef(new Set())
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -147,43 +144,6 @@ function App() {
     setScreen('habit-adder')
   }
 
-  // Populate / refresh check-in queue (only for today's scheduled habits)
-  useEffect(() => {
-    const enqueue = () => {
-      const now = new Date()
-      const todayDayKey = now.getDay()
-      
-      const habitsNeedingCheckIn = state.habits.filter(h => {
-        const isScheduled = h.daysOfWeek.includes(todayDayKey)
-        const isPaused = h.pausedUntil && h.pausedUntil >= now.toISOString().split('T')[0]
-        const isDone = state.completedToday.includes(h.id)
-        const isPaid = state.paidToday?.includes(h.id)
-        return isScheduled && !isPaused && !isDone && !isPaid
-      })
-
-      if (habitsNeedingCheckIn.length === 0) return
-
-      setCheckInQueue((prev) => {
-        const queuedIds = new Set(prev.map((h) => h.id))
-        const next = [...prev]
-
-        habitsNeedingCheckIn.forEach((h) => {
-          if (queuedIds.has(h.id)) return
-          if (shownCheckInsRef.current.has(h.id)) return
-          // shownCheckInsRef.current.add(h.id) // We'll keep them in queue for end of day check-in if needed, but for now we won't auto-pop modals without time
-          // next.push(h) 
-        })
-
-        return next
-      })
-    }
-    // We'll rethink the check-in modal trigger since there's no "deadline" now.
-    // Maybe a manual check-in or end-of-day reminder.
-  }, [state.habits, state.completedToday, state.paidToday])
-
-  // Current habit to show = first in queue
-  const currentCheckIn = checkInQueue[0] || null
-
   // Check if we should show the main nav bar (not on editor screens)
   const showMainNav = screen === 'home'
 
@@ -204,9 +164,7 @@ function App() {
             longestStreak={state.longestStreak || 0}
             habitHistory={state.habitHistory || {}}
             habitsExpanded={habitsExpanded}
-            notificationPermission={notificationPermission}
-            onEnableNotifications={requestNotificationPermission}
-                        onAddHabit={() => {
+            onAddHabit={() => {
               setPreviousHabitsExpanded(habitsExpanded)
               setEditingHabit(null)
               setScreen('habit-adder')
@@ -319,25 +277,6 @@ function App() {
           </svg>
           <span className="font-semibold text-lg">Great job!</span>
         </div>
-      )}
-
-      {/* Check-in Modal */}
-      {currentCheckIn && (
-        <CheckInModal
-          key={currentCheckIn.id}
-          habit={currentCheckIn}
-          onYes={() => {
-            const id = currentCheckIn.id
-            markHabitDone(id)
-            setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
-            setShowSuccessToast(true) // Show good vibes
-          }}
-          onNo={() => {
-            const id = currentCheckIn.id
-            markHabitPaid(id) // Mark as paid (separate from done)
-            setCheckInQueue(prev => prev.slice(1)) // Remove first, show next
-          }}
-        />
       )}
     </div>
   )
