@@ -4,8 +4,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const isEditing = !!habit
   const [step, setStep] = useState(1)
   const [name, setName] = useState(habit?.name || '')
-  const [deadline, setDeadline] = useState(habit?.deadline || '') // HH:mm or empty
-  const [hasDeadline, setHasDeadline] = useState(habit?.deadline ? true : false)
+  const [habitTime, setHabitTime] = useState(habit?.habitTime || '') // HH:mm or empty
+  const [hasHabitTime, setHasHabitTime] = useState(habit?.habitTime ? true : false)
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
   const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'charity')
@@ -77,7 +77,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
   const stepTitles = {
     1: 'Name your habit',
-    2: 'Set a deadline',
+    2: 'Set habit time',
     3: 'Habit Cost',
     4: 'When will you do it?',
   }
@@ -95,7 +95,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       return !!name.trim() && daysOfWeek.length > 0 && computedSkipCost !== null
     }
     if (step === 1) return !!name.trim()
-    if (step === 2) return !hasDeadline || !!deadline
+    if (step === 2) return !hasHabitTime || !!habitTime
     if (step === 3) return skipCost !== null || getCustomSkipCost() !== null
     if (step === 4) return daysOfWeek.length > 0
     return false
@@ -126,7 +126,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     onSave({
       ...(habit || {}),
       name: name.trim(),
-      deadline: hasDeadline ? deadline : '',
+      habitTime: hasHabitTime ? habitTime : '',
       skipCost: computedSkipCost,
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
       stakeDestination: 'charity',
@@ -279,7 +279,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           {(isEditing || step === 2) && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="mb-4">
-                <span className="text-lg font-bold text-gray-900">Habit Deadline</span>
+                <span className="text-lg font-bold text-gray-900">Habit Time</span>
               </div>
               
               <div className="space-y-4">
@@ -287,22 +287,25 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <button
                     type="button"
                     onClick={() => {
-                      setHasDeadline(false);
-                      setDeadline('');
+                      setHasHabitTime(false);
+                      setHabitTime('');
                     }}
                     className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
-                      !hasDeadline 
+                      !hasHabitTime 
                         ? 'bg-orange-500 text-white border-orange-500' 
                         : 'bg-gray-50 text-gray-700 border-gray-100'
                     }`}
                   >
-                    No Deadline
+                    No Time
                   </button>
                   <button
                     type="button"
-                    onClick={() => setHasDeadline(true)}
+                    onClick={() => {
+                      setHasHabitTime(true);
+                      if (!habitTime) setHabitTime('09:00'); // Default to 9 AM
+                    }}
                     className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
-                      hasDeadline 
+                      hasHabitTime 
                         ? 'bg-orange-500 text-white border-orange-500' 
                         : 'bg-gray-50 text-gray-700 border-gray-100'
                     }`}
@@ -311,16 +314,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </button>
                 </div>
 
-                {hasDeadline && (
-                  <div className="animate-fadeIn">
+                {hasHabitTime && (
+                  <div className="animate-fadeIn w-full">
                     <input
                       type="time"
-                      value={deadline}
-                      onChange={(e) => setDeadline(e.target.value)}
-                      className="w-full bg-gray-50 text-gray-900 rounded-xl p-4 text-center text-2xl font-black focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                      value={habitTime}
+                      onChange={(e) => setHabitTime(e.target.value)}
+                      className="w-full bg-gray-50 text-gray-900 rounded-xl p-4 text-center text-2xl font-black focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all border border-gray-100"
                     />
-                    <p className="text-gray-400 text-[10px] text-center mt-2 font-bold tracking-widest">
-                      YOU MUST COMPLETE BEFORE THIS TIME
+                    <p className="text-gray-400 text-[10px] text-center mt-2 font-bold tracking-widest uppercase">
+                      Finish before this time
                     </p>
                   </div>
                 )}
