@@ -512,8 +512,9 @@ function Home({
                         {(() => {
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
                           return Array.from({ length: dayCount }, (_, i) => {
-                            const date = new Date();
-                            date.setDate(date.getDate() - ((dayCount - 1) - i));
+                            const date = new Date(now);
+                            // Fill left-to-right: oldest day on far left, today on far right
+                            date.setDate(now.getDate() - ((dayCount - 1) - i));
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
                             const isToday = dateIso === now.toISOString().split('T')[0];
