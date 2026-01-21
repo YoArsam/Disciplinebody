@@ -171,6 +171,13 @@ function Home({
 }) {
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
+  const [now, setNow] = useState(new Date())
+
+  // Update clock every minute for countdowns
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(timer)
+  }, [])
 
   // Warm up CSS transitions on mount by doing a tiny invisible transition
   useEffect(() => {
@@ -440,7 +447,27 @@ function Home({
                       <span className={`text-sm ${
                         isResolved || isPaused ? 'text-gray-300' : 'text-gray-500'
                       }`}>
-                        {isPaused ? `Paused until ${habit.pausedUntil}` : 'Daily habit'}
+                        {isPaused ? `Paused until ${habit.pausedUntil}` : (() => {
+                          if (!habit.habitTime) return 'All Day'
+                          
+                          const [hour, min] = habit.habitTime.split(':').map(Number)
+                          const deadline = new Date(now)
+                          deadline.setHours(hour, min, 0, 0)
+
+                          if (now > deadline) {
+                            // If passed today, count to tomorrow
+                            deadline.setDate(deadline.getDate() + 1)
+                          }
+
+                          const diffMs = deadline - now
+                          const diffHrs = Math.floor(diffMs / (1000 * 60 * 60))
+                          const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+
+                          if (diffHrs > 0) {
+                            return `${diffHrs}h ${diffMins}m remaining`
+                          }
+                          return `${diffMins}m remaining`
+                        })()}
                       </span>
                     </button>
                     
