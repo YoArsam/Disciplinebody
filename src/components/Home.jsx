@@ -511,52 +511,32 @@ function Home({
                       <div className={`grid ${expandedGridHabitId === habit.id ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
                         {(() => {
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
-                          // Stable array of indices to ensure fixed DOM positions
                           const indices = Array.from({ length: dayCount }, (_, i) => i);
                           
                           return indices.map((i) => {
-                            // Positional Swap Logic:
-                            // We want Today and Yesterday to trade places in the row.
-                            // Original: 0=Today, 1=Yesterday, 2=2 days ago...
-                            // Swapped: 0=Yesterday, 1=Today, 2=2 days ago...
-                            let virtualIndex = i;
-                            if (dayCount === 7) {
-                              if (i === 0) virtualIndex = 1;
-                              else if (i === 1) virtualIndex = 0;
-                            }
-
+                            // Standardized RTL: index 0 is Today, index 1 is Yesterday, etc.
+                            // This ensures Today is ALWAYS at slot 0 (far left) in both views.
                             const date = new Date(now);
-                            date.setDate(now.getDate() - virtualIndex);
+                            date.setDate(now.getDate() - i);
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
-                            const isToday = virtualIndex === 0;
+                            const isToday = i === 0;
                             
-                            // Chain Bridge calculation based on virtual calendar dates
+                            // Unified chain logic: connects to previous calendar day (next index)
                             let hasNextChain = false;
-                            if (i < dayCount - 1) {
-                              // Find what date is in the NEXT slot (i + 1)
-                              let nextSlotVirtualIndex = i + 1;
-                              if (dayCount === 7) {
-                                if (i + 1 === 0) nextSlotVirtualIndex = 1;
-                                else if (i + 1 === 1) nextSlotVirtualIndex = 0;
-                              }
-                              
-                              const nextSlotDate = new Date(now);
-                              nextSlotDate.setDate(now.getDate() - nextSlotVirtualIndex);
-                              const nextSlotIso = nextSlotDate.toISOString().split('T')[0];
-                              
-                              // Connect if both this slot and the next slot are completed
-                              // (Chain only connects completed boxes)
-                              hasNextChain = isCompleted && habitDates.includes(nextSlotIso);
+                            if (i < dayCount - 1 && isCompleted) {
+                              const prevDayDate = new Date(date);
+                              prevDayDate.setDate(date.getDate() - 1);
+                              const prevDayIso = prevDayDate.toISOString().split('T')[0];
+                              hasNextChain = habitDates.includes(prevDayIso);
                             }
 
                             return (
                               <div 
                                 key={i} 
                                 className="relative flex-1 aspect-square"
-                                style={{ flex: '0 0 calc((100% - 6 * 0.25rem) / 7)' }}
+                                style={{ flex: `0 0 calc((100% - ${(dayCount === 7 ? 6 : 6)} * 0.25rem) / 7)` }}
                               >
-                                {/* Chain Bridge - Fixed element, visibility controlled by opacity */}
                                 <div 
                                   className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
                                     hasNextChain ? 'opacity-100' : 'opacity-0'
