@@ -5,7 +5,7 @@ import CheckoutForm from './CheckoutForm'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
-function CheckInModal({ habit, onComplete, onSkip, onClose, isMandatory = false }) {
+function CheckInModal({ habit, onComplete, onSkip, onClose }) {
   const [showPayment, setShowPayment] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false)
@@ -151,7 +151,7 @@ function CheckInModal({ habit, onComplete, onSkip, onClose, isMandatory = false 
               if (onComplete) onComplete();
             }
           }}
-          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors relative z-[100]"
+          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors relative z-[9999]"
         >
           Continue
         </button>
@@ -249,14 +249,12 @@ function CheckInModal({ habit, onComplete, onSkip, onClose, isMandatory = false 
           </button>
         )}
         
-        {!isMandatory && (
-          <button 
-            onClick={() => setShowPayment(false)}
-            className="mt-4 text-gray-500 text-sm font-medium"
-          >
-            Go Back
-          </button>
-        )}
+        <button 
+          onClick={() => setShowPayment(false)}
+          className="mt-4 text-gray-500 text-sm font-medium"
+        >
+          Go Back
+        </button>
       </div>
     )
   }
@@ -273,13 +271,10 @@ function CheckInModal({ habit, onComplete, onSkip, onClose, isMandatory = false 
 
       <div className="w-full space-y-3">
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowSuccess(true);
-            setIsPaymentSuccess(false);
+          onClick={() => {
+            if (onComplete) onComplete();
           }}
-          className="w-full bg-green-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform cursor-pointer relative z-[100]"
+          className="w-full bg-green-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
         >
           Yes, I did it! ✓
         </button>
@@ -291,14 +286,12 @@ function CheckInModal({ habit, onComplete, onSkip, onClose, isMandatory = false 
           No, I missed it
         </button>
 
-        {!isMandatory && (
-          <button 
-            onClick={onClose}
-            className="w-full text-gray-500 text-sm font-medium pt-2"
-          >
-            Go Back
-          </button>
-        )}
+        <button 
+          onClick={onClose}
+          className="w-full text-gray-500 text-sm font-medium pt-2"
+        >
+          Go Back
+        </button>
       </div>
     </div>
   )
