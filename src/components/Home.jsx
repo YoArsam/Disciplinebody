@@ -449,25 +449,31 @@ function Home({
                         isResolved || isPaused ? 'text-gray-300' : 'text-gray-500'
                       }`}>
                         {isPaused ? `Paused until ${habit.pausedUntil}` : (() => {
-                          if (!habit.habitTime) return 'All Day'
+                          const timeStr = habit.habitTime;
+                          if (!timeStr || timeStr === "") return 'All Day';
                           
-                          const [hour, min] = habit.habitTime.split(':').map(Number)
-                          const deadline = new Date(now)
-                          deadline.setHours(hour, min, 0, 0)
+                          try {
+                            const [hour, min] = timeStr.split(':').map(Number);
+                            if (isNaN(hour) || isNaN(min)) return 'All Day';
 
-                          if (now > deadline) {
-                            // If passed today, count to tomorrow
-                            deadline.setDate(deadline.getDate() + 1)
+                            const deadline = new Date(now);
+                            deadline.setHours(hour, min, 0, 0);
+
+                            if (now > deadline) {
+                              deadline.setDate(deadline.getDate() + 1);
+                            }
+
+                            const diffMs = deadline.getTime() - now.getTime();
+                            const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                            const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                            if (diffHrs > 0) {
+                              return `${diffHrs}h ${diffMins}m`;
+                            }
+                            return `${diffMins}m`;
+                          } catch (e) {
+                            return 'All Day';
                           }
-
-                          const diffMs = deadline - now
-                          const diffHrs = Math.floor(diffMs / (1000 * 60 * 60))
-                          const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
-
-                          if (diffHrs > 0) {
-                            return `${diffHrs}h ${diffMins}m`
-                          }
-                          return `${diffMins}m`
                         })()}
                       </span>
                     </button>
