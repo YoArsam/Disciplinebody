@@ -151,7 +151,7 @@ function CheckInModal({ habit, onComplete, onSkip, onClose, isMandatory = false 
               if (onComplete) onComplete();
             }
           }}
-          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors relative z-[9999]"
+          className="w-full bg-white text-gray-900 font-bold py-4 rounded-2xl cursor-pointer hover:bg-gray-100 transition-colors relative z-[100]"
         >
           Continue
         </button>
