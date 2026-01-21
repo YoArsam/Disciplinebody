@@ -29,6 +29,10 @@ function HabitAdded({ habit, onDone }) {
   }, [])
 
   const getTomorrowTimeText = () => {
+    if (habit.habitTime) {
+      // Format HH:mm to a nicer format if needed, but for now just showing the time
+      return `tomorrow at ${habit.habitTime}`
+    }
     return 'tomorrow'
   }
 
