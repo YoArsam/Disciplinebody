@@ -4,8 +4,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const isEditing = !!habit
   const [step, setStep] = useState(1)
   const [name, setName] = useState(habit?.name || '')
-  const [deadline, setDeadline] = useState(habit?.deadline || '09:00') // HH:mm or empty
-  const [hasDeadline, setHasDeadline] = useState(true)
+  const [habitTime, setHabitTime] = useState(habit?.habitTime || '09:00') // HH:mm or empty
+  const [hasDeadline, setHasDeadline] = useState(!!(habit?.habitTime))
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
   const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'charity')
@@ -95,7 +95,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       return !!name.trim() && daysOfWeek.length > 0 && computedSkipCost !== null
     }
     if (step === 1) return !!name.trim()
-    if (step === 2) return !hasDeadline || !!deadline
+    if (step === 2) return !hasDeadline || !!habitTime
     if (step === 3) return skipCost !== null || getCustomSkipCost() !== null
     if (step === 4) return daysOfWeek.length > 0
     return false
@@ -126,7 +126,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     onSave({
       ...(habit || {}),
       name: name.trim(),
-      deadline: hasDeadline ? deadline : '',
+      deadline: hasDeadline ? habitTime : '',
+      habitTime: hasDeadline ? habitTime : '',
       skipCost: computedSkipCost,
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
       stakeDestination: 'charity',
@@ -288,7 +289,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     type="button"
                     onClick={() => {
                       setHasDeadline(true)
-                      if (!deadline) setDeadline('09:00')
+                      if (!habitTime) setHabitTime('09:00')
                     }}
                     className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
                       hasDeadline 
@@ -302,7 +303,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     type="button"
                     onClick={() => {
                       setHasDeadline(false);
-                      setDeadline('');
+                      setHabitTime('');
                     }}
                     className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
                       !hasDeadline 
@@ -318,8 +319,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <div className="animate-fadeIn w-full px-1">
                     <input
                       type="time"
-                      value={deadline}
-                      onChange={(e) => setDeadline(e.target.value)}
+                      value={habitTime}
+                      onChange={(e) => setHabitTime(e.target.value)}
                       className="w-full bg-gray-50 text-gray-900 rounded-2xl py-6 px-2 text-center text-3xl font-black focus:outline-none focus:border-orange-500 transition-all border border-gray-100"
                       style={{ minHeight: '90px', appearance: 'none', WebkitAppearance: 'none' }}
                     />
