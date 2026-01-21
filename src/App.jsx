@@ -43,7 +43,6 @@ function App() {
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null)
   const [showSuccessToast, setShowSuccessToast] = useState(false)
   const [checkInHabit, setCheckInHabit] = useState(null)
-  const [checkInDate, setCheckInDate] = useState(null) // NEW: track WHICH date we are checking in for
   const [isMandatoryCheckIn, setIsMandatoryCheckIn] = useState(false)
 
   // Request notification permissions on mount
@@ -86,7 +85,6 @@ function App() {
 
         if (missedYesterday && !checkInHabit) {
           setIsMandatoryCheckIn(true)
-          setCheckInDate(yesterdayIso)
           setCheckInHabit(missedYesterday)
           return // Prioritize yesterday's missed habits
         }
@@ -111,13 +109,12 @@ function App() {
         const deadlineDate = new Date()
         deadlineDate.setHours(deadlineHour, deadlineMin, 0, 0)
 
-        const wasCreatedBeforeDeadlineToday = h.createdAt && h.createdAt < deadlineDate.getTime()
-        return now > deadlineDate && wasCreatedBeforeDeadlineToday
+        const wasCreatedBeforeDeadline = !h.createdAt || h.createdAt < deadlineDate.getTime()
+        return now > deadlineDate && wasCreatedBeforeDeadline
       })
 
       if (pendingHabitToday && !checkInHabit) {
         setIsMandatoryCheckIn(true)
-        setCheckInDate(todayIso)
         setCheckInHabit(pendingHabitToday)
       }
     }
@@ -201,46 +198,35 @@ function App() {
     })
   }
 
-  const markHabitDone = (habitId, dateIso) => {
-    const targetDate = dateIso || new Date().toISOString().split('T')[0]
-    const isToday = targetDate === new Date().toISOString().split('T')[0]
-    
-    setState(prev => {
-      const habitDates = prev.habitHistory[habitId] || []
-      if (habitDates.includes(targetDate)) return prev
-
-      const updatedDates = [...habitDates, targetDate]
-      
-      return {
-        ...prev,
-        completedToday: isToday ? [...prev.completedToday, habitId] : prev.completedToday,
-        habitHistory: {
-          ...prev.habitHistory,
-          [habitId]: updatedDates,
-        },
-      }
-    })
+  const markHabitDone = (habitId) => {
+    if (!state.completedToday.includes(habitId)) {
+      const today = new Date().toISOString().split('T')[0] // 'YYYY-MM-DD'
+      setState(prev => {
+        const habitDates = prev.habitHistory[habitId] || []
+        // Only add if not already recorded for today
+        const updatedDates = habitDates.includes(today) 
+          ? habitDates 
+          : [...habitDates, today]
+        
+        return {
+          ...prev,
+          completedToday: [...prev.completedToday, habitId],
+          habitHistory: {
+            ...prev.habitHistory,
+            [habitId]: updatedDates,
+          },
+        }
+      })
+    }
   }
 
-  const markHabitPaid = (habitId, dateIso) => {
-    const targetDate = dateIso || new Date().toISOString().split('T')[0]
-    const isToday = targetDate === new Date().toISOString().split('T')[0]
-
-    setState(prev => {
-      const habitDates = prev.habitHistory[habitId] || []
-      if (habitDates.includes(targetDate)) return prev
-
-      const updatedDates = [...habitDates, targetDate]
-
-      return {
+  const markHabitPaid = (habitId) => {
+    if (!state.paidToday?.includes(habitId)) {
+      setState(prev => ({
         ...prev,
-        paidToday: isToday ? [...(prev.paidToday || []), habitId] : prev.paidToday,
-        habitHistory: {
-          ...prev.habitHistory,
-          [habitId]: updatedDates,
-        },
-      }
-    })
+        paidToday: [...(prev.paidToday || []), habitId],
+      }))
+    }
   }
 
   const openHabitAdder = (habit = null) => {
@@ -257,7 +243,7 @@ function App() {
       <div 
         className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none"
       >
-        v0.0.35
+        v0.0.30
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
@@ -282,7 +268,6 @@ function App() {
             }}
             onMarkDone={(habit) => {
               setIsMandatoryCheckIn(false)
-              setCheckInDate(new Date().toISOString().split('T')[0])
               setCheckInHabit(habit)
             }}
             onToggleHabits={() => setHabitsExpanded(!habitsExpanded)}
@@ -296,9 +281,10 @@ function App() {
               updateHabit(habit)
               setEditingHabit(null)
               setScreen('home')
+              // Keep habitsExpanded as is (if they were on habits page, they stay there)
             } else {
               // New habit - add it and show confirmation
-              const newHabit = { ...habit, id: Date.now(), createdAt: Date.now() }
+              const newHabit = { ...habit, id: Date.now() }
               setState(prev => ({
                 ...prev,
                 habits: [...prev.habits, newHabit],
@@ -312,6 +298,7 @@ function App() {
             deleteHabit(editingHabit.id)
             setEditingHabit(null)
             setScreen('home')
+            // Keep habitsExpanded as is
           } : null}
           onBack={() => {
             setEditingHabit(null)
@@ -393,21 +380,18 @@ function App() {
           habit={checkInHabit}
           isMandatory={isMandatoryCheckIn}
           onComplete={() => {
-            markHabitDone(checkInHabit.id, checkInDate)
+            markHabitDone(checkInHabit.id)
             setCheckInHabit(null)
-            setCheckInDate(null)
             setIsMandatoryCheckIn(false)
             setShowSuccessToast(true)
           }}
           onSkip={() => {
-            markHabitPaid(checkInHabit.id, checkInDate)
+            markHabitPaid(checkInHabit.id)
             setCheckInHabit(null)
-            setCheckInDate(null)
             setIsMandatoryCheckIn(false)
           }}
           onClose={() => {
             setCheckInHabit(null)
-            setCheckInDate(null)
             setIsMandatoryCheckIn(false)
           }}
         />
