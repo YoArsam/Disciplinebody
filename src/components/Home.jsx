@@ -462,7 +462,7 @@ function Home({
                       <span className={`text-sm ${
                         isResolved || isPaused ? 'text-gray-300' : 'text-gray-500'
                       }`}>
-                        {isPaused ? `Paused until ${habit.pausedUntil}` : 'Daily habit'}
+                        {isPaused ? `Paused until ${habit.pausedUntil}` : getTimeRemaining(habit.habitTime)}
                       </span>
                     </button>
                     
