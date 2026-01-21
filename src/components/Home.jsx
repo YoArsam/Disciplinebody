@@ -513,24 +513,22 @@ function Home({
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
                           return Array.from({ length: dayCount }, (_, i) => {
                             const date = new Date(now);
-                            // Correct chronological LTR: 
-                            // i=0 is oldest (Left)
-                            // i=dayCount-1 is Today (Right)
-                            date.setDate(now.getDate() - ((dayCount - 1) - i));
+                            // Right-to-left: Today on left (i=0), oldest on right (i=dayCount-1)
+                            date.setDate(now.getDate() - i);
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
                             const isToday = dateIso === now.toISOString().split('T')[0];
                             
                             return (
                               <div key={dateIso} className="relative aspect-square">
-                                {/* Chain Bridge (Horizontal) - Connects to PREVIOUS day (left) */}
-                                {i > 0 && isCompleted && (() => {
-                                  const prevDate = new Date(date);
-                                  prevDate.setDate(date.getDate() - 1);
-                                  const prevIso = prevDate.toISOString().split('T')[0];
-                                  return habitDates.includes(prevIso);
+                                {/* Chain Bridge (Horizontal) - Connects to NEXT item (previous calendar day) if both are completed */}
+                                {i < dayCount - 1 && isCompleted && (() => {
+                                  const nextDate = new Date(date);
+                                  nextDate.setDate(date.getDate() - 1);
+                                  const nextIso = nextDate.toISOString().split('T')[0];
+                                  return habitDates.includes(nextIso);
                                 })() && (
-                                  <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0" />
+                                  <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0" />
                                 )}
 
                                 <div
