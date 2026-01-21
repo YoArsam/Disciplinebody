@@ -498,29 +498,59 @@ function Home({
                     )}
                   </div>
                   
-                  {/* Grid Chart - Only show when expanded */}
+                  {/* Chain View - Only show when expanded */}
                   {habitsExpanded && (
-                    <div className="border-t border-gray-100 grid-chart-enter">
-                      <div className="grid grid-cols-7 gap-1">
-                        {last28Days.map((date, i) => {
-                          const isCompleted = habitDates.includes(date)
-                          const isToday = date === new Date().toISOString().split('T')[0]
+                    <div className="border-t border-gray-100 pt-6 pb-2 px-2 grid-chart-enter">
+                      <div className="relative flex items-center justify-between">
+                        {/* Connecting Line Background */}
+                        <div className="absolute left-0 right-0 h-0.5 bg-gray-100 top-1/2 -translate-y-1/2 z-0" />
+                        
+                        {Array.from({ length: 7 }, (_, i) => {
+                          const date = new Date()
+                          date.setDate(date.getDate() - (6 - i))
+                          const dateIso = date.toISOString().split('T')[0]
+                          const isCompleted = habitDates.includes(dateIso)
+                          const isToday = dateIso === now.toISOString().split('T')[0]
+                          
+                          // Check if previous day was also completed to draw active line segment
+                          const prevDate = new Date(date)
+                          prevDate.setDate(prevDate.getDate() - 1)
+                          const prevDateIso = prevDate.toISOString().split('T')[0]
+                          const prevCompleted = habitDates.includes(prevDateIso)
+                          const hasConnection = isCompleted && prevCompleted
+
                           return (
-                            <div
-                              key={date}
-                              className={`aspect-square rounded-sm ${
+                            <div key={dateIso} className="relative z-10 flex flex-col items-center gap-2">
+                              {/* Connection Segment */}
+                              {i > 0 && hasConnection && (
+                                <div className="absolute right-1/2 w-full h-0.5 bg-orange-500 top-[14px] -translate-y-1/2 -z-10" />
+                              )}
+                              
+                              {/* Bubble */}
+                              <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
                                 isCompleted 
-                                  ? 'bg-green-500' 
+                                  ? 'bg-orange-500 shadow-sm' 
                                   : isToday 
-                                    ? 'bg-orange-200' 
-                                    : 'bg-gray-100'
-                              }`}
-                              title={date}
-                            />
+                                    ? 'bg-white border-2 border-orange-200' 
+                                    : 'bg-white border-2 border-gray-100'
+                              }`}>
+                                {isCompleted && (
+                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </div>
+                              
+                              {/* Day Label */}
+                              <span className={`text-[10px] font-bold uppercase tracking-wider ${
+                                isToday ? 'text-orange-500' : 'text-gray-400'
+                              }`}>
+                                {date.toLocaleDateString([], { weekday: 'short' }).charAt(0)}
+                              </span>
+                            </div>
                           )
                         })}
                       </div>
-                      <p className="text-xs text-gray-400 mt-2 text-center">Last 4 weeks</p>
                     </div>
                   )}
                 </div>
