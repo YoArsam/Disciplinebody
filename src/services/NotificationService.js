@@ -8,7 +8,7 @@ class NotificationService {
     }
   }
 
-  async scheduleDailyNotifications(habits, completedToday) {
+  async scheduleDailyNotifications(habits, completedToday, paidToday) {
     // Cancel all existing notifications first to avoid duplicates
     await LocalNotifications.cancel({
       notifications: [{ id: 1 }, { id: 2 }, { id: 3 }]
@@ -18,14 +18,16 @@ class NotificationService {
     const dayOfWeek = today.getDay();
     const todayIso = today.toISOString().split('T')[0];
 
-    // Calculate habits left for today
+    // Calculate habits scheduled for today
     const activeHabits = habits.filter(h => {
       const isScheduled = (h.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]).includes(dayOfWeek);
       const isPaused = h.pausedUntil && h.pausedUntil >= todayIso;
       return isScheduled && !isPaused;
     });
 
-    const pendingCount = activeHabits.length - (completedToday?.length || 0);
+    // Count how many of those active habits are NOT completed and NOT paid
+    const doneIds = new Set([...(completedToday || []), ...(paidToday || [])]);
+    const pendingCount = activeHabits.filter(h => !doneIds.has(h.id)).length;
     
     let message = '';
     if (habits.length === 0) {
@@ -62,7 +64,7 @@ class NotificationService {
   }
 
   // Development tool to test notifications in 1 minute
-  async scheduleTestNotification(habits, completedToday) {
+  async scheduleTestNotification(habits, completedToday, paidToday) {
     const today = new Date();
     const dayOfWeek = today.getDay();
     const todayIso = today.toISOString().split('T')[0];
@@ -73,7 +75,8 @@ class NotificationService {
       return isScheduled && !isPaused;
     });
 
-    const pendingCount = activeHabits.length - (completedToday?.length || 0);
+    const doneIds = new Set([...(completedToday || []), ...(paidToday || [])]);
+    const pendingCount = activeHabits.filter(h => !doneIds.has(h.id)).length;
     
     let message = '';
     if (habits.length === 0) {

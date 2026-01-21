@@ -51,8 +51,8 @@ function App() {
 
   // Update notifications whenever habits or completions change
   useEffect(() => {
-    NotificationService.scheduleDailyNotifications(state.habits, state.completedToday)
-  }, [state.habits, state.completedToday])
+    NotificationService.scheduleDailyNotifications(state.habits, state.completedToday, state.paidToday)
+  }, [state.habits, state.completedToday, state.paidToday])
 
   // Save to localStorage whenever state changes
   useEffect(() => {
@@ -173,7 +173,7 @@ function App() {
     <div className="h-full w-full relative">
       {/* Version Tracker - Clickable for testing notifications */}
       <div 
-        onClick={() => NotificationService.scheduleTestNotification(state.habits, state.completedToday)}
+        onClick={() => NotificationService.scheduleTestNotification(state.habits, state.completedToday, state.paidToday)}
         className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono cursor-pointer pointer-events-auto active:scale-95 transition-transform"
       >
         v2.4.3
