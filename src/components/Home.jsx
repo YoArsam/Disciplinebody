@@ -510,56 +510,75 @@ function Home({
                     >
                       <div className={`grid ${expandedGridHabitId === habit.id ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
                         {(() => {
-                          // SINGLE SOURCE OF TRUTH: Build 28 master cells chronologically (Oldest to Newest LTR)
-                          const masterCells28 = Array.from({ length: 28 }, (_, i) => {
+                          const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
+                          const indices = Array.from({ length: dayCount }, (_, i) => i);
+                          
+                          // Count how many boxes are "completed" to determine Today's position
+                          const completedCount = indices.filter(i => {
                             const date = new Date(now);
-                            // i=0 is 27 days ago, i=27 is Today
-                            date.setDate(now.getDate() - (27 - i));
+                            date.setDate(now.getDate() - i);
+                            return habitDates.includes(date.toISOString().split('T')[0]);
+                          }).length;
+
+                          return indices.map((i) => {
+                            // Positional logic: 
+                            // 1. Completed boxes go first (left)
+                            // 2. Today goes after the completed boxes
+                            // 3. Older/pending boxes follow
+                            let virtualIndex;
+                            if (dayCount === 7) {
+                              if (i < completedCount) {
+                                // Find the i-th completed date
+                                const completedIndices = indices.filter(idx => {
+                                  const date = new Date(now);
+                                  date.setDate(now.getDate() - idx);
+                                  return habitDates.includes(date.toISOString().split('T')[0]) && idx !== 0;
+                                });
+                                virtualIndex = completedIndices[i] || i;
+                              } else if (i === completedCount) {
+                                virtualIndex = 0; // Today
+                              } else {
+                                virtualIndex = i;
+                              }
+                            } else {
+                              virtualIndex = i;
+                            }
+
+                            const date = new Date(now);
+                            date.setDate(now.getDate() - virtualIndex);
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
-                            const isToday = dateIso === now.toISOString().split('T')[0];
-                            return { dateIso, isCompleted, isToday };
-                          });
-
-                          const isExpanded = expandedGridHabitId === habit.id;
-                          // DERIVED VIEW: 7-day preview is a pure slice of the last 7 master cells
-                          const displayCells = isExpanded ? masterCells28 : masterCells28.slice(-7);
-
-                          // DEV-ONLY ASSERTION/LOG
-                          const todayIndex28 = masterCells28.findIndex(c => c.isToday);
-                          const todayIndex7 = displayCells.findIndex(c => c.isToday);
-                          if (!isExpanded) {
-                            console.log(`[Grid Verify] Habit: ${habit.name}`);
-                            console.log(`todayIndex28: ${todayIndex28} (expected 27)`);
-                            console.log(`todayIndex7: ${todayIndex7} (expected 6)`);
-                            console.log(`Preview Dates:`, displayCells.map(c => c.dateIso));
-                          }
-
-                          return displayCells.map((cell, i) => {
-                            // Chain logic: Connects to PREVIOUS item in displayCells array
-                            const hasPreviousChain = i > 0 && cell.isCompleted && displayCells[i - 1].isCompleted;
+                            const isToday = virtualIndex === 0;
+                            
+                            let hasNextChain = false;
+                            if (i < dayCount - 1 && isCompleted) {
+                              const nextDate = new Date(date);
+                              nextDate.setDate(date.getDate() - 1);
+                              const nextIso = nextDate.toISOString().split('T')[0];
+                              hasNextChain = habitDates.includes(nextIso);
+                            }
 
                             return (
                               <div 
-                                key={cell.dateIso} 
+                                key={i} 
                                 className="relative flex-1 aspect-square"
                                 style={{ flex: '0 0 calc((100% - 6 * 0.25rem) / 7)' }}
                               >
                                 <div 
-                                  className={`absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
-                                    hasPreviousChain ? 'opacity-100' : 'opacity-0'
+                                  className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
+                                    hasNextChain ? 'opacity-100' : 'opacity-0'
                                   }`} 
                                 />
 
                                 <div
                                   className={`relative z-10 w-full h-full rounded-sm transition-all duration-300 ${
-                                    cell.isCompleted 
-                                      ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.2)]' 
-                                      : cell.isToday 
+                                    isCompleted 
+                                      ? 'bg-green-500' 
+                                      : isToday 
                                         ? 'bg-orange-200' 
                                         : 'bg-gray-100'
                                   }`}
-                                  title={cell.dateIso}
+                                  title={dateIso}
                                 />
                               </div>
                             );
