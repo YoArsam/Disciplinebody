@@ -456,14 +456,23 @@ function Home({
                             const [hour, min] = timeStr.split(':').map(Number);
                             if (isNaN(hour) || isNaN(min)) return 'All Day';
 
-                            const deadline = new Date(now.getTime());
-                            deadline.setHours(hour, min, 0, 0);
+                            // Anchor to current time
+                            const currentTime = now.getTime();
+                            
+                            // Create target for TODAY
+                            const targetToday = new Date(now.getTime());
+                            targetToday.setHours(hour, min, 0, 0);
+                            let targetTime = targetToday.getTime();
 
-                            if (now.getTime() > deadline.getTime()) {
-                              deadline.setDate(deadline.getDate() + 1);
+                            // If time passed today, target is tomorrow
+                            if (currentTime > targetTime) {
+                              const targetTomorrow = new Date(now.getTime());
+                              targetTomorrow.setDate(targetTomorrow.getDate() + 1);
+                              targetTomorrow.setHours(hour, min, 0, 0);
+                              targetTime = targetTomorrow.getTime();
                             }
 
-                            const diffMs = deadline.getTime() - now.getTime();
+                            const diffMs = targetTime - currentTime;
                             const diffHrs = Math.floor(diffMs / 3600000);
                             const diffMins = Math.floor((diffMs % 3600000) / 60000);
 
