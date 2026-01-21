@@ -539,7 +539,7 @@ function Home({
                               >
                                 {/* Chain Bridge - Fixed element, visibility controlled by opacity */}
                                 <div 
-                                  className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
+                                  className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-orange-500 z-0 transition-opacity duration-300 ${
                                     hasNextChain ? 'opacity-100' : 'opacity-0'
                                   }`} 
                                 />
@@ -547,9 +547,9 @@ function Home({
                                 <div
                                   className={`relative z-10 w-full h-full rounded-sm transition-all duration-300 ${
                                     isCompleted 
-                                      ? 'bg-green-500' 
+                                      ? 'bg-orange-500' 
                                       : isToday 
-                                        ? 'bg-orange-200' 
+                                        ? 'bg-green-200' 
                                         : 'bg-gray-100'
                                   }`}
                                   title={dateIso}
