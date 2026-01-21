@@ -61,12 +61,20 @@ class NotificationService {
 
     // Add specific habit deadline notifications
     habits.forEach(habit => {
-      if (habit.deadline && !doneIds.has(habit.id)) {
-        const [hour, minute] = habit.deadline.split(':').map(Number);
+      if (!doneIds.has(habit.id)) {
+        let hour, minute;
+        if (habit.deadline) {
+          [hour, minute] = habit.deadline.split(':').map(Number);
+        } else {
+          // All Day habits notify at 9 PM
+          hour = 21;
+          minute = 0;
+        }
+
         notifications.push({
           id: habit.id,
-          title: 'Deadline Approaching!',
-          body: `Time to complete: ${habit.name}`,
+          title: 'Habit Deadline!',
+          body: `Time's up: ${habit.name}. Did you complete it?`,
           schedule: {
             on: {
               hour,
