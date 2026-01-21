@@ -273,10 +273,13 @@ function CheckInModal({ habit, onComplete, onSkip, onClose, isMandatory = false 
 
       <div className="w-full space-y-3">
         <button
-          onClick={() => {
-            if (onComplete) onComplete();
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowSuccess(true);
+            setIsPaymentSuccess(false);
           }}
-          className="w-full bg-green-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform"
+          className="w-full bg-green-500 text-white font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform cursor-pointer relative z-[100]"
         >
           Yes, I did it! ✓
         </button>
