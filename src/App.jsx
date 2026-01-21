@@ -203,17 +203,13 @@ function App() {
 
   const markHabitDone = (habitId, dateIso) => {
     const targetDate = dateIso || new Date().toISOString().split('T')[0]
+    const isToday = targetDate === new Date().toISOString().split('T')[0]
     
     setState(prev => {
-      const isAlreadyDone = prev.completedToday.includes(habitId) && targetDate === new Date().toISOString().split('T')[0]
-      const isAlreadyInHistory = (prev.habitHistory[habitId] || []).includes(targetDate)
-      
-      if (isAlreadyInHistory) return prev
-
       const habitDates = prev.habitHistory[habitId] || []
+      if (habitDates.includes(targetDate)) return prev
+
       const updatedDates = [...habitDates, targetDate]
-      
-      const isToday = targetDate === new Date().toISOString().split('T')[0]
       
       return {
         ...prev,
@@ -231,9 +227,10 @@ function App() {
     const isToday = targetDate === new Date().toISOString().split('T')[0]
 
     setState(prev => {
-      // Record in history as well so we know it was resolved for that specific date
       const habitDates = prev.habitHistory[habitId] || []
-      const updatedDates = habitDates.includes(targetDate) ? habitDates : [...habitDates, targetDate]
+      if (habitDates.includes(targetDate)) return prev
+
+      const updatedDates = [...habitDates, targetDate]
 
       return {
         ...prev,
@@ -260,7 +257,7 @@ function App() {
       <div 
         className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none"
       >
-        v0.0.32
+        v0.0.33
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
@@ -299,10 +296,8 @@ function App() {
               updateHabit(habit)
               setEditingHabit(null)
               setScreen('home')
-              // Keep habitsExpanded as is (if they were on habits page, they stay there)
             } else {
-              // New habit - add it and show confirmation
-              const newHabit = { ...habit, id: Date.now() }
+              const newHabit = { ...habit, id: Date.now(), createdAt: Date.now() }
               setState(prev => ({
                 ...prev,
                 habits: [...prev.habits, newHabit],
