@@ -515,20 +515,39 @@ function Home({
                           const indices = Array.from({ length: dayCount }, (_, i) => i);
                           
                           return indices.map((i) => {
+                            // Positional Swap Logic:
+                            // We want Today and Yesterday to trade places in the row.
+                            // Original: 0=Today, 1=Yesterday, 2=2 days ago...
+                            // Swapped: 0=Yesterday, 1=Today, 2=2 days ago...
+                            let virtualIndex = i;
+                            if (dayCount === 7) {
+                              if (i === 0) virtualIndex = 1;
+                              else if (i === 1) virtualIndex = 0;
+                            }
+
                             const date = new Date(now);
-                            // Right-to-left mapping: index 0 is Today
-                            date.setDate(now.getDate() - i);
+                            date.setDate(now.getDate() - virtualIndex);
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
-                            const isToday = i === 0;
+                            const isToday = virtualIndex === 0;
                             
-                            // Check if next item (previous calendar day) was completed for the chain
+                            // Chain Bridge calculation based on virtual calendar dates
                             let hasNextChain = false;
-                            if (i < dayCount - 1 && isCompleted) {
-                              const nextDate = new Date(date);
-                              nextDate.setDate(date.getDate() - 1);
-                              const nextIso = nextDate.toISOString().split('T')[0];
-                              hasNextChain = habitDates.includes(nextIso);
+                            if (i < dayCount - 1) {
+                              // Find what date is in the NEXT slot (i + 1)
+                              let nextSlotVirtualIndex = i + 1;
+                              if (dayCount === 7) {
+                                if (i + 1 === 0) nextSlotVirtualIndex = 1;
+                                else if (i + 1 === 1) nextSlotVirtualIndex = 0;
+                              }
+                              
+                              const nextSlotDate = new Date(now);
+                              nextSlotDate.setDate(now.getDate() - nextSlotVirtualIndex);
+                              const nextSlotIso = nextSlotDate.toISOString().split('T')[0];
+                              
+                              // Connect if both this slot and the next slot are completed
+                              // (Chain only connects completed boxes)
+                              hasNextChain = isCompleted && habitDates.includes(nextSlotIso);
                             }
 
                             return (
@@ -539,7 +558,7 @@ function Home({
                               >
                                 {/* Chain Bridge - Fixed element, visibility controlled by opacity */}
                                 <div 
-                                  className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-orange-500 z-0 transition-opacity duration-300 ${
+                                  className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
                                     hasNextChain ? 'opacity-100' : 'opacity-0'
                                   }`} 
                                 />
@@ -547,9 +566,9 @@ function Home({
                                 <div
                                   className={`relative z-10 w-full h-full rounded-sm transition-all duration-300 ${
                                     isCompleted 
-                                      ? 'bg-orange-500' 
+                                      ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.2)]' 
                                       : isToday 
-                                        ? 'bg-green-200' 
+                                        ? 'bg-orange-200' 
                                         : 'bg-gray-100'
                                   }`}
                                   title={dateIso}
