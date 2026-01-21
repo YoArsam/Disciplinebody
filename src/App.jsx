@@ -89,7 +89,10 @@ function App() {
         const deadlineDate = new Date()
         deadlineDate.setHours(deadlineHour, deadlineMin, 0, 0)
 
-        return now > deadlineDate
+        // Only trigger if deadline passed AND habit was created before that deadline
+        const wasCreatedBeforeDeadline = !h.createdAt || h.createdAt < deadlineDate.getTime()
+
+        return now > deadlineDate && wasCreatedBeforeDeadline
       })
 
       if (pendingHabit && !checkInHabit) {
@@ -148,7 +151,7 @@ function App() {
   const addHabit = (habit) => {
     setState(prev => ({
       ...prev,
-      habits: [...prev.habits, { ...habit, id: Date.now() }],
+      habits: [...prev.habits, { ...habit, id: Date.now(), createdAt: Date.now() }],
     }))
   }
 
@@ -221,7 +224,7 @@ function App() {
       <div 
         className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none"
       >
-        v0.0.24
+        v0.0.25
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
