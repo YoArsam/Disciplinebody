@@ -174,12 +174,11 @@ function App() {
 
   return (
     <div className="h-full w-full relative">
-      {/* Version Tracker - Clickable for testing notifications */}
+      {/* Version Tracker */}
       <div 
-        onClick={() => NotificationService.scheduleTestNotification(state.habits, state.completedToday, state.paidToday)}
-        className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono cursor-pointer pointer-events-auto active:scale-95 transition-transform"
+        className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none"
       >
-        v0.0.43
+        v0.0.44
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>

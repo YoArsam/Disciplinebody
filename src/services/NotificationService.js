@@ -91,46 +91,6 @@ class NotificationService {
     await LocalNotifications.schedule({ notifications });
     console.log('Scheduled notifications:', notifications);
   }
-
-  // Development tool to test notifications in 1 minute
-  async scheduleTestNotification(habits, completedToday, paidToday) {
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const todayIso = today.toISOString().split('T')[0];
-
-    const activeHabits = habits.filter(h => {
-      const isScheduled = (h.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]).includes(dayOfWeek);
-      const isPaused = h.pausedUntil && h.pausedUntil >= todayIso;
-      return isScheduled && !isPaused;
-    });
-
-    const doneIds = new Set([...(completedToday || []), ...(paidToday || [])]);
-    const pendingCount = activeHabits.filter(h => !doneIds.has(h.id)).length;
-    
-    let message = '';
-    if (habits.length === 0) {
-      message = "Start your journey. Add a habit now!";
-    } else if (pendingCount <= 0) {
-      message = "You're all set! Great discipline today.";
-    } else {
-      message = `${pendingCount} habits left. Let's get it!`;
-    }
-
-    const testDate = new Date(Date.now() + 60000); // 1 minute from now
-
-    await LocalNotifications.schedule({
-      notifications: [
-        {
-          id: 99,
-          title: 'Test Notification',
-          body: message,
-          schedule: { at: testDate },
-          sound: 'default'
-        }
-      ]
-    });
-    alert('Test notification scheduled for 1 minute from now!');
-  }
 }
 
 export default new NotificationService();
