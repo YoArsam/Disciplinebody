@@ -513,6 +513,7 @@ function Home({
                           const isExpanded = expandedGridHabitId === habit.id;
                           
                           // Source of Truth: Compute 28 days chronologically (Oldest to Newest LTR)
+                          // Today (offset 0) is at the very END (index 27)
                           const allCells = Array.from({ length: 28 }, (_, i) => {
                             const date = new Date(now);
                             // i=0 is 27 days ago, i=27 is Today
@@ -524,16 +525,16 @@ function Home({
                             return { dateIso, isCompleted, isToday, date: new Date(date) };
                           });
 
-                          // Slice for the actual view (either all 28 or last 7)
+                          // Pure Slice: 7-day is the last 7 items of the 28-day master list
+                          // No reverse(), no reordering, no offsets.
                           const displayCells = isExpanded ? allCells : allCells.slice(-7);
-                          const dayCount = displayCells.length;
 
                           return displayCells.map((cell, i) => {
-                            // Chain logic: Connects to PREVIOUS calendar day (which is index i-1 in this LTR slice)
-                            let hasNextChain = false;
+                            // Chain logic: Connects to PREVIOUS calendar day (index i-1 in LTR)
+                            let hasPreviousChain = false;
                             if (i > 0 && cell.isCompleted) {
                               const prevCell = displayCells[i - 1];
-                              hasNextChain = prevCell.isCompleted;
+                              hasPreviousChain = prevCell.isCompleted;
                             }
 
                             return (
@@ -542,10 +543,10 @@ function Home({
                                 className="relative flex-1 aspect-square"
                                 style={{ flex: '0 0 calc((100% - 6 * 0.25rem) / 7)' }}
                               >
-                                {/* Chain Bridge - Connects to the left (previous day) */}
+                                {/* Chain Bridge - Connects to the left box (yesterday in LTR) */}
                                 <div 
                                   className={`absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
-                                    hasNextChain ? 'opacity-100' : 'opacity-0'
+                                    hasPreviousChain ? 'opacity-100' : 'opacity-0'
                                   }`} 
                                 />
 
