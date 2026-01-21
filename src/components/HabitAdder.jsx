@@ -315,14 +315,17 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </div>
 
                 {hasHabitTime && (
-                  <div className="animate-fadeIn w-full">
-                    <input
-                      type="time"
-                      value={habitTime}
-                      onChange={(e) => setHabitTime(e.target.value)}
-                      className="w-full bg-gray-50 text-gray-900 rounded-xl p-4 text-center text-2xl font-black focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all border border-gray-100"
-                    />
-                    <p className="text-gray-400 text-[10px] text-center mt-2 font-bold tracking-widest uppercase">
+                  <div className="animate-fadeIn">
+                    <div className="relative">
+                      <input
+                        type="time"
+                        value={habitTime}
+                        onChange={(e) => setHabitTime(e.target.value)}
+                        className="w-full bg-gray-50 text-gray-900 rounded-2xl p-6 text-center text-3xl font-black focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all border border-gray-100"
+                        style={{ minHeight: '80px' }}
+                      />
+                    </div>
+                    <p className="text-gray-400 text-[10px] text-center mt-3 font-bold tracking-widest uppercase opacity-60">
                       Finish before this time
                     </p>
                   </div>
