@@ -1,7 +1,7 @@
 {
   "name": "accountability-app",
   "private": true,
-  "version": "0.0.8",
+  "version": "0.0.9",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@capacitor/core": "^6.0.0",
+    "@capacitor/local-notifications": "^6.0.0",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.6.1",
     "@vercel/kv": "^2.0.0",
