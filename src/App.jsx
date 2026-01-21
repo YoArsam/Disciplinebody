@@ -179,7 +179,7 @@ function App() {
         onClick={() => NotificationService.scheduleTestNotification(state.habits, state.completedToday, state.paidToday)}
         className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono cursor-pointer pointer-events-auto active:scale-95 transition-transform"
       >
-        v2.4.3
+        v0.0.38
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
