@@ -29,7 +29,17 @@ function HabitAdded({ habit, onDone }) {
   }, [])
 
   const getTomorrowTimeText = () => {
-    return 'tomorrow'
+    const time = habit.deadline || '21:00'
+    const [hours, minutes] = time.split(':')
+    const date = new Date()
+    date.setHours(parseInt(hours), parseInt(minutes), 0)
+    
+    const timeString = date.toLocaleTimeString([], { 
+      hour: 'numeric', 
+      minute: '2-digit'
+    })
+    
+    return `tomorrow by ${timeString}`
   }
 
   const getPenaltyDestinationText = () => {
