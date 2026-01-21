@@ -450,22 +450,22 @@ function Home({
                       }`}>
                         {isPaused ? `Paused until ${habit.pausedUntil}` : (() => {
                           const timeStr = habit.habitTime;
-                          if (!timeStr || timeStr === "") return 'All Day';
+                          if (!timeStr || timeStr.trim() === "") return 'All Day';
                           
                           try {
                             const [hour, min] = timeStr.split(':').map(Number);
                             if (isNaN(hour) || isNaN(min)) return 'All Day';
 
-                            const deadline = new Date(now);
+                            const deadline = new Date(now.getTime());
                             deadline.setHours(hour, min, 0, 0);
 
-                            if (now > deadline) {
+                            if (now.getTime() > deadline.getTime()) {
                               deadline.setDate(deadline.getDate() + 1);
                             }
 
                             const diffMs = deadline.getTime() - now.getTime();
-                            const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-                            const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                            const diffHrs = Math.floor(diffMs / 3600000);
+                            const diffMins = Math.floor((diffMs % 3600000) / 60000);
 
                             if (diffHrs > 0) {
                               return `${diffHrs}h ${diffMins}m`;
