@@ -508,12 +508,12 @@ function Home({
                         setExpandedGridHabitId(expandedGridHabitId === habit.id ? null : habit.id);
                       }}
                     >
-                      <div className={`grid ${expandedGridHabitId === habit.id ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
+                      <div className="grid grid-cols-7 gap-2">
                         {(() => {
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
                           return Array.from({ length: dayCount }, (_, i) => {
                             const date = new Date(now);
-                            // Fill left-to-right: oldest day on far left, today on far right
+                            // Oldest day on far left (index 0), Today on far right (index dayCount - 1)
                             date.setDate(now.getDate() - ((dayCount - 1) - i));
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
@@ -522,11 +522,11 @@ function Home({
                             return (
                               <div
                                 key={dateIso}
-                                className={`aspect-square rounded-sm transition-all duration-300 ${
+                                className={`aspect-square rounded-md transition-all duration-300 ${
                                   isCompleted 
-                                    ? 'bg-green-500' 
+                                    ? 'bg-green-500 shadow-sm' 
                                     : isToday 
-                                      ? 'bg-orange-200' 
+                                      ? 'bg-orange-100 border-2 border-orange-400' 
                                       : 'bg-gray-100'
                                 }`}
                                 title={dateIso}
