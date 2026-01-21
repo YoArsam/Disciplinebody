@@ -500,10 +500,10 @@ function Home({
                   
                   {/* Chain View - Only show when expanded */}
                   {habitsExpanded && (
-                    <div className="border-t border-gray-100 pt-6 pb-2 px-2 grid-chart-enter">
-                      <div className="relative flex items-center justify-between">
+                    <div className="border-t border-gray-100 pt-6 pb-4 px-2 grid-chart-enter">
+                      <div className="relative flex items-center justify-between mb-6">
                         {/* Connecting Line Background */}
-                        <div className="absolute left-0 right-0 h-0.5 bg-gray-100 top-1/2 -translate-y-1/2 z-0" />
+                        <div className="absolute left-0 right-0 h-0.5 bg-gray-100 top-[14px] -translate-y-1/2 z-0" />
                         
                         {Array.from({ length: 7 }, (_, i) => {
                           const date = new Date()
@@ -550,6 +550,72 @@ function Home({
                             </div>
                           )
                         })}
+                      </div>
+
+                      {/* Stats + Sparkline */}
+                      <div className="bg-gray-50/50 rounded-2xl p-4 flex items-center justify-between gap-4">
+                        <div className="flex flex-col">
+                          <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Consistency</span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-xl font-black text-gray-900">
+                              {(() => {
+                                const last30Days = Array.from({ length: 30 }, (_, i) => {
+                                  const d = new Date()
+                                  d.setDate(d.getDate() - i)
+                                  return d.toISOString().split('T')[0]
+                                })
+                                const completedCount = last30Days.filter(d => habitDates.includes(d)).length
+                                return Math.round((completedCount / 30) * 100)
+                              })()}%
+                            </span>
+                            <span className="text-gray-400 text-[10px] font-bold uppercase">success</span>
+                          </div>
+                        </div>
+
+                        {/* Tiny Sparkline SVG */}
+                        <div className="flex-1 h-10 max-w-[120px]">
+                          <svg className="w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
+                            {(() => {
+                              const points = Array.from({ length: 30 }, (_, i) => {
+                                const d = new Date()
+                                d.setDate(d.getDate() - (29 - i))
+                                const isDone = habitDates.includes(d.toISOString().split('T')[0])
+                                return isDone ? 1 : 0
+                              })
+                              
+                              // Calculate rolling average for a smoother "wave"
+                              const smoothed = points.map((_, i, arr) => {
+                                const slice = arr.slice(Math.max(0, i - 3), i + 1)
+                                return slice.reduce((a, b) => a + b, 0) / slice.length
+                              })
+
+                              const pathData = smoothed.map((val, i) => {
+                                const x = (i / 29) * 100
+                                const y = 35 - (val * 30) // Invert and scale
+                                return `${i === 0 ? 'M' : 'L'} ${x} ${y}`
+                              }).join(' ')
+
+                              return (
+                                <>
+                                  <path
+                                    d={pathData}
+                                    fill="none"
+                                    stroke="url(#sparklineGradient)"
+                                    strokeWidth="3"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                  <defs>
+                                    <linearGradient id="sparklineGradient" x1="0" y1="0" x2="1" y2="0">
+                                      <stop offset="0%" stopColor="#ffedd5" />
+                                      <stop offset="100%" stopColor="#f97316" />
+                                    </linearGradient>
+                                  </defs>
+                                </>
+                              )
+                            })()}
+                          </svg>
+                        </div>
                       </div>
                     </div>
                   )}
