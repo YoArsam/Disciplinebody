@@ -513,56 +513,45 @@ function Home({
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
                           const indices = Array.from({ length: dayCount }, (_, i) => i);
                           
-                          // Count how many boxes are "completed" to determine Today's position
-                          const completedCount = indices.filter(i => {
+                          // Group indices by state to determine positional mapping
+                          // We want: [Completed Indices] -> [Today (0)] -> [Remaining Indices]
+                          const completedIndices = indices.filter(idx => {
+                            if (idx === 0) return false; // Exclude today from completed pool for sorting
                             const date = new Date(now);
-                            date.setDate(now.getDate() - i);
+                            date.setDate(now.getDate() - idx);
                             return habitDates.includes(date.toISOString().split('T')[0]);
-                          }).length;
+                          });
+
+                          const remainingIndices = indices.filter(idx => 
+                            idx !== 0 && !completedIndices.includes(idx)
+                          );
+
+                          // Final ordered list of what date index goes in which slot
+                          const virtualOrder = [...completedIndices, 0, ...remainingIndices];
 
                           return indices.map((i) => {
-                            // Positional logic: 
-                            // 1. Completed boxes go first (left)
-                            // 2. Today goes after the completed boxes
-                            // 3. Older/pending boxes follow
-                            let virtualIndex;
-                            if (dayCount === 7) {
-                              if (i < completedCount) {
-                                // Find the i-th completed date
-                                const completedIndices = indices.filter(idx => {
-                                  const date = new Date(now);
-                                  date.setDate(now.getDate() - idx);
-                                  return habitDates.includes(date.toISOString().split('T')[0]) && idx !== 0;
-                                });
-                                virtualIndex = completedIndices[i] || i;
-                              } else if (i === completedCount) {
-                                virtualIndex = 0; // Today
-                              } else {
-                                virtualIndex = i;
-                              }
-                            } else {
-                              virtualIndex = i;
-                            }
-
+                            const virtualIndex = virtualOrder[i];
                             const date = new Date(now);
                             date.setDate(now.getDate() - virtualIndex);
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
                             const isToday = virtualIndex === 0;
                             
+                            // Chain logic: Connects to NEXT slot if both are completed
                             let hasNextChain = false;
-                            if (i < dayCount - 1 && isCompleted) {
-                              const nextDate = new Date(date);
-                              nextDate.setDate(date.getDate() - 1);
+                            if (i < dayCount - 1) {
+                              const nextVirtualIndex = virtualOrder[i + 1];
+                              const nextDate = new Date(now);
+                              nextDate.setDate(now.getDate() - nextVirtualIndex);
                               const nextIso = nextDate.toISOString().split('T')[0];
-                              hasNextChain = habitDates.includes(nextIso);
+                              hasNextChain = isCompleted && habitDates.includes(nextIso);
                             }
 
                             return (
                               <div 
                                 key={i} 
                                 className="relative flex-1 aspect-square"
-                                style={{ flex: '0 0 calc((100% - 6 * 0.25rem) / 7)' }}
+                                style={{ flex: `0 0 calc((100% - 6 * 0.25rem) / 7)` }}
                               >
                                 <div 
                                   className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
@@ -573,7 +562,7 @@ function Home({
                                 <div
                                   className={`relative z-10 w-full h-full rounded-sm transition-all duration-300 ${
                                     isCompleted 
-                                      ? 'bg-green-500' 
+                                      ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.2)]' 
                                       : isToday 
                                         ? 'bg-orange-200' 
                                         : 'bg-gray-100'
