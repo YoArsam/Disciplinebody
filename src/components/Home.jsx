@@ -171,8 +171,30 @@ function Home({
 }) {
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
+  const [now, setNow] = useState(new Date())
 
-  // Warm up CSS transitions on mount by doing a tiny invisible transition
+  // Force re-render every minute to update countdowns
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const getTimeRemaining = (habitTime) => {
+    if (!habitTime) return 'Daily habit'
+    
+    const [hours, minutes] = habitTime.split(':').map(Number)
+    const deadline = new Date()
+    deadline.setHours(hours, minutes, 0, 0)
+    
+    const diff = deadline - now
+    if (diff <= 0) return 'Deadline passed'
+    
+    const h = Math.floor(diff / 3600000)
+    const m = Math.floor((diff % 3600000) / 60000)
+    
+    if (h > 0) return `${h}h ${m}m left`
+    return `${m}m left`
+  }
   useEffect(() => {
     // Start with a tiny transform
     setWidgetStyle({ transform: 'translateY(0.1px)' })
