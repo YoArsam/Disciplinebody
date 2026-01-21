@@ -464,9 +464,9 @@ function Home({
                           const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
 
                           if (diffHrs > 0) {
-                            return `${diffHrs}h ${diffMins}m remaining`
+                            return `${diffHrs}h ${diffMins}m`
                           }
-                          return `${diffMins}m remaining`
+                          return `${diffMins}m`
                         })()}
                       </span>
                     </button>

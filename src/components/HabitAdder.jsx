@@ -300,7 +300,10 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setHasDeadline(true)}
+                    onClick={() => {
+                      setHasDeadline(true)
+                      if (!deadline) setDeadline('09:00')
+                    }}
                     className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
                       hasDeadline 
                         ? 'bg-orange-500 text-white border-orange-500' 
@@ -312,15 +315,16 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                 </div>
 
                 {hasDeadline && (
-                  <div className="animate-fadeIn">
+                  <div className="animate-fadeIn w-full px-1">
                     <input
                       type="time"
                       value={deadline}
                       onChange={(e) => setDeadline(e.target.value)}
-                      className="w-full bg-gray-50 text-gray-900 rounded-xl p-4 text-center text-2xl font-black focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                      className="w-full bg-gray-50 text-gray-900 rounded-2xl py-6 px-2 text-center text-3xl font-black focus:outline-none focus:border-orange-500 transition-all border border-gray-100"
+                      style={{ minHeight: '90px', appearance: 'none', WebkitAppearance: 'none' }}
                     />
-                    <p className="text-gray-400 text-[10px] text-center mt-2 font-bold tracking-widest">
-                      YOU MUST COMPLETE BEFORE THIS TIME
+                    <p className="text-gray-400 text-[10px] text-center mt-3 font-bold tracking-widest uppercase opacity-60">
+                      Finish before this time
                     </p>
                   </div>
                 )}
