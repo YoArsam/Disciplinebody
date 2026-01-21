@@ -559,12 +559,6 @@ function Home({
                                 className="relative flex-1 aspect-square"
                                 style={{ flex: `0 0 calc((100% - 6 * 0.25rem) / 7)` }}
                               >
-                                <div 
-                                  className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
-                                    hasNextChain ? 'opacity-100' : 'opacity-0'
-                                  }`} 
-                                />
-
                                 <div
                                   className={`relative z-10 w-full h-full rounded-sm transition-all duration-300 ${
                                     isCompleted 
