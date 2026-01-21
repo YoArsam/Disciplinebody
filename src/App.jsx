@@ -66,13 +66,32 @@ function App() {
       const now = new Date()
       const todayIso = now.toISOString().split('T')[0]
       const dayKey = now.getDay()
+      const currentHour = now.getHours()
 
-      // Find first habit that:
-      // 1. Is scheduled for today
-      // 2. Is not paused
-      // 3. Is not completed/paid today
-      // 4. Its deadline has passed (or 9 PM for All Day habits)
-      const pendingHabit = state.habits.find(h => {
+      // 1. Check for Yesterday's missed habits (Starting at 9 AM today)
+      if (currentHour >= 9) {
+        const yesterday = new Date(now)
+        yesterday.setDate(yesterday.getDate() - 1)
+        const yesterdayIso = yesterday.toISOString().split('T')[0]
+        const yesterdayDayKey = yesterday.getDay()
+
+        const missedYesterday = state.habits.find(h => {
+          const isScheduled = h.daysOfWeek.includes(yesterdayDayKey)
+          const isPaused = h.pausedUntil && h.pausedUntil >= yesterdayIso
+          const wasResolved = (state.habitHistory[h.id] || []).includes(yesterdayIso)
+          
+          return isScheduled && !isPaused && !wasResolved
+        })
+
+        if (missedYesterday && !checkInHabit) {
+          setIsMandatoryCheckIn(true)
+          setCheckInHabit(missedYesterday)
+          return // Prioritize yesterday's missed habits
+        }
+      }
+
+      // 2. Check for Today's passed deadlines
+      const pendingHabitToday = state.habits.find(h => {
         const isScheduled = h.daysOfWeek.includes(dayKey)
         const isPaused = h.pausedUntil && h.pausedUntil >= todayIso
         const isResolved = state.completedToday.includes(h.id) || state.paidToday?.includes(h.id)
@@ -90,22 +109,20 @@ function App() {
         const deadlineDate = new Date()
         deadlineDate.setHours(deadlineHour, deadlineMin, 0, 0)
 
-        // Only trigger if deadline passed AND habit was created before that deadline
         const wasCreatedBeforeDeadline = !h.createdAt || h.createdAt < deadlineDate.getTime()
-
         return now > deadlineDate && wasCreatedBeforeDeadline
       })
 
-      if (pendingHabit && !checkInHabit) {
+      if (pendingHabitToday && !checkInHabit) {
         setIsMandatoryCheckIn(true)
-        setCheckInHabit(pendingHabit)
+        setCheckInHabit(pendingHabitToday)
       }
     }
 
     checkForPendingCheckIns()
-    const interval = setInterval(checkForPendingCheckIns, 60000) // Check every minute
+    const interval = setInterval(checkForPendingCheckIns, 60000)
     return () => clearInterval(interval)
-  }, [state.habits, state.completedToday, state.paidToday, checkInHabit])
+  }, [state.habits, state.completedToday, state.paidToday, state.habitHistory, checkInHabit])
 
   // Reset daily completions and check for missed habits once a day
   useEffect(() => {
@@ -226,7 +243,7 @@ function App() {
       <div 
         className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none"
       >
-        v0.0.26
+        v0.0.27
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
