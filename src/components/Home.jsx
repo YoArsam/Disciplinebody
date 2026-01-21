@@ -498,13 +498,10 @@ function Home({
                     )}
                   </div>
                   
-                  {/* Chain View - Only show when expanded */}
+                  {/* Weekly Grid - Only show when expanded */}
                   {habitsExpanded && (
-                    <div className="border-t border-gray-100 pt-6 pb-4 px-2 grid-chart-enter">
-                      <div className="relative flex items-center justify-between mb-6">
-                        {/* Connecting Line Background */}
-                        <div className="absolute left-0 right-0 h-0.5 bg-gray-100 top-[14px] -translate-y-1/2 z-0" />
-                        
+                    <div className="border-t border-gray-100 pt-6 pb-2 px-2 grid-chart-enter">
+                      <div className="grid grid-cols-7 gap-2">
                         {Array.from({ length: 7 }, (_, i) => {
                           const date = new Date()
                           date.setDate(date.getDate() - (6 - i))
@@ -512,34 +509,16 @@ function Home({
                           const isCompleted = habitDates.includes(dateIso)
                           const isToday = dateIso === now.toISOString().split('T')[0]
                           
-                          // Check if previous day was also completed to draw active line segment
-                          const prevDate = new Date(date)
-                          prevDate.setDate(prevDate.getDate() - 1)
-                          const prevDateIso = prevDate.toISOString().split('T')[0]
-                          const prevCompleted = habitDates.includes(prevDateIso)
-                          const hasConnection = isCompleted && prevCompleted
-
                           return (
-                            <div key={dateIso} className="relative z-10 flex flex-col items-center gap-2">
-                              {/* Connection Segment */}
-                              {i > 0 && hasConnection && (
-                                <div className="absolute right-1/2 w-full h-0.5 bg-orange-500 top-[14px] -translate-y-1/2 -z-10" />
-                              )}
-                              
-                              {/* Bubble */}
-                              <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                            <div key={dateIso} className="flex flex-col items-center gap-2">
+                              {/* Square */}
+                              <div className={`w-full aspect-square rounded-lg transition-all ${
                                 isCompleted 
-                                  ? 'bg-orange-500 shadow-sm' 
+                                  ? 'bg-orange-500' 
                                   : isToday 
-                                    ? 'bg-white border-2 border-orange-200' 
-                                    : 'bg-white border-2 border-gray-100'
-                              }`}>
-                                {isCompleted && (
-                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                )}
-                              </div>
+                                    ? 'bg-orange-100 border border-orange-200' 
+                                    : 'bg-gray-100'
+                              }`} />
                               
                               {/* Day Label */}
                               <span className={`text-[10px] font-bold uppercase tracking-wider ${
@@ -550,72 +529,6 @@ function Home({
                             </div>
                           )
                         })}
-                      </div>
-
-                      {/* Stats + Sparkline */}
-                      <div className="bg-gray-50/50 rounded-2xl p-4 flex items-center justify-between gap-4">
-                        <div className="flex flex-col">
-                          <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Consistency</span>
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-xl font-black text-gray-900">
-                              {(() => {
-                                const last30Days = Array.from({ length: 30 }, (_, i) => {
-                                  const d = new Date()
-                                  d.setDate(d.getDate() - i)
-                                  return d.toISOString().split('T')[0]
-                                })
-                                const completedCount = last30Days.filter(d => habitDates.includes(d)).length
-                                return Math.round((completedCount / 30) * 100)
-                              })()}%
-                            </span>
-                            <span className="text-gray-400 text-[10px] font-bold uppercase">success</span>
-                          </div>
-                        </div>
-
-                        {/* Tiny Sparkline SVG */}
-                        <div className="flex-1 h-10 max-w-[120px]">
-                          <svg className="w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
-                            {(() => {
-                              const points = Array.from({ length: 30 }, (_, i) => {
-                                const d = new Date()
-                                d.setDate(d.getDate() - (29 - i))
-                                const isDone = habitDates.includes(d.toISOString().split('T')[0])
-                                return isDone ? 1 : 0
-                              })
-                              
-                              // Calculate rolling average for a smoother "wave"
-                              const smoothed = points.map((_, i, arr) => {
-                                const slice = arr.slice(Math.max(0, i - 3), i + 1)
-                                return slice.reduce((a, b) => a + b, 0) / slice.length
-                              })
-
-                              const pathData = smoothed.map((val, i) => {
-                                const x = (i / 29) * 100
-                                const y = 35 - (val * 30) // Invert and scale
-                                return `${i === 0 ? 'M' : 'L'} ${x} ${y}`
-                              }).join(' ')
-
-                              return (
-                                <>
-                                  <path
-                                    d={pathData}
-                                    fill="none"
-                                    stroke="url(#sparklineGradient)"
-                                    strokeWidth="3"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  />
-                                  <defs>
-                                    <linearGradient id="sparklineGradient" x1="0" y1="0" x2="1" y2="0">
-                                      <stop offset="0%" stopColor="#ffedd5" />
-                                      <stop offset="100%" stopColor="#f97316" />
-                                    </linearGradient>
-                                  </defs>
-                                </>
-                              )
-                            })()}
-                          </svg>
-                        </div>
                       </div>
                     </div>
                   )}
