@@ -4,8 +4,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const isEditing = !!habit
   const [step, setStep] = useState(1)
   const [name, setName] = useState(habit?.name || '')
-  const [deadline, setDeadline] = useState(habit?.deadline || '') // HH:mm or empty
-  const [hasDeadline, setHasDeadline] = useState(habit?.deadline ? true : false)
+  const [deadline, setDeadline] = useState(habit?.deadline || '09:00') // HH:mm or empty
+  const [hasDeadline, setHasDeadline] = useState(true)
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
   const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'charity')
