@@ -33,8 +33,8 @@ class NotificationService {
         if (scheduleDate > now) {
           notifications.push({
             id: habit.id,
-            title: 'Deadline Arrival',
-            body: `Time's up for your habit: ${habit.name}`,
+            title: 'Habit',
+            body: `Finish ${habit.name}`,
             schedule: { at: scheduleDate },
             sound: 'default'
           });
@@ -57,12 +57,12 @@ class NotificationService {
       if (scheduleDate > now) {
         const remainingCount = pendingHabits.length;
         const body = remainingCount > 0 
-          ? `You have ${remainingCount} habits left for today. Keep going!` 
-          : "Great job! All your habits for today are completed.";
+          ? `${remainingCount} left today` 
+          : "All done!";
 
         notifications.push({
           id: time.id,
-          title: `${time.label} Update`,
+          title: time.label,
           body: body,
           schedule: { at: scheduleDate },
           sound: 'default'
