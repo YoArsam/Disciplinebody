@@ -516,9 +516,7 @@ function Home({
 
                           return Array.from({ length: dayCount }, (_, i) => {
                             const date = new Date(now);
-                            // Chronological left-to-right calculation:
-                            // i=0 is oldest day (far left)
-                            // i=(dayCount-1) is today (far right)
+                            // Chronological LTR: i=0 is oldest (Left), i=dayCount-1 is Today (Right)
                             date.setDate(now.getDate() - ((dayCount - 1) - i));
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
@@ -530,19 +528,30 @@ function Home({
                             const existed = checkDate >= creationDate;
 
                             return (
-                              <div
-                                key={dateIso}
-                                className={`aspect-square rounded-sm transition-all duration-300 ${
-                                  !existed
-                                    ? 'bg-transparent' // Hide squares before creation
-                                    : isCompleted 
-                                      ? 'bg-green-500' 
-                                      : isToday 
-                                        ? 'bg-orange-200' 
-                                        : 'bg-gray-100'
-                                }`}
-                                title={existed ? dateIso : ''}
-                              />
+                              <div key={dateIso} className="relative aspect-square">
+                                {/* Chain Bridge (Horizontal) - Connects to PREVIOUS day (left) */}
+                                {existed && i > 0 && isCompleted && (() => {
+                                  const prevDate = new Date(date);
+                                  prevDate.setDate(date.getDate() - 1);
+                                  const prevIso = prevDate.toISOString().split('T')[0];
+                                  return habitDates.includes(prevIso);
+                                })() && (
+                                  <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-[60%] bg-green-500 z-0" />
+                                )}
+
+                                <div
+                                  className={`relative z-10 w-full h-full rounded-sm transition-all duration-300 ${
+                                    !existed
+                                      ? 'bg-transparent'
+                                      : isCompleted 
+                                        ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
+                                        : isToday 
+                                          ? 'bg-orange-200 ring-2 ring-orange-100 ring-offset-1' 
+                                          : 'bg-gray-100'
+                                  }`}
+                                  title={existed ? dateIso : ''}
+                                />
+                              </div>
                             );
                           });
                         })()}
