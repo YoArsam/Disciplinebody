@@ -297,6 +297,7 @@ function App() {
               setEditingHabit(null)
               setScreen('home')
             } else {
+              // New habit - add it and show confirmation
               const newHabit = { ...habit, id: Date.now(), createdAt: Date.now() }
               setState(prev => ({
                 ...prev,
@@ -311,22 +312,12 @@ function App() {
             deleteHabit(editingHabit.id)
             setEditingHabit(null)
             setScreen('home')
-            // Keep habitsExpanded as is
           } : null}
           onBack={() => {
             setEditingHabit(null)
             setScreen(previousScreen)
             setPreviousScreen('home')
             setHabitsExpanded(previousHabitsExpanded)
-          }}
-        />
-      )}
-      {screen === 'habit-added' && newlyAddedHabit && (
-        <HabitAdded
-          habit={newlyAddedHabit}
-          onDone={() => {
-            setNewlyAddedHabit(null)
-            setScreen('home')
           }}
         />
       )}
