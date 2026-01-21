@@ -511,25 +511,38 @@ function Home({
                       <div className={`grid ${expandedGridHabitId === habit.id ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
                         {(() => {
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
-                          return Array.from({ length: dayCount }, (_, i) => {
+                          // Stable array of indices to ensure fixed DOM positions
+                          const indices = Array.from({ length: dayCount }, (_, i) => i);
+                          
+                          return indices.map((i) => {
                             const date = new Date(now);
-                            // Right-to-left: Today on left (i=0), oldest on right (i=dayCount-1)
+                            // Right-to-left mapping: index 0 is Today
                             date.setDate(now.getDate() - i);
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
-                            const isToday = dateIso === now.toISOString().split('T')[0];
+                            const isToday = i === 0;
                             
+                            // Check if next item (previous calendar day) was completed for the chain
+                            let hasNextChain = false;
+                            if (i < dayCount - 1 && isCompleted) {
+                              const nextDate = new Date(date);
+                              nextDate.setDate(date.getDate() - 1);
+                              const nextIso = nextDate.toISOString().split('T')[0];
+                              hasNextChain = habitDates.includes(nextIso);
+                            }
+
                             return (
-                              <div key={dateIso} className="relative aspect-square">
-                                {/* Chain Bridge (Horizontal) - Connects to NEXT item (previous calendar day) if both are completed */}
-                                {i < dayCount - 1 && isCompleted && (() => {
-                                  const nextDate = new Date(date);
-                                  nextDate.setDate(date.getDate() - 1);
-                                  const nextIso = nextDate.toISOString().split('T')[0];
-                                  return habitDates.includes(nextIso);
-                                })() && (
-                                  <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0" />
-                                )}
+                              <div 
+                                key={i} 
+                                className="relative flex-1 aspect-square"
+                                style={{ flex: '0 0 calc((100% - 6 * 0.25rem) / 7)' }}
+                              >
+                                {/* Chain Bridge - Fixed element, visibility controlled by opacity */}
+                                <div 
+                                  className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
+                                    hasNextChain ? 'opacity-100' : 'opacity-0'
+                                  }`} 
+                                />
 
                                 <div
                                   className={`relative z-10 w-full h-full rounded-sm transition-all duration-300 ${
