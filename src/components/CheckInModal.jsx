@@ -5,7 +5,7 @@ import CheckoutForm from './CheckoutForm'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
-function CheckInModal({ habit, onComplete, onSkip, onClose }) {
+function CheckInModal({ habit, onComplete, onSkip, onClose, isMandatory = false }) {
   const [showPayment, setShowPayment] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false)
@@ -249,12 +249,14 @@ function CheckInModal({ habit, onComplete, onSkip, onClose }) {
           </button>
         )}
         
-        <button 
-          onClick={() => setShowPayment(false)}
-          className="mt-4 text-gray-500 text-sm font-medium"
-        >
-          Go Back
-        </button>
+        {!isMandatory && (
+          <button 
+            onClick={() => setShowPayment(false)}
+            className="mt-4 text-gray-500 text-sm font-medium"
+          >
+            Go Back
+          </button>
+        )}
       </div>
     )
   }
@@ -286,12 +288,14 @@ function CheckInModal({ habit, onComplete, onSkip, onClose }) {
           No, I missed it
         </button>
 
-        <button 
-          onClick={onClose}
-          className="w-full text-gray-500 text-sm font-medium pt-2"
-        >
-          Go Back
-        </button>
+        {!isMandatory && (
+          <button 
+            onClick={onClose}
+            className="w-full text-gray-500 text-sm font-medium pt-2"
+          >
+            Go Back
+          </button>
+        )}
       </div>
     </div>
   )

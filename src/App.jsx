@@ -43,6 +43,7 @@ function App() {
   const [newlyAddedHabit, setNewlyAddedHabit] = useState(null)
   const [showSuccessToast, setShowSuccessToast] = useState(false)
   const [checkInHabit, setCheckInHabit] = useState(null)
+  const [isMandatoryCheckIn, setIsMandatoryCheckIn] = useState(false)
 
   // Request notification permissions on mount
   useEffect(() => {
@@ -96,6 +97,7 @@ function App() {
       })
 
       if (pendingHabit && !checkInHabit) {
+        setIsMandatoryCheckIn(true)
         setCheckInHabit(pendingHabit)
       }
     }
@@ -224,7 +226,7 @@ function App() {
       <div 
         className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none"
       >
-        v0.0.25
+        v0.0.26
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
@@ -247,7 +249,10 @@ function App() {
               setEditingHabit(habit)
               setScreen('habit-adder')
             }}
-            onMarkDone={(habit) => setCheckInHabit(habit)}
+            onMarkDone={(habit) => {
+              setIsMandatoryCheckIn(false)
+              setCheckInHabit(habit)
+            }}
             onToggleHabits={() => setHabitsExpanded(!habitsExpanded)}
           />
         </div>
@@ -356,16 +361,22 @@ function App() {
       {checkInHabit && (
         <CheckInModal
           habit={checkInHabit}
+          isMandatory={isMandatoryCheckIn}
           onComplete={() => {
             markHabitDone(checkInHabit.id)
             setCheckInHabit(null)
+            setIsMandatoryCheckIn(false)
             setShowSuccessToast(true)
           }}
           onSkip={() => {
             markHabitPaid(checkInHabit.id)
             setCheckInHabit(null)
+            setIsMandatoryCheckIn(false)
           }}
-          onClose={() => setCheckInHabit(null)}
+          onClose={() => {
+            setCheckInHabit(null)
+            setIsMandatoryCheckIn(false)
+          }}
         />
       )}
     </div>
