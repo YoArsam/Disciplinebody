@@ -74,6 +74,9 @@ function App() {
             const isPaused = h.pausedUntil && h.pausedUntil >= yesterday.toISOString().split('T')[0]
             const isDone = prev.completedToday.includes(h.id)
             const isPaid = prev.paidToday?.includes(h.id)
+            
+            // If it has a deadline, we could check if it passed, 
+            // but since we check at day transition, we just care if it was done at all yesterday
             return isScheduled && !isPaused && !isDone && !isPaid
           })
 

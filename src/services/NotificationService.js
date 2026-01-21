@@ -9,9 +9,9 @@ class NotificationService {
   }
 
   async scheduleDailyNotifications(habits, completedToday, paidToday) {
-    // Cancel all existing notifications first to avoid duplicates
+    // Cancel all existing notifications
     await LocalNotifications.cancel({
-      notifications: [{ id: 1 }, { id: 2 }, { id: 3 }]
+      notifications: [{ id: 1 }, { id: 2 }, { id: 3 }, ...habits.map(h => h.id)]
     });
 
     const today = new Date();
@@ -58,6 +58,27 @@ class NotificationService {
       },
       sound: 'default'
     }));
+
+    // Add specific habit deadline notifications
+    habits.forEach(habit => {
+      if (habit.deadline && !doneIds.has(habit.id)) {
+        const [hour, minute] = habit.deadline.split(':').map(Number);
+        notifications.push({
+          id: habit.id,
+          title: 'Deadline Approaching!',
+          body: `Time to complete: ${habit.name}`,
+          schedule: {
+            on: {
+              hour,
+              minute
+            },
+            repeats: true,
+            allowWhileIdle: true
+          },
+          sound: 'default'
+        });
+      }
+    });
 
     await LocalNotifications.schedule({ notifications });
     console.log('Scheduled notifications:', notifications);

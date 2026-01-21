@@ -4,6 +4,8 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
   const isEditing = !!habit
   const [step, setStep] = useState(1)
   const [name, setName] = useState(habit?.name || '')
+  const [deadline, setDeadline] = useState(habit?.deadline || '') // HH:mm or empty
+  const [hasDeadline, setHasDeadline] = useState(habit?.deadline ? true : false)
   const [skipCost, setSkipCost] = useState(habit?.skipCost ?? null)
   const [daysOfWeek, setDaysOfWeek] = useState(habit?.daysOfWeek || [0, 1, 2, 3, 4, 5, 6])
   const [stakeDestination, setStakeDestination] = useState(habit?.stakeDestination || 'charity')
@@ -75,8 +77,9 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
 
   const stepTitles = {
     1: 'Name your habit',
-    2: 'When will you do it?',
+    2: 'Set a deadline',
     3: 'Habit Cost',
+    4: 'When will you do it?',
   }
 
   const getCustomSkipCost = () => {
@@ -92,14 +95,15 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       return !!name.trim() && daysOfWeek.length > 0 && computedSkipCost !== null
     }
     if (step === 1) return !!name.trim()
-    if (step === 2) return daysOfWeek.length > 0
+    if (step === 2) return !hasDeadline || !!deadline
     if (step === 3) return skipCost !== null || getCustomSkipCost() !== null
+    if (step === 4) return daysOfWeek.length > 0
     return false
   }
 
   const goNext = () => {
     if (!canGoNext()) return
-    setStep(prev => Math.min(3, prev + 1))
+    setStep(prev => Math.min(4, prev + 1))
   }
 
   const goBackStep = () => {
@@ -122,6 +126,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
     onSave({
       ...(habit || {}),
       name: name.trim(),
+      deadline: hasDeadline ? deadline : '',
       skipCost: computedSkipCost,
       daysOfWeek: daysOfWeek.length ? daysOfWeek : [0, 1, 2, 3, 4, 5, 6],
       stakeDestination: 'charity',
@@ -148,7 +153,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           </h1>
           {!isEditing && (
             <div className="flex items-center gap-1.5 mt-1.5">
-              {[1, 2, 3].map((s) => (
+              {[1, 2, 3, 4].map((s) => (
                 <div
                   key={s}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
@@ -225,7 +230,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
             </div>
           )}
 
-          {(isEditing || step === 2) && (
+          {(isEditing || step === 4) && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="mb-4">
                 <span className="text-lg font-bold text-gray-900">When will you do it?</span>
@@ -266,6 +271,58 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <p className="text-orange-500 text-xs text-center font-bold tracking-wide">
                     Select at least one day
                   </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {(isEditing || step === 2) && (
+            <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
+              <div className="mb-4">
+                <span className="text-lg font-bold text-gray-900">Habit Deadline</span>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setHasDeadline(false);
+                      setDeadline('');
+                    }}
+                    className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                      !hasDeadline 
+                        ? 'bg-orange-500 text-white border-orange-500' 
+                        : 'bg-gray-50 text-gray-700 border-gray-100'
+                    }`}
+                  >
+                    No Deadline
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHasDeadline(true)}
+                    className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                      hasDeadline 
+                        ? 'bg-orange-500 text-white border-orange-500' 
+                        : 'bg-gray-50 text-gray-700 border-gray-100'
+                    }`}
+                  >
+                    Set Time
+                  </button>
+                </div>
+
+                {hasDeadline && (
+                  <div className="animate-fadeIn">
+                    <input
+                      type="time"
+                      value={deadline}
+                      onChange={(e) => setDeadline(e.target.value)}
+                      className="w-full bg-gray-50 text-gray-900 rounded-xl p-4 text-center text-2xl font-black focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                    />
+                    <p className="text-gray-400 text-[10px] text-center mt-2 font-bold tracking-widest">
+                      YOU MUST COMPLETE BEFORE THIS TIME
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -532,7 +589,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
       {/* Fixed Bottom Actions - Large hierarchy */}
       <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-5 pb-[max(2rem,env(safe-area-inset-bottom))] z-50">
         <div className="max-w-md mx-auto space-y-3">
-          {!isEditing && step < 3 ? (
+          {!isEditing && step < 4 ? (
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
