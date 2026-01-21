@@ -511,12 +511,24 @@ function Home({
                       <div className={`grid ${expandedGridHabitId === habit.id ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
                         {(() => {
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
+                          
+                          // Find the start date (Monday of the current week or X weeks ago)
+                          const startDate = new Date(now);
+                          const currentDay = startDate.getDay(); // 0 is Sun, 1 is Mon...
+                          const daysSinceMonday = (currentDay === 0 ? 6 : currentDay - 1);
+                          
+                          // If 28 days, we go back 3 full weeks + current week start
+                          const offsetDays = expandedGridHabitId === habit.id ? (21 + daysSinceMonday) : daysSinceMonday;
+                          startDate.setDate(startDate.getDate() - offsetDays);
+                          startDate.setHours(0, 0, 0, 0);
+
                           return Array.from({ length: dayCount }, (_, i) => {
-                            const date = new Date();
-                            date.setDate(date.getDate() - ((dayCount - 1) - i));
+                            const date = new Date(startDate);
+                            date.setDate(startDate.getDate() + i);
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
                             const isToday = dateIso === now.toISOString().split('T')[0];
+                            const isFuture = date > now;
                             
                             return (
                               <div
@@ -526,7 +538,9 @@ function Home({
                                     ? 'bg-green-500' 
                                     : isToday 
                                       ? 'bg-orange-200' 
-                                      : 'bg-gray-100'
+                                      : isFuture
+                                        ? 'bg-gray-50'
+                                        : 'bg-gray-100'
                                 }`}
                                 title={dateIso}
                               />
