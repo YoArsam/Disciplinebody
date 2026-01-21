@@ -233,7 +233,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           {(isEditing || step === 4) && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="mb-4">
-                <span className="text-lg font-bold text-gray-900">When will you do it?</span>
+                <span className="text-lg font-bold text-gray-900">Habit Days</span>
               </div>
 
               <div className="space-y-4">
@@ -337,7 +337,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           {(isEditing || step === 3) && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="mb-4">
-                <span className="text-lg font-bold text-gray-900">What's the cost of skipping?</span>
+                <span className="text-lg font-bold text-gray-900">Habit Cost</span>
               </div>
 
               <div className="space-y-4">
@@ -483,7 +483,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
           {habit && (
             <div className="bg-white border border-gray-200 rounded-[1.5rem] p-5">
               <div className="mb-4">
-                <span className="text-lg font-bold text-gray-900">Pause habit</span>
+                <span className="text-lg font-bold text-gray-900">Pause Habit</span>
               </div>
 
               <div className="space-y-4">
