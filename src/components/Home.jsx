@@ -172,6 +172,7 @@ function Home({
   const widgetRef = useRef(null)
   const [widgetStyle, setWidgetStyle] = useState({})
   const [now, setNow] = useState(new Date())
+  const [expandedGridHabitId, setExpandedGridHabitId] = useState(null)
 
   // Update clock every minute for countdowns
   useEffect(() => {
@@ -498,33 +499,44 @@ function Home({
                     )}
                   </div>
                   
-                  {/* Weekly Grid - Only show when expanded */}
+                  {/* Weekly/Monthly Grid - Only show when expanded */}
                   {habitsExpanded && (
-                    <div className="border-t border-gray-100 pt-4 grid-chart-enter">
-                      <div className="grid grid-cols-7 gap-1">
-                        {Array.from({ length: 7 }, (_, i) => {
-                          const date = new Date()
-                          date.setDate(date.getDate() - (6 - i))
-                          const dateIso = date.toISOString().split('T')[0]
-                          const isCompleted = habitDates.includes(dateIso)
-                          const isToday = dateIso === now.toISOString().split('T')[0]
-                          
-                          return (
-                            <div
-                              key={dateIso}
-                              className={`aspect-square rounded-sm ${
-                                isCompleted 
-                                  ? 'bg-green-500' 
-                                  : isToday 
-                                    ? 'bg-orange-200' 
-                                    : 'bg-gray-100'
-                              }`}
-                              title={dateIso}
-                            />
-                          )
-                        })}
+                    <div 
+                      className="border-t border-gray-100 pt-4 grid-chart-enter cursor-pointer active:opacity-80 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpandedGridHabitId(expandedGridHabitId === habit.id ? null : habit.id);
+                      }}
+                    >
+                      <div className={`grid ${expandedGridHabitId === habit.id ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
+                        {(() => {
+                          const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
+                          return Array.from({ length: dayCount }, (_, i) => {
+                            const date = new Date();
+                            date.setDate(date.getDate() - ((dayCount - 1) - i));
+                            const dateIso = date.toISOString().split('T')[0];
+                            const isCompleted = habitDates.includes(dateIso);
+                            const isToday = dateIso === now.toISOString().split('T')[0];
+                            
+                            return (
+                              <div
+                                key={dateIso}
+                                className={`aspect-square rounded-sm transition-all duration-300 ${
+                                  isCompleted 
+                                    ? 'bg-green-500' 
+                                    : isToday 
+                                      ? 'bg-orange-200' 
+                                      : 'bg-gray-100'
+                                }`}
+                                title={dateIso}
+                              />
+                            );
+                          });
+                        })()}
                       </div>
-                      <p className="text-xs text-gray-400 mt-2 text-center">Last 7 days</p>
+                      <p className="text-xs text-gray-400 mt-2 text-center transition-all">
+                        {expandedGridHabitId === habit.id ? 'Last 28 days' : 'Last 7 days (Tap to expand)'}
+                      </p>
                     </div>
                   )}
                 </div>
