@@ -51,7 +51,7 @@ function App() {
 
   // Update notifications whenever habits or completions change
   useEffect(() => {
-    NotificationService.scheduleDailyNotifications(state.habits, state.completedToday, state.paidToday)
+    NotificationService.scheduleNotifications(state.habits, state.completedToday, state.paidToday)
   }, [state.habits, state.completedToday, state.paidToday])
 
   // Save to localStorage whenever state changes

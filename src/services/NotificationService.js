@@ -8,88 +8,73 @@ class NotificationService {
     }
   }
 
-  async scheduleDailyNotifications(habits, completedToday, paidToday) {
-    // Cancel all existing notifications
-    await LocalNotifications.cancel({
-      notifications: [{ id: 1 }, { id: 2 }, { id: 3 }, ...habits.map(h => h.id)]
-    });
-
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const todayIso = today.toISOString().split('T')[0];
-
-    // Calculate habits scheduled for today
-    const activeHabits = habits.filter(h => {
-      const isScheduled = (h.daysOfWeek || [0, 1, 2, 3, 4, 5, 6]).includes(dayOfWeek);
-      const isPaused = h.pausedUntil && h.pausedUntil >= todayIso;
-      return isScheduled && !isPaused;
-    });
-
-    // Count how many of those active habits are NOT completed and NOT paid
-    const doneIds = new Set([...(completedToday || []), ...(paidToday || [])]);
-    const pendingCount = activeHabits.filter(h => !doneIds.has(h.id)).length;
-    
-    let message = '';
-    if (habits.length === 0) {
-      message = "Start your journey. Add a habit now!";
-    } else if (pendingCount <= 0) {
-      message = "You're all set! Great discipline today.";
-    } else {
-      message = `${pendingCount} habits left. Let's get it!`;
+  async scheduleNotifications(habits, completedToday, paidToday) {
+    // 1. Clear all existing notifications to avoid duplicates/stale schedules
+    const pending = await LocalNotifications.getPending();
+    if (pending.notifications.length > 0) {
+      await LocalNotifications.cancel(pending);
     }
 
-    const scheduleTimes = [
-      { id: 1, hour: 9, minute: 0 },
-      { id: 2, hour: 14, minute: 0 },
-      { id: 3, hour: 20, minute: 0 }
+    const notifications = [];
+    const now = new Date();
+    const habitIds = habits.map(h => h.id);
+    const resolvedIds = [...completedToday, ...(paidToday || [])];
+    const pendingHabits = habits.filter(h => !resolvedIds.includes(h.id));
+
+    // --- TRIGGER 1: Habit Deadlines ---
+    // 1 notification for each habit that hasn't been completed yet
+    pendingHabits.forEach(habit => {
+      if (habit.habitTime) {
+        const [hour, minute] = habit.habitTime.split(':').map(Number);
+        const scheduleDate = new Date();
+        scheduleDate.setHours(hour, minute, 0, 0);
+
+        // Only schedule if the deadline hasn't passed yet today
+        if (scheduleDate > now) {
+          notifications.push({
+            id: habit.id,
+            title: 'Deadline Arrival',
+            body: `Time's up for your habit: ${habit.name}`,
+            schedule: { at: scheduleDate },
+            sound: 'default'
+          });
+        }
+      }
+    });
+
+    // --- TRIGGER 2: 3 Daily Summaries ---
+    // 9 AM, 2 PM, 8 PM
+    const summaryTimes = [
+      { id: 10001, hour: 9, label: 'Morning' },
+      { id: 10002, hour: 14, label: 'Afternoon' },
+      { id: 10003, hour: 20, label: 'Evening' }
     ];
 
-    const notifications = scheduleTimes.map(time => ({
-      id: time.id,
-      title: 'Habit Buddy',
-      body: message,
-      schedule: {
-        on: {
-          hour: time.hour,
-          minute: time.minute
-        },
-        repeats: true,
-        allowWhileIdle: true
-      },
-      sound: 'default'
-    }));
+    summaryTimes.forEach(time => {
+      const scheduleDate = new Date();
+      scheduleDate.setHours(time.hour, 0, 0, 0);
 
-    // Add specific habit deadline notifications
-    habits.forEach(habit => {
-      if (!doneIds.has(habit.id)) {
-        let hour, minute;
-        if (habit.deadline) {
-          [hour, minute] = habit.deadline.split(':').map(Number);
-        } else {
-          // All Day habits notify at 9 PM
-          hour = 21;
-          minute = 0;
-        }
+      if (scheduleDate > now) {
+        const remainingCount = pendingHabits.length;
+        const body = remainingCount > 0 
+          ? `You have ${remainingCount} habits left for today. Keep going!` 
+          : "Great job! All your habits for today are completed.";
 
         notifications.push({
-          id: habit.id,
-          title: 'Habit Deadline!',
-          body: `Time's up: ${habit.name}. Did you complete it?`,
-          schedule: {
-            on: {
-              hour,
-              minute
-            },
-            repeats: true,
-            allowWhileIdle: true
-          },
+          id: time.id,
+          title: `${time.label} Update`,
+          body: body,
+          schedule: { at: scheduleDate },
           sound: 'default'
         });
       }
     });
 
-    await LocalNotifications.schedule({ notifications });
-    console.log('Scheduled notifications:', notifications);
+    if (notifications.length > 0) {
+      await LocalNotifications.schedule({
+        notifications: notifications
+      });
+    }
   }
 }
 
