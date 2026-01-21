@@ -61,12 +61,21 @@ class NotificationService {
 
     // Add specific habit time notifications
     habits.forEach(habit => {
-      if (habit.habitTime && !doneIds.has(habit.id)) {
-        const [hour, minute] = habit.habitTime.split(':').map(Number);
+      if (!doneIds.has(habit.id)) {
+        let hour, minute;
+        
+        if (habit.habitTime) {
+          [hour, minute] = habit.habitTime.split(':').map(Number);
+        } else {
+          // All Day habits get a notification at 9 PM (21:00)
+          hour = 21;
+          minute = 0;
+        }
+
         notifications.push({
           id: habit.id,
-          title: 'Habit Time!',
-          body: `Time to complete: ${habit.name}`,
+          title: 'Habit Check-in',
+          body: `Did you do it? ${habit.name}`,
           schedule: {
             on: {
               hour,

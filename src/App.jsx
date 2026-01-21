@@ -59,6 +59,49 @@ function App() {
     localStorage.setItem('accountability-app-state', JSON.stringify(state))
   }, [state])
 
+  // Check for missed habits that need a pop-up when app is opened
+  useEffect(() => {
+    const checkForPendingCheckIns = () => {
+      const now = new Date()
+      const todayIso = now.toISOString().split('T')[0]
+      const dayKey = now.getDay()
+
+      // Find first habit that:
+      // 1. Is scheduled for today
+      // 2. Is not paused
+      // 3. Is not completed/paid today
+      // 4. Its deadline has passed (or 9 PM for All Day habits)
+      const pendingHabit = state.habits.find(h => {
+        const isScheduled = h.daysOfWeek.includes(dayKey)
+        const isPaused = h.pausedUntil && h.pausedUntil >= todayIso
+        const isResolved = state.completedToday.includes(h.id) || state.paidToday?.includes(h.id)
+        
+        if (!isScheduled || isPaused || isResolved) return false
+
+        let deadlineHour, deadlineMin
+        if (h.habitTime) {
+          [deadlineHour, deadlineMin] = h.habitTime.split(':').map(Number)
+        } else {
+          deadlineHour = 21 // 9 PM for All Day habits
+          deadlineMin = 0
+        }
+
+        const deadlineDate = new Date()
+        deadline.setHours(deadlineHour, deadlineMin, 0, 0)
+
+        return now > deadlineDate
+      })
+
+      if (pendingHabit && !checkInHabit) {
+        setCheckInHabit(pendingHabit)
+      }
+    }
+
+    checkForPendingCheckIns()
+    const interval = setInterval(checkForPendingCheckIns, 60000) // Check every minute
+    return () => clearInterval(interval)
+  }, [state.habits, state.completedToday, state.paidToday, checkInHabit])
+
   // Reset daily completions and check for missed habits once a day
   useEffect(() => {
     const checkDayTransition = () => {
@@ -178,7 +221,7 @@ function App() {
       <div 
         className="fixed top-4 right-4 z-[100] bg-black/50 backdrop-blur-sm text-[10px] text-white/70 px-2 py-1 rounded-full font-mono pointer-events-none"
       >
-        v0.0.22
+        v0.0.23
       </div>
 
       <div style={{ display: screen === 'home' ? 'contents' : 'none' }}>
