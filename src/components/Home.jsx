@@ -500,8 +500,8 @@ function Home({
                   
                   {/* Weekly Grid - Only show when expanded */}
                   {habitsExpanded && (
-                    <div className="border-t border-gray-100 pt-6 pb-2 px-2 grid-chart-enter">
-                      <div className="grid grid-cols-7 gap-2">
+                    <div className="border-t border-gray-100 pt-4 grid-chart-enter">
+                      <div className="grid grid-cols-7 gap-1">
                         {Array.from({ length: 7 }, (_, i) => {
                           const date = new Date()
                           date.setDate(date.getDate() - (6 - i))
@@ -510,26 +510,21 @@ function Home({
                           const isToday = dateIso === now.toISOString().split('T')[0]
                           
                           return (
-                            <div key={dateIso} className="flex flex-col items-center gap-2">
-                              {/* Square */}
-                              <div className={`w-full aspect-square rounded-lg transition-all ${
+                            <div
+                              key={dateIso}
+                              className={`aspect-square rounded-sm ${
                                 isCompleted 
-                                  ? 'bg-orange-500' 
+                                  ? 'bg-green-500' 
                                   : isToday 
-                                    ? 'bg-orange-100 border border-orange-200' 
+                                    ? 'bg-orange-200' 
                                     : 'bg-gray-100'
-                              }`} />
-                              
-                              {/* Day Label */}
-                              <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                                isToday ? 'text-orange-500' : 'text-gray-400'
-                              }`}>
-                                {date.toLocaleDateString([], { weekday: 'short' }).charAt(0)}
-                              </span>
-                            </div>
+                              }`}
+                              title={dateIso}
+                            />
                           )
                         })}
                       </div>
+                      <p className="text-xs text-gray-400 mt-2 text-center">Last 7 days</p>
                     </div>
                   )}
                 </div>
