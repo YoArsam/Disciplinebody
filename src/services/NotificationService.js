@@ -29,12 +29,12 @@ class NotificationService {
         const scheduleDate = new Date();
         scheduleDate.setHours(hour, minute, 0, 0);
 
-        // Only schedule if the deadline hasn't passed yet today
+        // Only schedule if the time hasn't passed yet today
         if (scheduleDate > now) {
           notifications.push({
             id: habit.id,
             title: 'Habit',
-            body: `Finish ${habit.name}`,
+            body: `Time for ${habit.name}`,
             schedule: { at: scheduleDate },
             sound: 'default'
           });
