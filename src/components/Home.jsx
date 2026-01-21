@@ -510,48 +510,54 @@ function Home({
                     >
                       <div className={`grid ${expandedGridHabitId === habit.id ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
                         {(() => {
-                          const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
-                          const indices = Array.from({ length: dayCount }, (_, i) => i);
+                          const isExpanded = expandedGridHabitId === habit.id;
                           
-                          return indices.map((i) => {
-                            // Standardized RTL: index 0 is Today, index 1 is Yesterday, etc.
-                            // This ensures Today is ALWAYS at slot 0 (far left) in both views.
+                          // Source of Truth: Compute 28 days chronologically (Oldest to Newest LTR)
+                          const allCells = Array.from({ length: 28 }, (_, i) => {
                             const date = new Date(now);
-                            date.setDate(now.getDate() - i);
+                            // i=0 is 27 days ago, i=27 is Today
+                            date.setDate(now.getDate() - (27 - i));
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
-                            const isToday = i === 0;
+                            const isToday = dateIso === now.toISOString().split('T')[0];
                             
-                            // Unified chain logic: connects to previous calendar day (next index)
+                            return { dateIso, isCompleted, isToday, date: new Date(date) };
+                          });
+
+                          // Slice for the actual view (either all 28 or last 7)
+                          const displayCells = isExpanded ? allCells : allCells.slice(-7);
+                          const dayCount = displayCells.length;
+
+                          return displayCells.map((cell, i) => {
+                            // Chain logic: Connects to PREVIOUS calendar day (which is index i-1 in this LTR slice)
                             let hasNextChain = false;
-                            if (i < dayCount - 1 && isCompleted) {
-                              const prevDayDate = new Date(date);
-                              prevDayDate.setDate(date.getDate() - 1);
-                              const prevDayIso = prevDayDate.toISOString().split('T')[0];
-                              hasNextChain = habitDates.includes(prevDayIso);
+                            if (i > 0 && cell.isCompleted) {
+                              const prevCell = displayCells[i - 1];
+                              hasNextChain = prevCell.isCompleted;
                             }
 
                             return (
                               <div 
-                                key={i} 
+                                key={cell.dateIso} 
                                 className="relative flex-1 aspect-square"
-                                style={{ flex: `0 0 calc((100% - ${(dayCount === 7 ? 6 : 6)} * 0.25rem) / 7)` }}
+                                style={{ flex: '0 0 calc((100% - 6 * 0.25rem) / 7)' }}
                               >
+                                {/* Chain Bridge - Connects to the left (previous day) */}
                                 <div 
-                                  className={`absolute -right-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
+                                  className={`absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-[40%] bg-green-500 z-0 transition-opacity duration-300 ${
                                     hasNextChain ? 'opacity-100' : 'opacity-0'
                                   }`} 
                                 />
 
                                 <div
                                   className={`relative z-10 w-full h-full rounded-sm transition-all duration-300 ${
-                                    isCompleted 
+                                    cell.isCompleted 
                                       ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.2)]' 
-                                      : isToday 
+                                      : cell.isToday 
                                         ? 'bg-orange-200' 
                                         : 'bg-gray-100'
                                   }`}
-                                  title={dateIso}
+                                  title={cell.dateIso}
                                 />
                               </div>
                             );
