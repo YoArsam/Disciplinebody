@@ -180,15 +180,18 @@ function Home({
   }, [])
 
   const getTimeRemaining = (habitTime) => {
-    if (!habitTime) return 'Daily habit'
+    if (!habitTime) return 'All Day'
     
     const [hours, minutes] = habitTime.split(':').map(Number)
-    const deadline = new Date()
+    let deadline = new Date()
     deadline.setHours(hours, minutes, 0, 0)
     
-    const diff = deadline - now
-    if (diff <= 0) return 'Deadline passed'
+    // If deadline passed today, count down to tomorrow
+    if (deadline < now) {
+      deadline.setDate(deadline.getDate() + 1)
+    }
     
+    const diff = deadline - now
     const h = Math.floor(diff / 3600000)
     const m = Math.floor((diff % 3600000) / 60000)
     
