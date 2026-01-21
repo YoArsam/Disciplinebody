@@ -508,28 +508,40 @@ function Home({
                         setExpandedGridHabitId(expandedGridHabitId === habit.id ? null : habit.id);
                       }}
                     >
-                      <div className={`grid ${expandedGridHabitId === habit.id ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
+                      <div className="grid grid-cols-7 gap-1">
                         {(() => {
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
+                          const creationDate = new Date(habit.createdAt || habit.id);
+                          creationDate.setHours(0, 0, 0, 0);
+
                           return Array.from({ length: dayCount }, (_, i) => {
                             const date = new Date(now);
-                            // Right-to-left: Today on left (i=0), oldest on right (i=dayCount-1)
-                            date.setDate(now.getDate() - i);
+                            // Correct chronological left-to-right calculation:
+                            // i=0 is (dayCount-1) days ago (far left)
+                            // i=(dayCount-1) is today (far right)
+                            date.setDate(now.getDate() - ((dayCount - 1) - i));
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
                             const isToday = dateIso === now.toISOString().split('T')[0];
                             
+                            // Check if the habit existed on this date
+                            const checkDate = new Date(date);
+                            checkDate.setHours(0, 0, 0, 0);
+                            const existed = checkDate >= creationDate;
+
                             return (
                               <div
                                 key={dateIso}
                                 className={`aspect-square rounded-sm transition-all duration-300 ${
-                                  isCompleted 
-                                    ? 'bg-green-500' 
-                                    : isToday 
-                                      ? 'bg-orange-200' 
-                                      : 'bg-gray-100'
+                                  !existed
+                                    ? 'bg-transparent' // Hide squares before creation
+                                    : isCompleted 
+                                      ? 'bg-green-500' 
+                                      : isToday 
+                                        ? 'bg-orange-200' 
+                                        : 'bg-gray-100'
                                 }`}
-                                title={dateIso}
+                                title={existed ? dateIso : ''}
                               />
                             );
                           });
