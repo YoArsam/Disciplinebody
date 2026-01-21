@@ -287,20 +287,6 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                   <button
                     type="button"
                     onClick={() => {
-                      setHasDeadline(false);
-                      setDeadline('');
-                    }}
-                    className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
-                      !hasDeadline 
-                        ? 'bg-orange-500 text-white border-orange-500' 
-                        : 'bg-gray-50 text-gray-700 border-gray-100'
-                    }`}
-                  >
-                    No Deadline
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
                       setHasDeadline(true)
                       if (!deadline) setDeadline('09:00')
                     }}
@@ -311,6 +297,20 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                     }`}
                   >
                     Set Time
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setHasDeadline(false);
+                      setDeadline('');
+                    }}
+                    className={`flex-1 h-12 rounded-xl font-bold text-sm border transition-all active:scale-95 ${
+                      !hasDeadline 
+                        ? 'bg-orange-500 text-white border-orange-500' 
+                        : 'bg-gray-50 text-gray-700 border-gray-100'
+                    }`}
+                  >
+                    No Deadline
                   </button>
                 </div>
 
