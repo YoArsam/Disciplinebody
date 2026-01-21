@@ -511,14 +511,14 @@ function Home({
                       <div className="grid grid-cols-7 gap-1">
                         {(() => {
                           const dayCount = expandedGridHabitId === habit.id ? 28 : 7;
-                          const creationDate = new Date(habit.createdAt || habit.id);
+                          // Use the habit ID as the creation timestamp if createdAt isn't explicitly set
+                          const creationTimestamp = habit.createdAt || habit.id;
+                          const creationDate = new Date(creationTimestamp);
                           creationDate.setHours(0, 0, 0, 0);
 
                           return Array.from({ length: dayCount }, (_, i) => {
                             const date = new Date(now);
-                            // Correct chronological left-to-right calculation:
-                            // i=0 is (dayCount-1) days ago (far left)
-                            // i=(dayCount-1) is today (far right)
+                            // Chronological LTR: oldest on left (i=0), today on far right (i=dayCount-1)
                             date.setDate(now.getDate() - ((dayCount - 1) - i));
                             const dateIso = date.toISOString().split('T')[0];
                             const isCompleted = habitDates.includes(dateIso);
@@ -534,7 +534,7 @@ function Home({
                                 key={dateIso}
                                 className={`aspect-square rounded-sm transition-all duration-300 ${
                                   !existed
-                                    ? 'bg-transparent' // Hide squares before creation
+                                    ? 'bg-transparent' // Invisible square before creation
                                     : isCompleted 
                                       ? 'bg-green-500' 
                                       : isToday 
