@@ -321,7 +321,7 @@ function HabitAdder({ habit, onSave, onDelete, onBack }) {
                         type="time"
                         value={habitTime}
                         onChange={(e) => setHabitTime(e.target.value)}
-                        className="w-full bg-gray-50 text-gray-900 rounded-2xl py-6 px-2 text-center text-3xl font-black focus:outline-none focus:ring-4 focus:ring-orange-500/30 focus:border-orange-500 transition-all border border-gray-100"
+                        className="w-full bg-gray-50 text-gray-900 rounded-2xl py-6 px-2 text-center text-3xl font-black focus:outline-none focus:border-orange-500 transition-all border border-gray-100"
                         style={{ minHeight: '90px', appearance: 'none', WebkitAppearance: 'none' }}
                       />
                     </div>
